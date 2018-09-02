@@ -55,7 +55,9 @@ def remove_todo_tags(data_list,filepath):
 	# Write line if no TODO tag is in.
 	for i in range(0,len(data_list)):
 		
-		if data_list[i].find("TODO") == 0:
+		print(data_list[i])
+		print(data_list[i].find("<TODO"))
+		if data_list[i].find("<TODO") < 0:
 			# Copy line over to new file
 			file.write(data_list[i]+"\n")
 	file.close()
@@ -65,41 +67,41 @@ def remove_all_todo_tags():
 	data = parse_file(fn)
 	remove_todo_tags(data,fn)
 	
-	fn = "../texfiles/chapter2.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter3.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter4.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter5.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter6.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter7.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter8.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter9.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
-	
-	fn = "../texfiles/chapter10.tex"
-	data = parse_file(fn)
-	remove_todo_tags(data,fn)
+	# fn = "../texfiles/chapter2.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter3.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter4.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter5.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter6.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter7.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter8.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter9.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
+	# 
+	# fn = "../texfiles/chapter10.tex"
+	# data = parse_file(fn)
+	# remove_todo_tags(data,fn)
 
 
 def init_todo_tags():
@@ -192,6 +194,7 @@ def email_all_todo_tags():
 
 
 #print(data)
+init_todo_tags()
 
 remove_all_todo_tags()
 
