@@ -11,14 +11,10 @@ This Chapter covers a broad topic of what an \ac{FPGA} is and to understand this
 \section{FPGA Alternatives and Data Rate Capabilities}
 There are many platforms for embedded processing. A Raspberry Pi is a very popular platform for the electronics hobbyist and the ARM processor that is available on the Raspberry Pi is very powerful for an embedded processor. However, there are applications, such as image processing, that a little more computing power is needed. This section discusses determining the requirements for the application and determining if a particular platform can handle the data rate required by the application. 
 
-\subsection{Introduction to Data Rate}
-A data rate in general is defined as the number of bits per unit time. For a system the data rate is how much data can the system handle per unit time. The overall data rate of the system is the minimum data rate for the individual components. In designing a system with a minimum data rate requirement it is important to be mindful of the data rates of the components.
-
-To make the concept of determining data rate a little more concrete lets look at a simple architecture of a wireless receiver. To determine the data rate of a system the knowledge of the application and more importantly the architecture of the system needs to be known. Even for a simple receiver there are multiple ways to architect the design to enable higher or lower data rates. 
-
 
 \subsection{Micro-Controllers (uC)}
 \ac{uC}'s are embedded processors for use in \emph{small} systems. What is meant by a small system is relative, usually embedded systems are programmed for a specific task. For example live-streaming a webcam to the \ac{LAN}. \ac{uC}'s come in varying sizes; depending on the task to be performed. You don't need the cutting-edge i7 from intel to stream video, but an 8-bit \ac{PIC} \ac{uC} is too small for the task. However, an 8-bit \ac{uC} will turn on a water pump for 10 minutes a day to water a house hold plant. Just as different vehicles suit owner's needs in different ways so do \ac{uC}'s.
+
 
 \subsection{Application Specific Integrated Circuits}
 \ac{ASIC} chips are designed, of course, for a specific application. The knowledge of the algorithms to be calculated and the ability in an \ac{ASIC} to make any gate on the blank silicon make the \ac{ASIC} the most power processing platform. 
