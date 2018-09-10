@@ -1,8 +1,21 @@
 \chapter{Overview of Computing Platforms}
-	<TODO Chapter Overview of Computing Platforms} : NOT DONE>
+	<TODO Chapter Overview of Computing Platforms} : STARTED-NEEDS PROOFREAD>
+Today's electronics hobbyist has many platforms available to learn anything from programming basics to complicated topics like web hosting and robotics. This chapter discussed all the possibilities of available types of computing platforms. We discuss Single board computer's, Field Programmable Gate Arrays, and Application Specific Integrated Circuits. All of which have varying levels for skill required to get started. This book will get you started in designing systems for all the platforms.  
 
+If you are a beginner in all this then you should start with single board computers. They are a smaller and cheaper version of your laptop. They offer an operating system and are user friendly. They are not as computationally equipped but do offer some ability to do complex processing. 
+
+A Graphical Processing Unit (GPU) offers more processing power depending on the application. GPUs offer performance gains when the algorithm has a lot of multiply-accumulate operations. However the working memory can be limiting; the overhead of moving data to and from the host CPU degrades performance.
+
+For high-data rate applications where large data sets are ingested by algorithms FPGAs can be used to select significant pieces of the data for analysis. This data selection concept can be a little abstract but for particular applications it can be applied quite effectively. For instance in image processing a portion of the image can be eliminated or just edges are considered. 
+
+Finally, the last step and the ultimate in computational performance is the Application Specific Integrated Circuit. These chips are touched on briefly here for the sake of completeness however the hobbyist would only explore this option if the hobby became an amazing success and would pay for a chip to be manufactured. 
+	
+	
 \section{What Can an FPGA Do}
-	<TODO Section What Can an FPGA Do} : NOT DONE>
+	<TODO Section What Can an FPGA Do} : STARTED-NEEDS PROOFREAD>
+
+The development of todays FPGAs started in the late 1988s, where Simple Programmable Logic Devices took the place of hand placing logic gates. These SPLDs gave way to Complex Programmable Logic Devices. This section provides a brief history which will help in the understanding of how and why FPGAs are used.  	
+	
 
 \subsection{History of FPGAs}
 	<TODO Subsection History of FPGAs} : NOT DONE>
@@ -14,10 +27,20 @@
 	<TODO Subsubsection  Macrocells} : NOT DONE>
 
 \subsection{Why Use an FPGA}
-	<TODO Subsection Why Use an FPGA} : NOT DONE>
+	<TODO Subsection Why Use an FPGA} : STARTED-NEEDS PROOFREAD>
+	
+FPGAs are really the blank slate of embedded processing. The features in FPGAs today lead to a large range of applications, including Artificial Intelligence and machine learning. FPGAs have many characteristics that make them a great versatile computational platform. 
+
+Most people of familiar with processors, CPUs, or microprocessors. The architecture of these platforms vary great but at the root of each processor has one or more ALU. An FPGA can have an ALU implemented in it. Research in processor design use FPGAs to test new architecture performance and prove out designs. This research is enabled by the ability to reprogram the FPGA to make design changes and test whether the changes are an improvement in practice. 
+
+Another ability that makes FPGAs versatile is the ability to add additional logic in parallel. When an algorithm is being implemented the programmer is looking to optimize the code to get the result as fast as possible. With an FPGA the programmer can add another operation in parallel as opposed to waiting for an Arithmetic Logic Unit to be ready to do the calculation. 
+
+Another benefit of an FPGA is the amount of configurable input and output pins. If your application needs to interface to many peripherals FPGAs have hundreds even thousands of pins available for configuration. Some pins are high performance pins that can be used to interface to DDR, SATA, and PCIe controllers. 
+
+Finally, an FPGA is a great testing platform for ASIC development. The ultimate in performance is the ASIC however you get one chance for a die. The NRE for a second attempt can make it not cost effective.
 
 \subsubsection{Introduction to Data Rate}
-	<TODO Subsubsection  Introduction to Data Rate} : NOT DONE>
+	<TODO Subsubsection  Introduction to Data Rate} : STARTED NEEDS PROOFREAD>
 
 A data rate in general is defined as the number of bits per unit time. For a system the data rate is how much data can the system handle per unit time. The overall data rate of the system is the minimum data rate for the individual components. In designing a system with a minimum data rate requirement it is important to be mindful of the data rates of the components.
 
