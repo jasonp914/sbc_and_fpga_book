@@ -4,7 +4,7 @@
 \usepackage[nolist]{acronym}
 
 %opening
-\title{Field Programmable Gate Arrays: What Are They and Why to Use Them}
+\title{Field Programmable Gate Arrays and Single Board Computers: What Are They and Why to Use Them}
 \author{Dr. Jason Pennington}
 
 \begin{document}
@@ -13,111 +13,87 @@
 
 \tableofcontents
 
-%\input{chapter1.tex}
-\chapter{Overview of Computing Platforms}
-\section{What can an FPGA Do}
-\section{What can SBCs Do}
-\section{What can SBCs Do}
+\input{chapter1.tex}
+%\chapter{Overview of Computing Platforms}
+%\section{What can an FPGA Do}
+%\section{What can SBCs Do}
+%\section{What can SBCs Do}
 
-%\input{chapter2.tex}
-\chapter{FPGAs in Depth}
+\input{chapter2.tex}
+%\chapter{FPGAs in Depth}
 
-%\input{chapter3.tex}
-\chapter{SBCs in Depth}
+\input{chapter3.tex}
+%\chapter{SBCs in Depth}
 
-%\input{chapter4.tex}
-\chapter{Design Flow Methodology}
+\input{chapter4.tex}
+%\chapter{Design Flow Methodology}
 
-%\input{chapter5.tex}
+\input{chapter5.tex}
 
 
-\section{What is a Micro-Controller}
-\section{Why Use a Micro-Controller}
-\subsection{Quick Development Time}
-\subsection{Low Data Rate Applications}
-\subsubsection{Web Server}
-\subsubsection{Sensor Controller}
-\section{Case Study: Image Processing}
-\subsection{System Data Rate Study}
-\subsection{Correlation Scan Across Picture}
+%\section{What is a Micro-Controller}
+%\section{Why Use a Micro-Controller}
+%\subsection{Quick Development Time}
+%\subsection{Low Data Rate Applications}
+%\subsubsection{Web Server}
+%\subsubsection{Sensor Controller}
+%\section{Case Study: Image Processing}
+%\subsection{System Data Rate Study}
+%\subsection{Correlation Scan Across Picture}
 
-\section{Introduction to Hardware Scripting}
-\section{Intro to TCL}
-\subsection{Changing the Build Version}
-\subsection{Automating Simulations and Testbenches}
-\subsection{Automating Builds}
-\section{Intro to Python}
-\section{C language basics}
+%\section{Introduction to Hardware Scripting}
+%\section{Intro to TCL}
+%\subsection{Changing the Build Version}
+%\subsection{Automating Simulations and Testbenches}
+%\subsection{Automating Builds}
+%\section{Intro to Python}
+%\section{C language basics}
 
-%\input{chapter6.tex}
+\input{chapter6.tex}
 %\chapter{Controlling Peripherals}
 %\section{pull up resistor}
 %\section{debouncing}
 %\section{Storage (in flash EEPROM)}
 %\section{LCD Displays}
 
-%\input{chapter7.tex}
-\chapter{Data Transfer}
-\section{Buttons}
-\section{UART}
-\section{SPI}
-\section{I$^2$C}
-\section{USB}
-\section{Ethernet programing}
+\input{chapter7.tex}
+%\chapter{Data Transfer}
+%\section{Buttons}
+%\section{UART}
+%\section{SPI}
+%\section{I$^2$C}
+%\section{USB}
+%\section{Ethernet programing}
 
-%input{chapter8.tex}
-\chapter{Trouble Shooting and Debugging}
-\section{Programming the Board (USB Device Driver)}
-\section{Functional Verification}
-\section{On-Chip Debugging Tools}
+input{chapter8.tex}
+%\chapter{Trouble Shooting and Debugging}
+%\section{Programming the Board (USB Device Driver)}
+%\section{Functional Verification}
+%\section{On-Chip Debugging Tools}
 
-%input{chapter9.tex}
-\chapter{Advanced topics}
-\section{Hardware and Timer Interrupts}
-\section{Data Logging with SD cards}
-\section{Connecting to Internet}
-\section{Audio Electronics}
-\subsection{Equalization}
-\subsection{Compression}
+\input{chapter9.tex}
+%\chapter{Advanced topics}
+%\section{Hardware and Timer Interrupts}
+%\section{Data Logging with SD cards}
+%\section{Connecting to Internet}
+%\section{Audio Electronics}
+%\subsection{Equalization}
+%\subsection{Compression}
 	
-%input{chapter10.tex}
-\chapter{Filters}
-\section{Types of Digital Filters}
-\section{Optimization for Digital Logic}
-\section{Optimization for Micro-controllers}
+\input{chapter10.tex}
+%\chapter{Filters}
+%\section{Types of Digital Filters}
+%\section{Optimization for Digital Logic}
+%\section{Optimization for Micro-controllers}
 
 %input{chapter11.tex}
-\chapter{Case Study: Matrix Multiplication}
-\section{Combinatorial Implementation}
-\section{Sequential Implementation}
+%\chapter{Case Study: Matrix Multiplication}
+%\section{Combinatorial Implementation}
+%\section{Sequential Implementation}
 
 %\input{chapter12.tex}
-\chapter{Case Study: Digital Receiver}
-Is digital transceiver design city walks to the design of a orthogonal frequency-division multiplexing receiver first a section that describes how the what the major blocks of the receiver are is described next converting that to vhdl contesting East sub-module and then test by touching the receiver as a system and then finally putting the design synthesizing and placing Rock on xilinx fpga
+%\chapter{Case Study: Digital Receiver}
 
-\section{Digital Receiver Design - System Level}
-In this section we discuss the system model for the receiver in this case that he will be focusing on the receiver however the transmitter is a design very similar however the receiver is is more difficult receiver has to deal with noise that the channel provides in the channel as into the system fever must be designed and weight snow ice handle this noise the first block in a little past the first block and a transceiver is a is a little pass filter is low pass filter prevent anti-aliasing colorado signal quality and ice block as a mask filter mSU filter is set to determine when the Preamble arrives the Preamble is a none sequence of deaths the Preamble is a known sequence of bits that is used to determine the synchronization between the transmitter and receiver on the synchronization is known then we can do my July the rest of the signal after the Preamble The Signal structure after the preamble the signal is an ofdm block ofdm block consists of a secret prefix andy cyclic prefix and a set up in superiors in the time to me the first step is to remove the cyclic prefix then transform to the frequency domain frequency domain is where the clam symbols are allocated once in the frequency domain the channel can be estimated dividing the pilot towns by dividing the pilot towns that were received 509 pilottown that were transmitted the resulting Channel estimates are at the sub cares where the pilot turns off where the pilot zones are located we use these pilot towns are we use these Channel estimates weezy's Channel estimates to extrapolate the channel estimates for the sub. On the date of tones 1 day fix tracker the channel estimates for all some carriers will I still receive signal remodeling and demodulate when's the beds have been estimated then for error correction or crippled graphic operations can occur on the bits that have been to modulated
-
-The section talks about division multiplexing transmission transceivers in the section we Define the equations internet PGA to implement the transceiver whitley first take a look at orthogonal frequency-division multiplexing and how it compares to traditional single carrier we can take a look at how multipath is considered in single carrier and ofdm find a good look at simulation results for the system
-
-\section{System Model - OFDM}
-First we'll consider quad quadrature amplitude in particular will look at for 2 a.m.4q a.m. In the signaling scheme we have two levels for the ID channel and two levels of for the Q Channel can of this scheme lawson - 1 + 10 - I will use the clam constellation to Define our sub carriers in the frequency domain if we first take our string of bits and map them to cram symbols which symbol the bitstream will line up n dog carriers worth of Clan symbols well then take the inverse Fourier transform of them and get any samples in the time domain representing the end this is the signal that will be transmitted in our if we look at our model the if you look at the model for the Wireless Communications will have y equals convoluted with x plus in Texas it is the impulse response of the channel what is representing a measurement noise and why is the receive signal app at the receiver first we'll consider the situation where we have a frequency flat fading Channel in this case it is a single complex component all the notes are Channel length which equals one in this case nH of 0 cool aralie fading Channel nicole frequency flat fading complex component Within corresponding to the channel attenuation and a phase response elsa need to make sure we include multiple Mall imodium blocks in the transmitted signal can semen sample of that in this scenario and frequency flat fading we do not experience any interblock interference or we do not experience any interference where one of them block interferes with another of the empire when we increase the length of the channel making a sequel 10 for example and we look at the convolution of a transmitted signal with the impulse response what we have channel being multiplied the previous of the block being added to nation of the frequency response impulse response with a current of them block this energy is referred to as interblock or intersymbol interference the reader should also be aware of it inter carrier interference and this is where the zoo orthogonal to each other this happens all when a Doppler shift occurs for the the Doppler shift occurs for the minutes this is usually correct the through pilottown correction and it will not be discussed in this doppler shift is an issue in this to avoid intersymbol or inter block interference specifics of the last Eng Subs EP samples in the time to Maine from the end of the block from the block if I left him block him blocked out consists of a secret prefix and the end carrier transform into the time to me the first Eng Subs EP in the last and subsidies CP samples are the same they are just copied from the to the front forget the name this is where we get the name cyclic prefix now if we look at a graphic of the convolution of the impulse response with the transmitted signal are no where an impulse then the separate prefix length - 1 where the impulse response times northfield block the still occurs but it occurs in the cyclic prefix the prefix is simply thrown away consider it just a buffer also consider the reason why we use a cigarette prefix instead of just using Dead Space zero's at that location what would happen if the receiver is off by e90 face the receiver could trick her that phase difference frequency domain still be able to recover the transmitted symbols if the face of the receiver is off there is no information lost because well that just doesn't need any another we have the signal model we have X so multiple of 10 blocks basically facts pertaining to itself so if we have 10 of them blocks we have 10 ticket prefix list if we have 10 of them blocks 10 distinct sense of N Sub carriers in the time to Maine of those sets of samples we have 10 distinct that's of sickly prefixes does the prefix and time sample blocks interspersed rating the diagram in figure 94 then when we launch the signal into little experience now and I block interference go to demodulators the signal there of course is a preamble of the pretended to be transmitted signal this is what the receiver locks onto but for now we'll consider renovation step already complete at the receiver the first thing the receiver does is remove the sick like me fix this is usually just a flag hanging in FTP nope t block on the fpga is India started during the 66 recording time started at the first sample in the idiom block after the sickly prefix once in the frequency domain I need to go back and talk about pilot Townsend need to go back and talk about pilot Tums tones indiana towns and tones data and data tons now using the properties of convolution in the frequency domain is multiplication between a transmitted signal in the frequency domain and the channels frequency response in this case h plus n success bigger than hell - 1 estimate the channel estimate destiny the channel at the pilot y equals 8 times x equation and solve for H each sub carrier you calculate h equals y divided by X pilottown that we allocated at the transmitter known as a receiver why is the received signal at that particular subject we do this for all would you this for all of the Pilot Jones transmission so in general the number of Paula Times you should do this is the number of impulse response capstar it'll be fantastic if you know this ahead of time but in most Wireless channels you don't and the reason that the prefix length and the number of pilot owns should pretty close together should be the same because she went
-
-\section{Module Design}
-The first module in the receipt chain is a low pass filter low pass filter it prevents aliasing for the receiver it sets the bandwidth of the receiver find received this filter also impacts the signal-to-noise ratio the receiver if the low filter is too narrow signal is cut off and if it's too wide too much noise is let through this system a common lopes filter used in receivers are the square root for you to sign filter square-root race cosine filters use the transmitter and at the receiver and due to the nature of convolution overall filter used cosine filter in the sectional look at how the race goes on filter operates in in the RF energy Spectrum first look at the frequency response of the square is cosine filter oh also need to look into other types of low pass filters bear efficiency in hardware and software will touch up on these topics but they will also look at the hardware emergency can I talk to you then
-
-The next section is the preamble or the magic filter for the preamble in the section will talk about the match filter for next filter and the Preamble for the attitude at 11 standard 802. 11 n standard will take a look at this point ensor probability of correlation under varying SNR conditions will look at a preamble that is randomly generated at the same length compare this to 1511 standard
-
-The section discusses the Fourier transform of the receive signal the fast Fourier transform is a common algorithm for determining the Discrete Fourier transform of a signal the fast Fourier transform is of complexity login much more of this more efficient compared to the 848 transform which is N squared complexity in Hardware those other than has already developed for you and IP blocks from xilinx in Ontario he's a few blocks are generated specifically for the part that you're using this makes it very efficient in the hardware that you're using however it hardware agnostic HDL what is preferable so you can Target different species with the same code general you can generate the IP block for the next sounds of PGA xilinx generator will also like thanks for removing of the second Pacific prefix fix is used in ofdm signals to prevent interblock interference the longer the secret prefix the longer the impulse balls of the channel response of the channel the longer the cyclic prefix the longer the channel channels impulse response can be without experiencing interblock interference in an urban environment where there are many Reflections off buildings relatively long longer sick sick with prefix is needed to overcome these effects however in a line of sight application but there are no more components longer cyclic prefix effects of the data rate of the communication system so the secret prefix length is a trade-off between I lost connection and connection
-
-After the Fourier transform we are in the frequency domain we are at the data tones and Pilot Jones are defined firstly use the pilot towns to estimate the Channel Inn receiver the frequency response of each of the Pilot Jones frequencies estimated by division the reason for the pilot turns being in the frequency that medicine that I can take advantage of the identity of the property of the Fourier transform or a convolution in the kind of meat is multiplication in the frequency domain we see that since the pilot towns are known at the receiver received pilot towns by the known transmetropolitan and get an estimate of the frequency response at that sub carrier we do this for each of the superior is in the the number of Pilot Jones allocated by the transmitter needs to at least be the number of degrees of freedom in the impulse response the second step for channel estimation is 2888 moon pilot own channel estimates the channel the frequency response for all the other times wind 888 by using the Discrete Fourier transform Matrix where the accounts are removed corresponding to the data tones the pilot towns are left taking the inverse Fourier transform of this matrix will receive impulse response estimate the impulse response of the system of the channel responsible Channel the channel is estimated then we can take the Fourier transform of the impulse response and get the frequency response of the estimated frequency response of the channel
-
-Now that we have the estimated frequency response of the system of the channel equalize the received signal the estimated transmitted symbols this is similarly done too center Channel estimation where we knew the transmit a signal and the receive signal the signal in the channel and now estimating minutes the estimate to transmit a signal we simply divide the received signal by the channel estimate 90 model 8 bpsk are clam signals
-
-\section{Data Rate Study}
-\section{Test Benching - Module Level}
-\section{Test Benching - System Level}
-\section{FPGA Resource Usage}
 
 
 
