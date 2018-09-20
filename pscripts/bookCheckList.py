@@ -29,13 +29,13 @@ def add_todo_init(data_list,filepath):
 		
 		# Determine if we need to write TODO tag
 		if data_list[i].find("chapter") == 1:
-			file.write("\t<TODO Chapter " +data_list[i][9:-1] + " : NOT DONE>\n")
+			file.write("\t<TODO Chapter " +data_list[i][9:-2] + " : NOT DONE>\n")
 		elif data_list[i].find("section") == 1:
-			file.write("\t<TODO Section " +data_list[i][9:-1] + " : NOT DONE>\n")
+			file.write("\t<TODO Section " +data_list[i][9:-2] + " : NOT DONE>\n")
 		elif data_list[i].find("subsection") == 1:
-			file.write("\t<TODO Subsection " +data_list[i][12:-1] + " : NOT DONE>\n")
+			file.write("\t<TODO Subsection " +data_list[i][12:-2] + " : NOT DONE>\n")
 		elif data_list[i].find("subsubsection") == 1:
-			file.write("\t<TODO Subsubsection  " +data_list[i][15:-1] + " : NOT DONE>\n")
+			file.write("\t<TODO Subsubsection  " +data_list[i][15:-2] + " : NOT DONE>\n")
 
 	file.close()		
 
@@ -48,7 +48,9 @@ def gen_email_msg(data_list):
 	todo_tags ="""From: Jason Pennington <penninjr@gmail.com>\nTo:Jason Pennington <penninjr@gmail.com\nSubject: TODO Tags\n\n""" 
 	for i in range(0,len(data_list)):
 		if data_list[i].find("TODO") > 0:
-			todo_tags = todo_tags + data_list[i]
+			if data_list[i].find("NOT DONE") >= 0:
+				todo_tags = todo_tags + data_list[i]
+
 
 	return todo_tags
 
@@ -191,7 +193,7 @@ def email_all_todo_tags():
 
 
 #print(data)
-#init_todo_tags()
+init_todo_tags()
 
 #remove_all_todo_tags()
 
@@ -199,7 +201,7 @@ def email_all_todo_tags():
 #print(td_tags)
 
 
-email_all_todo_tags()
+#email_all_todo_tags()
 
 
 
