@@ -44,6 +44,7 @@ def email_msg(data_str):
 	server.starttls()
 	server.login("penninjr@gmail.com","Ktown Rocks!")
 	server.sendmail("penninjr@gmail.com","penninjr@gmail.com",data_str)	
+
 def gen_email_msg(data_list):
 	todo_tags ="""From: Jason Pennington <penninjr@gmail.com>\nTo:Jason Pennington <penninjr@gmail.com\nSubject: TODO Tags\n\n""" 
 	for i in range(0,len(data_list)):
@@ -54,6 +55,18 @@ def gen_email_msg(data_list):
 
 	return todo_tags
 
+def gen_email_switch_msg(data_list,switch_array):
+	todo_tags ="""From: Jason Pennington <penninjr@gmail.com>\nTo:Jason Pennington <penninjr@gmail.com\nSubject: TODO Tags\n\n""" 
+	for i in range(0,len(data_list)):
+		for sa in range(0,len(switch_array)):
+			if data_list[i].find("TODO") > 0:
+				if data_list[i].find(switch_array[sa]) >= 0:
+					todo_tags = todo_tags + data_list[i]
+
+
+	return todo_tags
+
+
 def remove_todo_tags(data_list,filepath):
 	# File is parsed - print out file
 	file=open(filepath,'w')
@@ -61,8 +74,14 @@ def remove_todo_tags(data_list,filepath):
 	# Write line if no TODO tag is in.
 	for i in range(0,len(data_list)):
 		if data_list[i].find("<TODO") < 0:
-			# Copy line over to new file
+			# Copy non-tag line over to new file
 			file.write(data_list[i])
+		else:
+			# TODO TAG line
+			if data_list[i].find("NOT DONE") < 0:
+				# Don't remove other tag types
+				file.write(data_list[i])
+
 	file.close()
 
 def remove_all_todo_tags():
@@ -148,7 +167,7 @@ def init_todo_tags():
 	data = parse_file(fn)
 	add_todo_init(data,fn)
 
-def email_all_todo_tags():
+def email_all_todo_tags(switch_array):
 	fn = "../texfiles/chapter1.tex"
 	data_all = parse_file(fn)
 	
@@ -188,24 +207,55 @@ def email_all_todo_tags():
 	data = parse_file(fn)
 	data_all = data_all + data
 
-	td_tags = gen_email_msg(data_all)
+	#td_tags = gen_email_msg(data_all)
+	td_tags = gen_email_switch_msg(data_all,switch_array)
 	email_msg(td_tags)
 
 
-#print(data)
-init_todo_tags()
-
-#remove_all_todo_tags()
-
-
-#print(td_tags)
-
-
-#email_all_todo_tags()
 
 
 
 
+
+
+
+running = 1
+while(running == 1):
+	print("\n\n ---------------- \n")
+	cmd = input("Remove all tags : r\nInitalize All Tags : i \nEmail Tags with switches : e -[switches]\nHelp : h\nQuit : q\n\n>")
+	
+	if cmd.find("r") >= 0:
+		remove_all_todo_tags()
+		print("\nRemove Tags Complete\n")
+	elif cmd.find("i") >= 0:
+		init_todo_tags()
+		print("\nInitalize Command Complete\n")
+	elif cmd.find("e") >= 0:
+		si = cmd.find("-")
+		s_array = cmd[3:]
+		
+		print("\nEmail Command Started with switch : " + s_array + "\n")
+		switch_array = []
+		for sws in range(0,len(s_array)):
+			if s_array[sws].find("N") >= 0:
+				switch_array.append("NOT DONE")
+			elif s_array[sws].find("C") >= 0:
+				switch_array.append("INSERT CODE")
+			elif s_array[sws].find("P") >= 0:
+				switch_array.append("PROOF READ")
+
+		email_all_todo_tags(switch_array)
+		print("Email Command Complete\n")
+	elif cmd.find("h") >= 0:
+		print("Email Switch Definitions:\n")
+		print("N - NOT DONE:\n")
+		print("C - INSERT CODE:\n")
+		print("P - PROOF READ:\n")
+	elif cmd.find("q") >= 0:
+		running = 0
+		print("Good Bye")
+	else:
+		print("Unknown Command")
 
 
 
