@@ -1,17 +1,57 @@
 \chapter{Hello World and Other Projects}
-	<TODO Chapter Hello World and Other Projects : NOT DONE>
+	<TODO Chapter Hello World and Other Projects : PROOF READ>
 
+There is no better way to get started than to work on a small project. This chapter outlines small projects to work on where each of them gets a little more challenging. As you progress through this chapter you will ensure your development environment is setup properly with simulating the hello world project. You will learn how to use a clock in a design and control an \ac{LED}. Then you will learn how to transfer data into and out of the \ac{FPGA} chip. 
+	
+	
 \section{Beginner Projects}
-	<TODO Section Beginner Projects : NOT DONE>
+	<TODO Section Beginner Projects : PROOF READ>
 
+Everyone has to start somewhere. These projects are designed to start off slowly. It may not be very exciting to add one to a counter but these exercises get you used to writing \ac{VHDL} and the development environment. Work through these exercises so that when we can get to exciting projects you won't be frustrated with working with the tools. 
+	
 \subsection{Hello World}
-	<TODO Subsection Hello World : NOT DONE>
+	<TODO Subsection Hello World : PROOF READ>
 
+When learning a new language you always need to write the hello world program. There are two lessons from this project. First, setting up and interacting with the features of your simulator. Once you write the first draft of your program you go through the steps of compiling and simulating your design. You will use this process many times. Gain an understanding of keyboard short cuts and practice them. Make changes to your file and recompile and ensure the changes are reflected when you re-simulate.
+
+The other main take-away from this example is the use of the report function. The report function allows you to print strings out to the console. The report function can be used to print out values of signals to make sure the simulation is progressing like you want in a larger more complex simulation. Or it can be used to report progress of the simulation.      
+
+	<TODO Subsection Hello World : INSERT CODE helloworld hdl>
+	
+	
 \subsection{Counter Test-Bench}
-	<TODO Subsection Counter Test-Bench : NOT DONE>
+	<TODO Subsection Counter Test-Bench : PROOF READ>
 
+In this exercise we will instantiate a \ac{DUT} in a testbench. The \ac{DUT} itself is a simple counter. We will provide a clock to the counter and a reset line that will reset the counter. We will also have an enable line that turns the counter on. A simple \ac{DUT} like this has a few inputs that will need to be driven by the testbench.      
+
+    <TODO Subsection Counter Test-Bench : INSERT CODE counter tb>
+
+In our testbench we have a process that generates the timing for the input signals. This testbench is only as good as the assumptions made in the timing between signals. If there is a race condition or an inter-timing bug in the \ac{DUT} that the testbench does not cover then the \ac{DUT} will pass the testbench giving you confidence in the \ac{DUT}. Then you have the worst case scenario: debugging a flaky build on hardware. So we need to make sure we make our code reliable to ensure there are no race conditions. In this exercise we look at two examples of a counter. The only difference in the two examples is how the reset is handled, synchronously or asynchronously. We will explain the considerations needed when using this counter in a higher level block.      
+
+    <TODO Subsection Counter Test-Bench : INSERT CODE counter synchronous>
+
+First the synchronous reset counter. We see in the code that the reset is inside the rising_edge(i_clk) if statement. That means that the reset can only happen synchronous to the I_clk. We can see that both the reset and enable are synchronous. In general synchronous logic is preferred since the vendor tools ensure the propagation delays between the registers are short enough to avoid erroneous results.
+
+    <TODO Subsection Counter Test-Bench : INSERT CODE counter asynchronous>
+
+There are situations when you have to use asynchronous resets. If we assume we will use this counter in a situation where we have to use an asynchronous reset we would write this block slightly differently where the reset line is used outside the clocked region of the process. Now if the I_reset line changes or the I_clk line changes the process executed but there doesn't have to be a rising_edge event for the reset to apply. There is potential issue with instantiating this block with an asynchronous reset. It is possible that the reset fails timing. If the asynchronous reset is applied right before a clock edge where the counter is enabled there could be a mismatch between the expected value in the counter and the registered value. Unfortunately, the vendor tools can't warn you about the asynchronous reset failing timing since it isn't under a clocked process. The vendor tools can't know the timing of the asynchronous reset.	
+	
+	
+	
 \subsection{Blink Led with a One Second Interval}
-	<TODO Subsection Blink Led with a One Second Interval : NOT DONE>
+	<TODO Subsection Blink Led with a One Second Interval : PROOF READ>
+
+In the project you will write \ac{HDL} to blink an LED. The LED should be on for a second and off for a second. You will also need to write a testbench for the block. You will find that it will take a long time to simulate a block for multiple seconds. We will once again have a synchronous reset, enable, and a clock as inputs. The output will be wired up to an LED.
+
+To toggle the output we need to know when a second passes. The only way to mark time passing on an \ac{FPGA} is to count clock cycles. So we can setup a counter to increment when enabled and once we get to a certain number of clock cycles we can toggle the output. 
+
+    <TODO Subsection Blink Led with a One Second Interval : INSERT CODE blink led>
+
+The certain number we need to count to is just the frequency of the clock you re using. Here is a fantastic opportunity to learn about generics. Generics can help you configure a block when instantiated. We could use a generic called gCLKFREQ but if we wanted the output to toggle at a rate other than a second this could be confusing. We will use the generic gTOGGLECOUNT. This way if we know how the counter is used and when instantiated we can set the value accordingly.
+
+    <TODO Subsection Blink Led with a One Second Interval : INSERT CODE tb blink led>
+
+The testbench is simple with the reset, enable, and clock to generate. The difficult part of this testbench though is how long it will take to simulate. At first when you get the testbench working you don't want to have to wait 30 minutes for the simulation to finish. So at first we will set gTOGGLECOUNT to 10 and make sure the logic works. After getting the simulation two work then we can increase it and make sure the output toggles at the expected rate. 
 
 \section{IO Interfacing}
 	<TODO Section IO Interfacing : NOT DONE>
