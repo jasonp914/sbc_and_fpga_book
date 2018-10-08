@@ -2,6 +2,20 @@
 
 % Import User Packages 
 \usepackage[nolist]{acronym}
+\usepackage{fancyvrb}
+\usepackage{listings,color}
+
+% for colored solution
+\lstnewenvironment{VHDLlisting}[1][]
+  {\lstset{
+    language=VHDL,
+    basicstyle=\footnotesize\ttfamily,
+    columns=flexible,
+    keepspaces=true,
+    keywordstyle=\color{blue},
+    identifierstyle=\color{black},
+    commentstyle=\color{green}
+  }}{}
 
 %opening
 \title{Field Programmable Gate Arrays and Single Board Computers: What Are They and Why to Use Them}
