@@ -16,25 +16,154 @@ When learning a new language you always need to write the hello world program. T
 
 The other main take-away from this example is the use of the report function. The report function allows you to print strings out to the console. The report function can be used to print out values of signals to make sure the simulation is progressing like you want in a larger more complex simulation. Or it can be used to report progress of the simulation.      
 
-	<TODO Subsection Hello World : INSERT CODE helloworld hdl>
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity hello_world is
+end entity hello_world;
+
+architecture tb of hello_world is
+begin
+	process
+	begin
+		report("Hello World!");
+	end process;
+end tb;
+\end{VHDLlisting}
 	
 	
 \subsection{Counter Test-Bench}
 	<TODO Subsection Counter Test-Bench : PROOF READ>
 
 In this exercise we will instantiate a \ac{DUT} in a testbench. The \ac{DUT} itself is a simple counter. We will provide a clock to the counter and a reset line that will reset the counter. We will also have an enable line that turns the counter on. A simple \ac{DUT} like this has a few inputs that will need to be driven by the testbench.      
+	
+\begin{VHDLlisting}
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity tb_counter is
+end entity tb_counter;
 
-    <TODO Subsection Counter Test-Bench : INSERT CODE counter tb>
+architecture tb of tb_counter is
+	signal w_clk         : std_logic := '0';
+	signal w_rst         : std_logic := '0';
+	signal w_en          : std_logic := '0';
+	signal w_count_sync  : unsigned(7 downto 0):=(others => '0');
+	signal w_count_async : unsigned(7 downto 0):=(others => '0');
+
+begin
+	p_gen_stim : process
+	begin
+		w_rst <= '1';
+		wait for 37.9 ns;
+		w_rst <= '0';
+		
+		wait for 10 ns;
+		w_en <= '1';
+		wait for 50 ms;	
+	end process;
+	
+	u_counter_sync : entity work.counter_sync
+	port map(i_clk    => w_clk,
+			 i_rst    => w_rst,
+			 i_en     => w_en,
+			 o_count  => w_count_sync
+	);
+	
+	u_counter_async : entity work.counter_async
+	port map(i_clk    => w_clk,
+			 i_arst   => w_rst,
+			 i_en     => w_en,
+			 o_count  => w_count_async
+	);
+	
+	p_clk : process
+	begin
+		wait for 5 ns;
+		w_clk <= not w_clk;
+	end process;
+end tb;
+\end{VHDLlisting}
 
 In our testbench we have a process that generates the timing for the input signals. This testbench is only as good as the assumptions made in the timing between signals. If there is a race condition or an inter-timing bug in the \ac{DUT} that the testbench does not cover then the \ac{DUT} will pass the testbench giving you confidence in the \ac{DUT}. Then you have the worst case scenario: debugging a flaky build on hardware. So we need to make sure we make our code reliable to ensure there are no race conditions. In this exercise we look at two examples of a counter. The only difference in the two examples is how the reset is handled, synchronously or asynchronously. We will explain the considerations needed when using this counter in a higher level block.      
 
-    <TODO Subsection Counter Test-Bench : INSERT CODE counter synchronous>
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity counter_sync is
+port(i_clk   : in    std_logic;
+	 i_rst   : in    std_logic;
+	 i_en    : in    std_logic;
+	 o_count :   out unsigned(7 downto 0)	
+)
+end entity counter_sync;
 
-First the synchronous reset counter. We see in the code that the reset is inside the rising_edge(i_clk) if statement. That means that the reset can only happen synchronous to the I_clk. We can see that both the reset and enable are synchronous. In general synchronous logic is preferred since the vendor tools ensure the propagation delays between the registers are short enough to avoid erroneous results.
+architecture rtl of counter_sync is
+	-- Output Register
+	signal f_count : unsigned(7 downto 0) := (others => '0');
+begin
 
-    <TODO Subsection Counter Test-Bench : INSERT CODE counter asynchronous>
+	-- Assign Outputs
+	o_count <= f_count;
 
-There are situations when you have to use asynchronous resets. If we assume we will use this counter in a situation where we have to use an asynchronous reset we would write this block slightly differently where the reset line is used outside the clocked region of the process. Now if the I_reset line changes or the I_clk line changes the process executed but there doesn't have to be a rising_edge event for the reset to apply. There is potential issue with instantiating this block with an asynchronous reset. It is possible that the reset fails timing. If the asynchronous reset is applied right before a clock edge where the counter is enabled there could be a mismatch between the expected value in the counter and the registered value. Unfortunately, the vendor tools can't warn you about the asynchronous reset failing timing since it isn't under a clocked process. The vendor tools can't know the timing of the asynchronous reset.	
+	p_count : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_count <= (others => '0');
+			elsif i_en = '1' then
+				f_count <= f_count + 1;
+			end if;		
+		end if;
+	end process;
+end rtl;
+
+\end{VHDLlisting}
+	
+First the synchronous reset counter. We see in the code that the reset is inside the rising\_edge(i\_clk) if statement. That means that the reset can only happen synchronous to the i\_clk. We can see that both the reset and enable are synchronous. In general synchronous logic is preferred since the vendor tools ensure the propagation delays between the registers are short enough to avoid erroneous results.
+
+
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity counter_async is
+port(i_clk   : in    std_logic;
+	 i_arst  : in    std_logic;
+	 i_en    : in    std_logic;
+	 o_count :   out unsigned(7 downto 0)	
+)
+end entity counter_async;
+
+architecture rtl of counter_async is
+	-- Output Register
+	signal f_count : unsigned(7 downto 0) := (others => '0');
+begin
+
+	-- Assign Outputs
+	o_count <= f_count;
+
+	p_count : process(i_clk)
+	begin
+		if i_arst = '1' then
+			f_count <= (others => '0');
+		elsif rising_edge(i_clk) then
+			if i_en = '1' then
+				f_count <= f_count + 1;
+			end if;		
+		end if;
+	end process;
+end rtl;
+
+\end{VHDLlisting}
+	
+There are situations when you have to use asynchronous resets. If we assume we will use this counter in a situation where we have to use an asynchronous reset we would write this block slightly differently where the reset line is used outside the clocked region of the process. Now if the i\_reset line changes or the i\_clk line changes the process executed but there doesn't have to be a rising\_edge event for the reset to apply. There is potential issue with instantiating this block with an asynchronous reset. It is possible that the reset fails timing. If the asynchronous reset is applied right before a clock edge where the counter is enabled there could be a mismatch between the expected value in the counter and the registered value. Unfortunately, the vendor tools can't warn you about the asynchronous reset failing timing since it isn't under a clocked process. The vendor tools can't know the timing of the asynchronous reset.	
 	
 	
 	
@@ -45,23 +174,323 @@ In the project you will write \ac{HDL} to blink an LED. The LED should be on for
 
 To toggle the output we need to know when a second passes. The only way to mark time passing on an \ac{FPGA} is to count clock cycles. So we can setup a counter to increment when enabled and once we get to a certain number of clock cycles we can toggle the output. 
 
-    <TODO Subsection Blink Led with a One Second Interval : INSERT CODE blink led>
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity blink_led is
+generic(gTOGGLECOUNT : integer)
+port(i_clk   : in    std_logic;
+	 i_rst   : in    std_logic;
+	 i_en    : in    std_logic;
+	 o_led   :   out std_logic	
+)
+end entity blink_led;
+
+architecture rtl of blink_led is
+	-- Output Register
+	signal f_led   : std_logic := '0';
+
+	-- Duration Counter
+	signal f_count : unsigned(31 downto 0) := (others => '0');
+begin
+
+	-- Assign Outputs
+	o_led <= f_led;
+
+	p_count : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_count <= (others => '0');
+			elsif i_en = '1' then
+				f_count <= f_count + 1;
+			end if;	
+
+			if f_count = gTOGGLECOUNT then
+				f_led <= not f_led;
+				f_count <= (others => '0');
+			end if;			
+		end if;
+	end process;
+end rtl;
+
+\end{VHDLlisting}
 
 The certain number we need to count to is just the frequency of the clock you re using. Here is a fantastic opportunity to learn about generics. Generics can help you configure a block when instantiated. We could use a generic called gCLKFREQ but if we wanted the output to toggle at a rate other than a second this could be confusing. We will use the generic gTOGGLECOUNT. This way if we know how the counter is used and when instantiated we can set the value accordingly.
+	
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity tb_blink_led is
+end entity tb_blink_led;
 
-    <TODO Subsection Blink Led with a One Second Interval : INSERT CODE tb blink led>
+architecture tb of tb_blink_led is
+	constant k_TOGGLECOUNT : integer := 100000000;
+
+	signal w_clk : std_logic := '0';
+	signal w_rst : std_logic := '0';
+	signal w_en  : std_logic := '0';
+	signal w_led : std_logic := '0';
+begin
+
+	p_gen_stim : process
+	begin
+		w_rst <= '1';
+		wait for 34 ns;
+		w_rst <= '0';
+		
+		wait for 15 ns;
+		w_en <= '1';
+		
+		wait;
+	end process;
+
+	u_blink_led : entity work.blink_led
+	generic map(gTOGGLECOUNT => k_TOGGLECOUNT)
+	port map(i_clk   => w_clk,
+		     i_rst   => w_rst,
+		     i_en    => w_en ,
+		     o_led   => w_led
+	);
+
+	p_clk : process
+	begin
+		wait for 5 ns;
+		w_clk <= not w_clk;
+	end process;	
+end tb;
+\end{VHDLlisting}
 
 The testbench is simple with the reset, enable, and clock to generate. The difficult part of this testbench though is how long it will take to simulate. At first when you get the testbench working you don't want to have to wait 30 minutes for the simulation to finish. So at first we will set gTOGGLECOUNT to 10 and make sure the logic works. After getting the simulation two work then we can increase it and make sure the output toggles at the expected rate. 
 
 \section{IO Interfacing}
-	<TODO Section IO Interfacing : NOT DONE>
+	<TODO Section IO Interfacing : PROOF READ>
+	
+This section of projects gets data in to and out from the \ac{FPGA}. The list of projects here are the easiest ways of setting up two way data transfer off the chip. These protocols are popular in interacting with a computer or with other chips on the same board.
+
+Although these projects are simple and great starting exercises you will reuse these blocks a lot when interfacing to different peripherals. We will discuss making these blocks generic so that they can be used with minimal changes on a variety of projects.
 
 \subsection{Universal Asynchronous Receiver-Transmitter (UART)}
 	<TODO Subsection Universal Asynchronous Receiver-Transmitter (UART) : NOT DONE>
+	
+The \ac{UART} is a very common low speed protocol. It's primary use is commanding and controlling the FPGA to do a task when a user issues the command through a general purpose computer. The \ac{UART} is also great for status or debugging what is happening on the \ac{FPGA}.
+
+A \ac{UART} is an asynchronous protocol so there is no clock associated with the data. Since there is no clock or an enable line to know when the data is valid we first need to know the baudrate of the data. It is assumed that the datarate is known between the computer and \ac{FPGA}. Since the datarate is known once we get a bit we will know when the next bit is valid. To know when the first bit is valid the \ac{UART} protocol starts with the receive line high. Data is starting to be transmitted when the line goes low. At the falling edge of the data line we count half the bit duration. Once half the bit duration is reached we check again to make sure the data line is low. If the data line is low then we know we are receiving data. Once we have started the transfer the predetermined number of bits are sent. After the falling edge of data line there is a start bit, a stop bit, and a configurable number of data bits. The start bit is what we used to detect the start of the transfer. Then we count a bit duration for each of the data bits. Finally the stop bit can be ignored or sometimes can be configured as a parity bit.  Now we will look at some \ac{HDL} that performs the above tasks. We will use a state machine for this since it is easier to read. 
+
+	
+	
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity uart_rx is
+  generic(g_baudRate : integer := 115200;
+          g_clkRate  : integer := 50000000);
+  port(
+      i_clk           : in    std_logic;
+      i_rx            : in    std_logic;
+      o_rx_data       : out   std_logic_vector(7 downto 0);
+      o_rx_data_rdy   : out   std_logic
+      );
+end entity uart_rx;
+
+architecture rtl of uart_rx is
+  constant k_timeperbit   : real := real(1)/real(g_baudRate);
+  constant k_clkperiod    : real := real(1)/real(g_clkRate);
+  constant k_clksPerBit   : integer := integer(real(g_clkRate)/real(g_baudRate));
+  constant k_clksPerBitd2 : integer := integer(real(k_clksPerBit)/real(2));
+  constant k_TBits        : unsigned(3 downto 0) := to_unsigned(10,4);
+
+  -- Outputs 
+  signal f_rx_data     : std_logic_vector(7 downto 0) := (others => '0');
+  signal f_rx_data_rdy : std_logic := '0';
+  
+  type sm_rxUart is (s_idle, s_cfmLow, s_rxStartBit, s_rx8bits, s_parity, s_stop, s_reset);
+  signal f_cState : sm_rxUart := s_idle;
+  
+  signal f_clkCount : integer := 0;
+  signal f_rxBits   : unsigned(3 downto 0) := (others => '0');
+  
+begin
+  p_rxctrl : process(i_clk) 
+  begin
+    if rising_edge(i_clk) then
+      o_rx_data_rdy <= f_rx_data_rdy;
+      o_rx_data <= f_rx_data;
+      case f_cState is
+        when s_idle => 
+          f_rx_data_rdy <= '0';
+          f_rx_data <= (others => '0');
+          if i_rx = '0' then
+            f_cState <= s_cfmLow;
+          end if;
+        when s_cfmLow =>
+          if f_clkCount = k_clksPerBitd2 then
+            if i_rx = '0' then
+              f_cState <= s_rxStartBit;
+              f_clkCount <= 0;  
+            else 
+              f_cState <= s_idle; -- if rx line isn't still low during start bit.
+              f_clkCount <= 0;
+            end if;
+          else
+            f_clkCount <= f_clkCount + 1;
+          end if;
+        when s_rxStartBit =>
+          if f_clkCount = k_clksPerBit then
+            f_cState <= s_rx8bits;
+            f_rx_data(to_integer(f_rxBits)) <= i_rx;
+            f_rxBits <= f_rxBits + 1;
+            f_clkCount <= 0;
+          else 
+            f_clkCount <= f_clkCount + 1;
+          end if;        
+        when s_rx8bits =>
+          if f_rxBits = 8 then
+            f_cState <= s_parity;
+          elsif f_clkCount = k_clksPerBit then 
+            f_clkCount <= 0;
+            f_rx_data(to_integer(f_rxBits)) <= i_rx;
+            f_rxBits <= f_rxBits + 1;
+          else 
+            f_clkCount <= f_clkCount + 1;
+          end if;
+        when s_parity =>
+          if f_clkCount = k_clksPerBit then
+            f_rxBits <= (others => '0');
+            f_clkCount <= 0;
+            if i_rx = '1' then
+              f_cState <= s_stop;
+            else
+              f_cState <= s_idle;
+            end if;
+          else
+            f_clkCount <= f_clkCount + 1;
+          end if;
+        when s_stop => 
+          if f_clkCount = k_clksPerBit then
+            f_clkCount <= 0;
+            if i_rx = '1' then
+              f_cState <= s_reset;
+            else
+              f_cState <= s_idle;
+            end if;
+          else
+            f_clkCount <= f_clkCount + 1;
+          end if;
+        when s_reset =>
+          if f_clkCount = k_clksPerBitd2 then
+            f_rx_data_rdy <= '1';
+            f_cState <= s_idle;
+            f_rxBits <= (others => '0');
+          else
+            f_clkCount <= f_clkCount + 1;
+          end if;
+      end case; 
+    end if;
+  end process;
+end rtl;
+\end{VHDLlisting}
+
+The five states of the state machine are idle, start, check start, acquire bits, and stop. As a side note state machines can use more resources. If you really wanted to squeeze out all the resources needed then you could rewrite the below code to not use a state machine and save some resources.The first state is s\_idle. In this state we are only concerned with whether or not the data has started. To start a UART transaction the data line is deasserted. We will use a falling edge detection circuit to determine is if the transaction has started. Once the falling edge is detected we move to s\_check.
+
+In s\_check we count a half a bit's duration. The half a bit duration ensures we are sampling at the middle of a bit window. Since the clocks at the transmitter and receiver aren't synchronized we need to sample in the middle of the bit to gain the most reliable data. Once we have counted half a bits duration we can check that the start bit is low, if not we reset back to s\_idle, however if the start bit is low we go to s\_getbits.
+
+In s\_getbits we will receive all the bits in a UART transaction. The number of bits in a transaction is variable but the most common is a byte or eight bits. So, after the start bit is confirmed to be low and we transition to this state we need to wait a full bit duration and sample the data line. We store the sampled data in a shift register. Once we have counted up the number of bits we continue on the the s\_stop state. In the s\_stop state we make sure the data line is high after the next but duration. Some configurations of the UART protocol have a parity bit. In this state is where you calculate the parity and check the integrity of the received data. 
+
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  use ieee.math_real.all;
+  
+entity uart_tx is
+  generic(g_baudRate : integer := 115200;
+          g_clkRate  : integer := 50000000);
+  port(
+      i_clk        : in    std_logic;
+      i_sclr       : in    std_logic;
+      i_tx_data    : in    std_logic_vector(7 downto 0);
+      i_tx_data_dv : in    std_logic;
+      o_tx         :   out std_logic;
+      o_tx_busy    :   out std_logic
+      );
+end uart_tx;
+architecture rtl of uart_tx is 
+  constant k_timeperbit : real := real(1)/real(g_baudRate);
+  constant k_clkperiod  : real := real(1)/real(g_clkRate);
+  constant k_clksPerBit : integer := integer(real(g_clkRate)/real(g_baudRate)); 
+  constant k_TBits      : unsigned(3 downto 0) := to_unsigned(10,4);
+  
+  type sm_uarttx_ctrl is (s_idle, s_txing, s_reset);
+  signal f_cState : sm_uarttx_ctrl := s_idle;
+  
+  signal f_data2Tx : std_logic_vector(10 downto 0) := (others => '0');
+  signal f_clkCount: integer := 0;
+  signal f_bitCount: unsigned(3 downto 0) := (others => '0');
+  
+  -- Register Outs
+  signal f_tx : std_logic := '1';
+  signal f_tx_busy : std_logic := '0';
+begin
+  p_ctrl : process(i_clk) 
+  begin
+    if i_sclr = '1' then
+        f_data2Tx <= (others => '0');
+    elsif rising_edge(i_clk) then
+      o_tx <= f_tx;
+      o_tx_busy <= f_tx_busy;
+      case f_cState is  
+        when s_idle =>
+          if i_tx_data_dv = '1' then
+            f_data2Tx(8 downto 1) <= i_tx_data;
+            f_data2Tx(10 downto 9) <= b"11";
+            f_tx <= '0';
+            f_tx_busy <= '1';
+            f_cState <= s_txing;
+            f_bitCount <= f_bitCount + 1;
+          end if;
+        when s_txing => 
+          if f_clkCount = k_clksPerBit then
+            f_clkCount <= 0;
+            f_tx <= f_data2Tx(to_integer(f_bitCount));
+            f_bitCount <= f_bitCount + 1;
+            if f_bitCount = k_TBits then
+              f_cState <= s_reset;
+            end if;
+          else
+            f_clkCount <= f_clkCount + 1;
+          end if;
+        when s_reset => 
+          f_tx <= '1';
+          f_tx_busy <= '0';
+          f_cState <= s_idle;
+          f_bitCount <= (others => '0');
+      end case;
+    end if;
+  end process;
+end rtl;
+\end{VHDLlisting}
+	
+The \ac{UART} transmitter operates in a similar fashion. The transmitter's job is is ensure the data is put on the line with the same timing the receiver expects. The data in loaded into the core in parallel but it output with a shift register. After a bit duration has passed we shift another bit out of the shift register until all the bits are sent. Then the transaction is ended.
+	
 
 \subsection{Serial Peripheral Interface (SPI)}
 	<TODO Subsection Serial Peripheral Interface (SPI) : NOT DONE>
 
+\ac{SPI} is commonly used for inter-chip communication where a chip is configured by a SPI master. The SPI master initiates all traffic between the SPI master and SPI slave. The slave chip only responses to commands from the master. The SPI bus consists of four wires; clock, chip select, input data, and output data. Since there is a clock we know this protocol is synchronous. The clock is driven by the master and the clock rate is the only way to change the data rate of the communications. In general the \ac{SPI} bus is capable of a higher data rate than the UART.
+
+The rest of the lines generally work as follows but some chips use a slight variation to the descriptions below. General SPI code can be altered to meet specific chip standards. The datasheet for the chip you are trying to interface to should be consulted to ensure proper operation. 
+
+The chip-select (CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the CS lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{FPGA}. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our CS line were active low it could be called CSn. 
+
+The last lines of the SPI bus to discuss are the data lines. These lines are named \ac{MOSI} and \ac{MISO}. The names of course tell you the direction and who drives the pins. Sometimes if \ac{IO} pins are limited there is a shared data line. This is possible because it is understood that the master controls communication if the master is reading data from the slave then the master releases control of the data line in time for the slave to control the line. Care must be taken to ensure that there isn't contention on the line. If both slave and master drive the pin communication will fail. 	
+	
 \subsection{Inter-Integrated Circuit (I2C) Bus}
 	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : NOT DONE>
 
