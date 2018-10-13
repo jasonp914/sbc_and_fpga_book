@@ -17,23 +17,244 @@
 	<TODO Subsection Lattice : NOT DONE>
 
 \section{Number Representation}
-	<TODO Section Number Representation : NOT DONE>
+	<TODO Section Number Representation : PROOF READ>
 
+Number representation on an \ac{FPGA} is not like number representation on a desktop computer. On a desktop computer you have 64 bits of floating point precision. On an \ac{FPGA} you can define the precision you'd like to keep through your processing.Although some find number representation cumbersome and tedious the flexibility the \ac{FPGA} offers is quite an advantage. A straight forward example is if your algorithm doesn't need 64 bits of precision then you don't need to spend the time fetching 64 bits from memory. Even in this little example we see an advantage, but there are other subtle advantages to having the ability to adjust numerical precision throughout the data processing chain.
+
+In the reset of this section we discuss both fixed point and floating point number representations. The fixed point representation offers higher performance with the trade off of precision. There is quantization error when converting numbers to fixed point. The floating point representation discussion introduces the \ac{IEEE} standard for floating point.
+	
 \subsection{Fixed Point}
-	<TODO Subsection Fixed Point : NOT DONE>
+	<TODO Subsection Fixed Point : PROOF READ>
 
+The first step in understand numerical representation is understanding bases. You are familiar with decimal which is base-10. In a base-10 number each digit can be 1 of 10 numbers, namely, \{0, 1, 2, 3, 4, 5, 6, 7, 8, 9\}. As we increase the number we add more digits to the left, which means that the position of the digit in the number carries a certain weight. The weights associated with the positions are ones, tens, hundreds, thousands, etc.
+
+So, if we take the number 987 for example. The 7 is in the ones place, the 8 is in the tens place and the 9 is in the hundreds place. So this number can be written as $9*10^2 + 8*10^1 + 7*10^0 = 987$. We are going to apply this process of summing over the number of digits in a number; the value times base raised to the position number for binary and hexadecimal numbers. 
+
+\subsubsection{Binary Representation}
+	<TODO Subsection Binary Representation : PROOF READ>
+	
+First the binary example. We denote binary numbers, which have a base of 2, with a subscript of 2. We put the base of the number as a subscript. For example, decimal $4_{10} = {100}_2$. To understand how we got ${100}_2$ we can just count up to $4_{10}$ in binary. First we start at $0_{2}$ then, $1_2$, now when we add one we are now in the same situation as we would be in decimal when we have reached the limit of the digits and need to add another positional digit, like when we add $9_{10} + 1_{10} = 10_{10}$. So we do the same thing in binary $1_2 + 1_2 = 10_2$. We increment again to get $3_{10} = 11_2$ and again we need to and a positional digit to get to $4_{10} = 100_2$.
+
+Conversely, if we are given a binary number we can sum over the number of digits adding the value times the base raised to the position number. Continuing with the example of $100_2$ we get $1*2^2 + 0*2^1 + 0*2^0$, which reduces to just the $2^2$ term which of course is $4_{10}$.
+	
+After looking at the previous example you may be wondering how to represent negative numbers. There are three ways to interpret the positions of the digits (or bits) in the binary number. The first way is the way we used above, which you can only represent positive numbers. The next way is to add another bit to the left most position. The extra bit says whether the number is negative or not. So $0100_2$ is positive $4$ and $1100_2$ is $-4$. This method is called Sign-Magnitude representation and is quite wasteful since positive zero and negative zero are both represented, which isn't needed. So the third way is the two's complement method.	
+	
+The two's complement method is widely used to represent positive and negative numbers. The use twos complement you take the magnitude of the negative number, invert all the bits and add 1. So if we wanted to represent $-4$ we would take the magnitude $0100_2$ in binary like we are used to. Then we invert all the bits, $1011_2$ and add one, $1100_2$.	
+	
+So far twos complement looks the same as sign-magnitude, but we can represent more numbers with twos complement. First positive zero and negative zero are represented but the same binary number. If we wanted to represent negative zero, we would take the magnitude $0000_2$, invert all the bits, $1111_2$ and add 1, $0000_2$. So positive zero and negative zero are represented the same way and we are wasting a bit of information.
+	
+We can also look at the maximum and minimum value we can represent with each method. We will look at numbers that can be represented with four bits. For the Sign-Magnitude method the largest number we can have is $0111_2 = 7_{10}$. The smallest number is $1111_2 = -7_{10}$. For the twos complement method the largest value is the same at $0111_2 = 7_{10}$ however the smallest number that can be represented is $1000_2$ which is converted to decimal by applying the same process. First we invert all the bits $0111_2$ and add 1, $1000_2 = 8_{10}$.
+	
+\subsubsection{Hexadecimal Representation}
+	<TODO Subsection Hexadecimal Representation : PROOF READ>
+Hexadecimal values have a base of 16. We have 0-9 but we need 6 more "digits" so we use A-F to represent the 16 values of a hexadecimal digit. Hexadecimal or hex for short is used in digital systems since each digit in hex represent 4 bits in binary. Converting binary to hex is as simple as grouping the binary into groups of four and using a look up table for the hex digits.
+	
+For example the hex value of $A5E9_{16}$, also common notation that you may come across uses $0x$ to denote base-16 numbers, $0xA5E9$. Here we look up what each value is in binary, $0xA=1010_2$, $0x5=0101_2$, $0xE=1101_2$, and $0x9=1001_2$. We then just concatenate the binary, $1010_0101_1101_1001_2$. You will see many times for long strings of bits the use of the underscore to denote groups of 4 bits to help readability.	
+		
 \subsection{Floating Point}
-	<TODO Subsection Floating Point : NOT DONE>
+	<TODO Subsection Floating Point : PROOF READ>
+	
+The standard for binary floating-point arithmetic is the \ac{IEEE}-754. Which states there are three parts to the 32 bit floating point number. A sign bit, denoted by $S$, which is 0 for a positive number and 1 for a negative number. The next field is the biased exponent, denoted by $E$, is 8 bits. The biased exponent is the exponent of the number when represented in scientific notation plus 127. Lastly the magnitude field denoted by $F$ is the magnitude of the number with the \ac{MSB} dropped occupying the last 23 bits.
+
+As an example we can convert the speed of light $c = 2.998 \times 10^9$ into floating point representation. First we convert $c$ into binary and we get, $c=0001\_0001\_1101\_1110\_1001\_0101\_1100\_0000_2$. Next we need to convert our binary representation into scientific notation and we get $c=1.0001\_1101\_1110\_1001\_0101\_1100\_0000 \times 2^{28}$. Now we can define the three fields of the floating point number. First $S=0$ since $c$ is positive. Next $E=28+127=155_{10}=1001\_1011_2$ and $F=000\_1110\_1111\_0100\_1010\_1110$.
+
 
 \section{Basic Gates and Analysis}
-	<TODO Section Basic Gates and Analysis : NOT DONE>
+	<TODO Section Basic Gates and Analysis : PROOF READ>
+In this section we look at the basic building blocks of hardware, logic gates. We describe how those gates are used together to do any processing that you would like to do. We start at the gate level and incrementally build larger blocks that allow you customize a design without always having to be programming at the lowest level.
 
 \subsection{Combinatorial Logic Analysis}
-	<TODO Subsection Combinatorial Logic Analysis : NOT DONE>
+	<TODO Subsection Combinatorial Logic Analysis : PROOF READ>
 
+Combinatorial logic is logic that does not depend on a clock. The combinatorial logic speed is only driven by the propagation delay through a gate. If you would like to know more about propagation delay and transistor gate design the field of \ac{VLSI} would be the place to get more information. Here we will assume that the worst case propagation delay is known. So lets first learn about the basic gates.
+	
+The basic logic gates are \emph{NOT}, \emph{AND}, \emph{OR}, and \emph{XOR}. All the gates, except for the \emph{NOT}, have two inputs and one output. The \emph{NOT} gate has one input and one output where the output is the opposite of the input. If the input is \emph{logic high} then the output is \emph{logic low} and vise-versa. Table \ref{tab:ttnot} shows the truth table for the gate.
+	
+\begin{table}[h!]  
+\begin{center}    
+\caption{NOT Gate Truth Table} 
+\label{tab:ttnot} 
+\begin{tabular}{|c|c|}  
+\textbf{Input} & \textbf{Output}\\  
+\hline  
+0 & 1\\  
+1 & 0\\ 
+\end{tabular}  
+\end{center}
+\end{table}
+
+The \emph{AND} gate's output is only high if both inputs are high. The \emph{AND} gate performs binary multiplication. The truth table for the \emph{AND} gate is shown in Table \ref{tab:ttand}.
+
+\begin{table}[h!]  
+\begin{center}    
+\caption{AND Gate Truth Table} 
+\label{tab:ttand} \begin{tabular}{|c|c|c|}  
+\textbf{Input A} & \textbf{Input B} & \textbf{Output}\\  
+\hline  
+0 & 0 & 0\\  
+0 & 1 & 0\\  
+1 & 0 & 0\\  
+1 & 1 & 1\\ 
+\end{tabular}  
+\end{center}
+\end{table}
+
+The \emph{OR} output is high if either or both inputs are high, Table \ref{tab:ttor}.
+
+\begin{table}[h!]  
+\begin{center}    
+\caption{OR Gate Truth Table} 
+\label{tab:ttor} 
+\begin{tabular}{|c|c|c|}  
+\textbf{Input A} & \textbf{Input B} & \textbf{Output}\\  
+\hline  
+0 & 0 & 0\\  
+0 & 1 & 1\\  
+1 & 0 & 1\\  
+1 & 1 & 1\\ 
+\end{tabular}  
+\end{center}
+\end{table}
+
+The \emph{XOR} output is high if either inputs are high but not both, Table \ref{tab:ttxor}.
+
+\begin{table}[h!]  
+\begin{center}    
+\caption{XOR Gate Truth Table} 
+\label{tab:ttxor} 
+\begin{tabular}{|c|c|c|}  
+\textbf{Input A} & \textbf{Input B} & \textbf{Output}\\  
+\hline  
+0 & 0 & 0\\  
+0 & 1 & 1\\  
+1 & 0 & 1\\  
+1 & 1 & 0\\ 
+\end{tabular}  
+\end{center}
+\end{table}
+
+With the knowledge of these simple gates we can now move forward into learning how we can take the logic gates and combine them into complex data processing systems. We can start with how to make an adder.
+
+
+
+	
 \subsubsection{Basic Adders}
-	<TODO Subsubsection  Basic Adders : NOT DONE>
+	<TODO Subsubsection  Basic Adders : PROOF READ>
 
+We are sure you already know how to add. If you were given $9+7$ you could perform the calculation. But here we are going to make a digital adder. For this we need to add binary numbers. It is actually simpler than adding decimal, you just many not be used to it yet. First the simplest case, adding two bits together. We know the input is two bits but how many output bits do we need? As a rule of thumb if you are adding two numbers of $n$ bits wide the result is $n+1$ bits wide. So we need two bits. We can make a truth table for this calculation. The output bits are called \emph{sum} and \emph{carry} where the \emph{sum} is the ones place result and the \emph{carry} bits is the tens place result.
+
+\begin{table}[h!]  
+\begin{center}    
+\caption{One Bit Adder Truth Table} 
+\label{tab:tt2ba} 
+\begin{tabular}{|c|c|c|c|}  
+\textbf{Input A} & \textbf{Input B} & \textbf{Carry} & \textbf{Sum}\\  
+\hline  
+0 & 0 & 0 & 0\\  
+0 & 1 & 0 & 1\\  
+1 & 0 & 0 & 1\\  
+1 & 1 & 1 & 0\\ 
+\end{tabular}  
+\end{center}
+\end{table}
+	
+In Table \ref{tab:tt2ba} if we look at the \emph{Carry} column we can see that if we \emph{AND} the inputs we get the correct result for the \emph{Carry} bit. If we \emph{XOR} the inputs we get the \emph{SUM} bit. We will now make this one bit adder a block in \ac{VHDL} so that we can use this again and not have to redesign this circuit.
+
+\begin{VHDLlisting}[tabsize=8]
+-- one_bit_adder.vhd
+library ieee; 
+	use ieee.std_logic_1164.all; 
+	use ieee.numeric_std.all; 
+entity one_bit_adder is
+port(i_a : in    std_logic;  
+     i_b : in    std_logic;  
+	 o_s :   out std_logic;  
+	 o_c :   out std_logic);
+end entity one_bit_adder;
+
+architecture rtl of one_bit_adder is
+begin 
+	o_s <= i_a xor i_b; 
+	o_c <= i_a and i_b;
+end rtl;
+\end{VHDLlisting}
+
+Now that we have a 1-bit adder we can look at how we could add two 2-bit numbers. We notate the two operands by indexing the bits in the number so $A=[a_1~a_0]$ where $a_i$ is a bit in $A$ and $i=0$ denotes the ones place and $i=1$ denotes the tens place. As an aside, the terms \emph{ones} and \emph{tens} place are not technically accurate here since we are in base-2 arithmatic but they are used anyway for descriptive purposes. $B=[b_1~b_0]$ is a two bit number as well.
+
+So we want to perform the operation $A+B$. We already know how to add $a_0+b_0$ but when we go to add $a_1+b_1$ we must also consider the \emph{carry} bit from the $a_0+b_0$ operation. For this we need to revisit our one bit adder truth table.
+
+\begin{table}[h!]  
+\begin{center}    
+\caption{One Bit Full Adder Truth Table} 
+\label{tab:tt2bfa} 
+\begin{tabular}{|c|c|c||c|c|}  
+\textbf{Input A} & \textbf{Input B} & \textbf{Input C} & \textbf{Carry} & \textbf{Sum}\\  
+\hline  
+0 & 0 & 0 & 0 & 0\\  
+0 & 0 & 1 & 0 & 1\\  
+0 & 1 & 0 & 0 & 1\\  
+0 & 1 & 1 & 1 & 0\\  
+1 & 0 & 0 & 0 & 1\\  
+1 & 0 & 1 & 1 & 0\\  
+1 & 1 & 0 & 1 & 0\\  
+1 & 1 & 1 & 1 & 1\\ 
+\end{tabular}  
+\end{center}
+\end{table}
+
+\begin{VHDLlisting}[tabsize=8]
+-- one_bit_full_adder.vhd
+library ieee; 
+	use ieee.std_logic_1164.all; 
+	use ieee.numeric_std.all; 
+entity one_bit_full_adder is
+port(i_a    : in    std_logic;  
+	 i_b    : in    std_logic;  
+	 i_cin  : in    std_logic;  
+	 o_s    :   out std_logic;  
+	 o_cout :   out std_logic);
+end entity one_bit_full_adder;
+
+architecture rtl of one_bit_full_adder is
+begin 
+	o_s <= i_a xor i_b xor i_cin; 
+	o_cout <= i_a xor i_b and i_cin or i_a and i_b;
+end rtl;
+\end{VHDLlisting}
+
+Using the full adder we can get back to adding $A=[a_1 a_0] + B=[b_1 b_0]$. First we calculate $a_0 + b_0$ by using the one\_bit\_adder we originally made, or we could use the full adder and set cin to zero. We will use the full adder that way we don't have to manage another \ac{VHDL} file. Then we add the carry bit from the first addition to the second addition with the next two bits in $A$ and $B$, $a_1 + b_1 + cout_0$. We will now write some \ac{VHDL} to wire a few full adders together to add two N-bit numbers.  
+
+\begin{VHDLlisting}[tabsize=8]
+entity add is
+generic(g_bitwidth : integer)
+port(i_a  : in    std_logic_vector(g_bitwidth-1 downto 0);  
+     i_b  : in    std_logic_vector(g_bitwidth-1 downto 0);  
+	 o_res:   out std_logic_vector(g_bitwidth downto 0));
+end entity add;
+
+architecture rtl of add is 
+	signal w_sum  : std_logic_vector(g_bitwidth-1 downto 0) := (others => '0'); 
+	signal w_cout : std_logic_vector(g_bitwidth downto 0) := (others => '0');
+	
+begin 
+
+	-- Assign Output 
+	o_res <= w_cout(g_bitwidth) & w_sum; 
+	
+	u_gen_fa : for i in 0 to g_bitwidth-1 generate  
+		u_one_bit_full_adder : entity work.one_bit_full_adder  
+		port map(i_a    => i_a(i),
+				 i_b    => i_b(i),
+				 i_cin  => w_cout(i),
+				 o_s    => w_sum(i),
+				 o_cout => w_cout(i+1)
+        );  
+	end generate;
+end rtl;
+\end{VHDLlisting}
+
+
+	
 \subsubsection{Decoders and Encoders}
 	<TODO Subsubsection  Decoders and Encoders : NOT DONE>
 
@@ -45,7 +266,7 @@
 
 \subsection{Sequential Logic}
 	<TODO Subsection Sequential Logic : NOT DONE>
-
+	
 \subsubsection{Latches and Flip-flops}
 	<TODO Subsubsection  Latches and Flip-flops : NOT DONE>
 

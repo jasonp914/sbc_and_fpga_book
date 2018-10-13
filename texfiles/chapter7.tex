@@ -490,6 +490,8 @@ The rest of the lines generally work as follows but some chips use a slight vari
 The chip-select (CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the CS lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{FPGA}. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our CS line were active low it could be called CSn. 
 
 The last lines of the SPI bus to discuss are the data lines. These lines are named \ac{MOSI} and \ac{MISO}. The names of course tell you the direction and who drives the pins. Sometimes if \ac{IO} pins are limited there is a shared data line. This is possible because it is understood that the master controls communication if the master is reading data from the slave then the master releases control of the data line in time for the slave to control the line. Care must be taken to ensure that there isn't contention on the line. If both slave and master drive the pin communication will fail. 	
+
+
 	
 \subsection{Inter-Integrated Circuit (I2C) Bus}
 	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : NOT DONE>
