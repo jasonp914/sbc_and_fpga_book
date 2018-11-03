@@ -179,7 +179,7 @@ begin
 end rtl;
 \end{VHDLlisting}
 
-Now that we have a 1-bit adder we can look at how we could add two 2-bit numbers. We notate the two operands by indexing the bits in the number so $A=[a_1~a_0]$ where $a_i$ is a bit in $A$ and $i=0$ denotes the ones place and $i=1$ denotes the tens place. As an aside, the terms \emph{ones} and \emph{tens} place are not technically accurate here since we are in base-2 arithmatic but they are used anyway for descriptive purposes. $B=[b_1~b_0]$ is a two bit number as well.
+Now that we have a 1-bit adder we can look at how we could add two 2-bit numbers. We notate the two operands by indexing the bits in the number so $A=[a_1~a_0]$ where $a_i$ is a bit in $A$ and $i=0$ denotes the ones place and $i=1$ denotes the tens place. As an aside, the terms \emph{ones} and \emph{tens} place are not technically accurate here since we are in base-2 arithmetic but they are used anyway for descriptive purposes. $B=[b_1~b_0]$ is a two bit number as well.
 
 So we want to perform the operation $A+B$. We already know how to add $a_0+b_0$ but when we go to add $a_1+b_1$ we must also consider the \emph{carry} bit from the $a_0+b_0$ operation. For this we need to revisit our one bit adder truth table.
 
@@ -256,7 +256,7 @@ end rtl;
 
 	
 \subsubsection{Decoders and Encoders}
-	<TODO Subsubsection  Decoders and Encoders : NOT DONE>
+	<TODO Subsubsection  Decoders and Encoders : PROOF READ>
 	
 Encoders and decoders map inputs to outputs. Encoders reduce the number of inputs by $log_2$. Depending on the application the inputs could be one-hot, one-cold, or gray-code. First the one-hot input has one of the $n$ bits as inputs high and the others are low.
 
@@ -351,64 +351,1035 @@ begin
 end rtl;
 \end{VHDLlisting}
 	
-	
-	
-Encoders
-one hot
-gray code
-one cold
+The take away from all these encoders and decoders is that inputs are mapped to some outputs. Depending on the application we can use and encoder or decoder to interface to a another piece of existing code or to a another chip. To drive this point home we can look at an example of the decoder. Here we take two bits as input and map them to four bits, which here is a one-hot example.
+
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  
+entity decoder_onehot is
+port(a : in    std_logic_vector(1 downto 0);
+     b :   out std_logic_vector(3 downto 0)
+);
+end entity decoder_onehot;
+
+architecture rtl of decoder_onehot is
+begin
+	p_enc : process(a)
+	begin
+		case a is	
+			when "00" => 
+				b <= "0001";
+			when "01" => 
+				b <= "0010";
+			when "0011" => 
+				b <= "0100";
+			when "10" => 
+				b <= "1000";
+		end case;
+	end process;
+end rtl;
+\end{VHDLlisting}
 
 \subsubsection{Multiplexers and De-multiplexers}
-	<TODO Subsubsection  Multiplexers and De-multiplexers : NOT DONE>
+	<TODO Subsubsection  Multiplexers and De-multiplexers : PROOF READ>
+	
+Multiplexers and De-multiplexers are the mechanisms used to control data routing. Similar to an \ac{if} statement, the \ac{mux} is used to determine under a condition where to route data. The inputs to a \ac{mux} are the $N$ data paths and a select bus that is $\log_{2}N$ wide. The output is a single data path which is assign one of the inputs based on the select lines. 
+
+A simple case is where the data path is a single bit. 
 
 \subsubsection{Parity Generators and Checkers}
-	<TODO Subsubsection  Parity Generators and Checkers : NOT DONE>
+	<TODO Subsubsection  Parity Generators and Checkers : PROOF READ>
+	
+A rudamentary data integrity check is using a parity checker. The parity checker determines whether a byte of data has an even or odd number of bits. The use of the parity bit works as follows. First a transmitter calculates a parity bit. Say we are transmitting a byte of data. If the number of bits set to one is an odd number we assert the parity bit. We then transmit the byte of data along with the parity bit. 
+
+At the receiver, the parity of the received data is calculated on the byte of data. The receiver then checks that the parity it calculated matches the parity the transmitter sent. If the parity does not match the receiver knows there was an error in transmission and can take appropriate action.
+
+There are some issues with this as you may be able to tell. It is possible that a number of error could occur to get the same parity result. In this case an even number of bit errors could go undetected and the reciever could be processing data that was not intended by the transmitter. 
+
+Parity bits are commonly used in wired, very low bit error rate communications. The probability of one bit error occuring is unlikely and two occuring is astronomical. In an application where the wired communication is used billions of times there could be a chance for an error so some protection is needed. In this case using a parity bit is helpful. 
+
+Another draw back is that we have to send nine bits instead of eight. There is an overhead for this protection. This may seem neglidgeable but it is worth noting that over billions of transactions the added time can ammount to hours. This only matters when automated testing is desired and the number of trials needs to be large. 
+
+Next we will look at how to calculate the parity bit in \ac{VHDL}. The parity bit is the result of the data being \ac{xor}'d together.
+
+\begin{VHDLlisting}[tabsize=8]
+-- parity_generator.vhd
+
+libarary ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	use ieee.std_logic_misc.all;
+	
+entity parity_generator is
+	port(i_clk       : in    std_logic;
+		 i_dv        : in    std_logic;
+		 i_data      : in    std_logic_vector(7 downto 0);
+		 o_parity_dv :   out std_logic;
+		 o_parity    :   out std_logic
+	);
+end entity parity_generator;
+
+architecture rtl of parity_generator is
+	signal f_parity    : std_logic;
+	signal f_parity_dv : std_logic;
+begin
+	p_calc : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			f_dv <= i_dv;
+			if i_dv = '1' then
+				f_parity <= xor_reduce(i_data);
+			end if;
+		end if;	
+	end process;
+end rtl;
+\end{VHDLlisting}
+
+This parity generator is used at the transmitter to generate the parity to transmit, denoted $partity_{tx}$. Next we move to the receiver. The receiver also needs to calculate the parity but on the received data. The parity generated here is denoted, $parity_{rx}$.
+
+A parity checker at the receiver looks like this:
+
+\begin{VHDLlisting}[tabsize=8]
+-- parity_checker.vhd
+
+libarary ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity parity_checker is
+	port(i_clk       : in    std_logic;
+		 i_dv        : in    std_logic;
+		 i_data      : in    std_logic_vector(7 downto 0);
+		 i_parity_tx : in    std_logic;
+		 o_error_dv  :   out std_logic;
+		 o_error     :   out std_logic
+	);
+end entity parity_checker;
+
+architecture rtl of parity_checker is
+	signal w_parity_rx    : std_logic;
+	signal w_parity_rx_dv : std_logic;
+	
+	signal f_error        : std_logic;
+	signal f_error_dv     : std_logic;
+begin
+	
+	u_parity_gen : entity work.parity_generator
+	port map(i_clk          => i_clk,
+	         i_dv           => i_dv,
+	         i_data         => i_data,
+	         o_parity_dv    => w_parity_rx_dv,
+	         o_parity       => w_parity_rx
+	);
+	
+	p_check : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_dv = '1' then	
+				f_parity_tx <= i_parity_tx;
+			end if;
+			
+			f_error_dv <= w_parity_rx_dv;
+			if w_parity_rx_dv = '1' then
+				if f_parity_tx = w_parity_rx then
+					-- No Error
+					f_error <= '0';
+				else
+					-- Error
+					f_error <= '1';
+				end if;			
+			end if;
+		end if;	
+	end process;
+end rtl;
+\end{VHDLlisting}
+
+A couple things to notice about the parity\_checker. First, since the parity\_generator has a clock cycle of latency we need to register i\_parity\_tx. We need to store the bit while it is valid otherwise we won't know if the block that instantiates this block has changed the input in the clock cycle that the parity is being calculated. Also, in terms of streaming data this is a \emph{dead-end} for the data. The actual received data, good or bad, does not pass through this block. The parity checker is meant to be done in parallel with received data processing. There is no assumption here on what happens if there is an error detected. The instantiating block could use the error flag generated by the checker to throw away the data or start the process of requesting the data again from the transmitter. 
 
 \subsection{Sequential Logic}
-	<TODO Subsection Sequential Logic : NOT DONE>
+	<TODO Subsection Sequential Logic : PROOF READ>
+	
+When designing a peice of \ac{FPGA} code we can either design a combinatorial or sequential system. Sequential systems are generally more complex but with combinatorial subsystems embedded. We will look at in this section what makes sequential possible in the \ac{FPGA}. We will talk about how sequential statements are designed to avoid data integrity pitfalls that can occur on an \ac{FPGA}.
+	
+The concept of sequential logic is simple, in sequential logic data is driven with a clock. Sequential logic is synchronous to a clock. We will see examples of sequential logic in this section including basic latches and flip-flops. These are simple registers used on an \ac{FPGA} to remember state. We will also look at counters, shift registers, and memory and storage. 	
+	
 	
 \subsubsection{Latches and Flip-flops}
-	<TODO Subsubsection  Latches and Flip-flops : NOT DONE>
+	<TODO Subsubsection  Latches and Flip-flops : PROOF READ>
 
+Ther are a few options for holding data in memory on an \ac{FPGA}. Here we will talk about two of them, the latch and the flip-flop. First we will start with the flip-flop. The flip-flop or more specifically the D-flip-flop is a sequential memory unit built into an \ac{FPGA} fabric. Depending on the \ac{FPGA} there are usually a few flip-flops in each \emph{slice} or \ac{CLB}. Flip-flops may also be refered to as \emph{registers} by some vendors. We will use the terms interchangably. 
+
+A operation of a register has three inputs and an output. The first input is a clock. We have mentioned earlier that a register is a synchronous memory unit. The register is sensitive to the rising edge of the clock and at this event, depending on the other inputs, will store the data. The second input we will consider is the data. 
+
+The data is subject to setup and hold times with relation to the rising edge of the clock. For a register to store the correct value the data the value needs to be present at the register a certain amount of time prior to the rising edge of the clock the time required is referred to the setup time, often denoted as $T_S$. The data must also be stable through the rising edge and after for a duration of the hold time, denote $T_H$. Both $T_S$ and $T_H$ are \ac{FPGA} dependent but are mostly affected by the size of process or gate implemented on the \ac{FPGA} silicon. Other than gate size there are some manufactoring variances that are captured by the manufactor's speed grades. If you require a faster \ac{FPGA} the more recent \ac{FPGA}s are having smaller process sizes to meet the demand for faster chips. 
+
+For someone getting started with \ac{FPGA}s the above message can be intimidating. The process for ensuring $T_S$ and $T_H$ are met is called \ac{Timing Verification} the vendor tools provide a timing analysis tool and report that will be presented to you after the code is synthesized and routed. If there is a problem the tools will highlight the problematic path and you can fix the path by adding more registers to the data path or by reducing the clock speed. 
+
+Getting back to the third and final input to our register, the enable. The enable is also subjected to the same setup and hold time requirments but it can disable the register from storing the input data. This feature if very helpful when looking to register values when a certain condition is reached. If we are always interested in storing the data then we can tie the enable high.
+
+The output is of course the data that was input but with one clock cycle of latency. This can be someone confusing for a beginner when they have a background in software programming. In essence it takes one clock cycle for your sequential statement to happen. In programming C/C++, Python, or Java after we write a variable assignment the next line can use that result. That is not the case in \ac{HDL} due to the D-flip-flop. However, we did just learn an imporant point, if we want to delay a signal, we can use a register. In developing algorithms on an \ac{FPGA} we will face varying levels of latency in different signal paths. If two paths come together we need to ensure they align to properly apply data from one path to the corresponding data from the other path. In this case we will use registers, sometimes a few registers in series to get the proper data alignment. 
+
+Now we can look at how a register is made in \ac{VHDL}. Making a register is simply completed by making an assignment in a clocked process. Like so:
+
+\begin{VHDLlisting}[tabsize=8]
+p_reg_example : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		f_reg_example <= i_input_data;
+	end if;
+end process;
+\end{VHDLlisting}
+	
+We see in our example that we have a process, labeled p\_reg\_example, that is sensitive to our clock; \emph{i\_clk}. Next we have an if statement that checks to see if the clock is on a rising edge, if it is then we take the input data and store it in a register called f\_reg\_example. In this example the enable input to the register is tied high since that after the rising edge is detected there is no other condition to prevent registration of the data.  	
+	
+We can look at the same example with a slight modification to see how the enable line would work.
+	
+
+\begin{VHDLlisting}[tabsize=8]
+p_reg_example : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		if i_input_data_valid = '1' then
+			f_reg_example <= i_input_data;
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+	
+Now we see that in order to register the data in the clocked process the signal i\_input\_data\_valid must be high to register the input data. Here the i\_input\_data\_valid signal would be routed to the enable pin of the D-flip-flop.
+	
+	
 \subsubsection{Counters}
-	<TODO Subsubsection  Counters : NOT DONE>
+	<TODO Subsubsection  Counters : PROOF READ>
+	
+Counters are used quite frequently on the \ac{FPGA}. The can be used to keep track of time passing, they can also be used as an address for accessing data in a \ac{BRAM}. Here we will see the use of a counter in a general sense but also provide example code that marks the passing of a microsecond. 
+
+First our signal declarations. We will need a group of bits that will represent the number. \ac{VHDL} provides a couple of choices for this task. First we could use the signal type \emph{std\_logic\_vector} which does take as a parameter the number of bits we can use for the counter. However, \ac{VHDL} doesn't have the notion of addition for the type \emph{std\_logic\_vector}. So if we used \emph{std\_logic\_vector} we would need to cast the value to a numeric type, because of this \emph{std\_logic\_vector} is not a good choice. The \ac{IEEE} does provide a library that has numeric types defined that will have addition defined for our counter. We can add this library to our code by using. 
+
+\begin{VHDLlisting}[tabsize=8]
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+\end{VHDLlisting}
+
+In particular the \emph{numeric\_std} library provides two types \emph{signed} and \emph{unsigned}. The \emph{signed} type is a twos-complement representation where we can represent negative numbers. For our counter we do not need negative numbers since we won't need a concept of negative time or address. So we will use the \emph{unsigned} type. 
+
+So now we can define our counter:
+
+\begin{VHDLlisting}[tabsize=8]
+signal f_counter : unsigned(15 downto 0);
+\end{VHDLlisting}
+
+Now we are ready to make the counter itself.
+
+\begin{VHDLlisting}[tabsize=8]
+p_counter : process(i_clk) 
+begin
+	if rising_edge(i_clk) then
+		f_counter <= f_counter + 1;
+	end if;
+end process;
+\end{VHDLlisting}
+
+To use the counter described above we can changed signals based on the counter. First we will assume that i\_clk is a $1$ \ac{MHz} clock. If we want to to mark one millisecond then we need to determine how many clock cycles at $1$ \ac{MHz} are in a millisecond. To determine the number we need to count up to we first need to determine the duration of one clock cycle at $1$ \ac{MHz} by $T_{sys}=\frac{1}{1e6}=1$ microsecond. A millisecond divided by a microsecond is $1,000$. So from the time the counter is started until we get to $1,000$ a millisecond has passed. So we will update the above counter code to incorperate the check for $1,000$ but we also need a better way to know when the start of a millisecond is starting. So we will add an enable line.
+
+\begin{VHDLlisting}[tabsize=8]
+p_counter : process(i_clk) 
+begin
+	if rising_edge(i_clk) then
+		if i_enable = '1' then
+			f_counter <= f_counter + 1;
+			if f_counter = k_1000 then
+				f_out <= not f_out;
+				f_counter <= (others => '0');
+			end if;
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+
+With this implementation we can assert i\_enable then when the f\_out toggles we will know a millisecond has lapsed. we also need to define the constant $1,000$ signal we used. 
+
+
+\begin{VHDLlisting}[tabsize=8]
+constant k\_1000 : integer := 1000;
+\end{VHDLlisting}
+
+Another application for a counter which we will use as an exmaple is initalizing a \ac{BRAM}. A simple change to the millisecond duration counter we can accomplish the task.
+
+\begin{VHDLlisting}[tabsize=8]
+p\_counter : process(i\_clk) 
+begin
+	if rising\_edge(i\_clk) then
+		if i\_enable = '1' then
+			if f\_counter = k\_bram\_size then
+				f\_out\_done <= '1';
+			else
+				f\_out\_done <= '0';
+				f\_counter <= f\_counter + 1;
+				f\_bram(to\_integer(f\_counter)) <= k\_bram\_init\_value;
+			end if;
+		else	
+			f\_counter <= (others => '0');
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+
+There are a few changes we made to this code. First is when we reset the counter. In this case we reset the counter only when we are disabled. This way we don't keep looping over the entire \ac{BRAM}; we only need to initalize once. The signal f\_out\_done was added to ensure that when we don't use the \ac{BRAM} while it is being initalized. We know that if we had $1000$ addresses with the clock running at 1 \ac{MHz} it would take a millisecond which can be a long time in terms of data processing platforms. Once we enable initialization we need to wait for the f\_out\_done flag to be asserted before we know we can use the \ac{BRAM}. Another change is how we used the f\_counter signal. For \ac{VHDL} the index of an array can't be an unsigned type, we cast the unsigned value to an integer to use as the address or index of the \emph{f\_bram} array. Finally we added two constants which can be declared just like \emph{k1000}, but the values are the \ac{BRAM} size or number of addresses to initalize and what the \ac{BRAM} is initalized to. 
+
 
 \subsubsection{Shift Registers}
-	<TODO Subsubsection  Shift Registers : NOT DONE>
+	<TODO Subsubsection  Shift Registers : PROOF READ>
 
+In a previous section we discussed registers. Now we will add on to the concept by chained registers together. When we register a value into a shift register all the other values moved down by one to make room for the incoming data. The shift register is construct is best illustrated by code. 
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of shift\_reg\_example is
+	signal f\_shift\_reg : std\_logic\_vector(2 downto 0);
+begin
+
+p\_shift\_reg : process(i\_clk)
+begin
+	if rising\_edge(i\_clk) then
+		f\_shift\_reg(0) <= i\_in\_data;
+		f\_shift\_reg(1) <= f\_shift\_reg(0);
+		f\_shift\_reg(2) <= f\_shift\_reg(1);
+	end if;
+end process;
+\end{VHDLlisting}
+
+In the code we see that on every clock cycle we have the input i\_in\_data being registered into the shift register but also on every clock cycle the data at index zero is being assign to index one and one to two. The shift register is used quite often in hardware development because it is very condusive to the pipline architecture we like to take advantage of on an \ac{FPGA}.
+
+We can clean up the code above and make the application a little more concrete. First, i\_in\_data is one bit wide. This example is best suited to show how we can use a shift register to shift data valid flags. We would want to do this when the algorithm we are implementing uses multiple pipline stages. In this case data is registered along with the data valid shift register in the first clock cycle. In the next clock cycle maybe some arithmetic is performed on the data. In the next clock cycle more arthimatic is performed then finally in the third and last clock cycle the data is output. 
+
+In the cleaning up of the code we will only look at how the shift register would be implemented, if you would like to see an example of an implementation of an algorithm like this you can refer to the \ac{FIR} implementation.
+
+We can also use the concatenate function in \ac{VHDL} to make the code a little cleaner.
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of shift\_reg\_example is
+	signal f\_shift\_reg : std\_logic\_vector(2 downto 0);
+begin
+
+p\_shift\_reg : process(i\_clk)
+begin
+	if rising\_edge(i\_clk) then
+		f\_shift\_reg <= f\_shift\_reg(f\_shift\_reg'high-1 downto 0) & i\_in\_data;
+	end if;
+end process;
+\end{VHDLlisting}
+
+Here the f\_shift\_reg'high equates to $2$ so the indexing of \emph{f\_shift\_reg'high-1 downto 0} equates to \emph{1 downto 0}. We take the two \ac{LSB}s and move them up one bit to indices $1$ and $2$. In the same clock cycle we register i\_in\_data at index $0$.
+
+Another use of shift registers is to generate \ac{PN}. To generate a \ac{PN} sequence we first need to choose a polynomial that provides the amount of data we need, this just means that a lower order polynomial generates less data before it loops around to repeat data again. For example a polynomial of order nine repeats after $511$ bits. 
+
+The polynomial we will choose is order $19$. This repeats data every ?? bits. The polynomial is 
+\begin{equation}
+x^{18} + x^{17} + x^{16} + x^{13}. 
+\label{eq:pneq}
+\end{equation}
+\noindent
+To implement a \ac{PN} generator with this polynomial we can first start with a shift register in \ac{VHDL} that is $19$ bits wide. We start with 
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of shift\_reg\_example is
+	signal f\_shift\_reg : std\_logic\_vector(18 downto 0);
+begin
+
+p\_shift\_reg : process(i\_clk)
+begin
+	if rising\_edge(i\_clk) then
+		f\_shift\_reg(f\_shift\_reg'high downto 1) <= f\_shift\_reg(f\_shift\_reg'high-1 downto 0);
+	end if;
+end process;
+\end{VHDLlisting}
+
+, but now the bit at index $0$ is not an input to the entity. Bit $0$ is updated based on the polynomial that we defined in \ref{eq:pneq}. 	
+
+\begin{VHDLlisting}[tabsize=8]
+o\_bit\_out <= f\_shift\_reg(18);
+p\_shift\_reg : process(i\_clk)
+begin
+	if rising\_edge(i\_clk) then
+		f\_shift\_reg(f\_shift\_reg'high downto 1) <= f\_shift\_reg(f\_shift\_reg'high-1 downto 0);
+		f\_shift\_reg(0) <= f\_shift\_reg(18) xor 
+						  f\_shift\_reg(17) xor 
+						  f\_shift\_reg(16) xor 
+						  f\_shift\_reg(13);
+	end if;
+end process;
+\end{VHDLlisting}
+
+We added the update of bit zero and we also added setting an output assignment. We could further make this \ac{PN} generator a little most user friendly by added an enable line to control when data is output from the block.
+
+The \ac{PN} generator goes by another name, \ac{LFSR}. Breaking this name down we surely understand the \ac{Shift Register} portion since we implemented a the \ac{LFSR} or \ac{PN} generator with a shift register. The linear part of the name applies since the \ac{LFSR} is a linear system \cite{??}. The \emph{feedback} portion of the name applies to the indices that are fed back to the zeroth index. In the above example the bits $18$, $17$, $16$, and $13$ are fed-back.
+
+	
 \subsubsection{Memory and Storage}
-	<TODO Subsubsection  Memory and Storage : NOT DONE>
+	<TODO Subsubsection  Memory and Storage : PROOF READ>
 
+On an \ac{FPGA} you have a few different options in terms of memory and storage. The choice between the five options depends on the application and size of the amount of data to be saved. You will also want to consider also if you want the data to be persistant. If the data is needed after the system is power cycled you will need memory that is non-volital. 
+
+The metrics in which we will use to determine which type of memory we should store data is starts with the amount of data needed per clock cycle. After the data is stored there will be a time when the data needs to be retrieved. Depending on the algorithm if a lot of data is needed in a single clock cycle then the number of options is reduced. Also if a large data rate is required then some of the storage methods may not be able to keep up. Finally if non-volitle storage is needed then we will need to store the data off-chip. 
+
+The first option is distributed \ac{RAM}. Distributed \ac{RAM} is used when a small amount of data is needed to be stored but all the data needs to be used every clock cycle. The disadvantage of this method is that more resources will be used on the \ac{FPGA}. The advantage of this method is that the data processing will be low latency. We have seen many examples of distributed \ac{RAM} already. When we looked at flip-flops we stored data in a clocked process. Distributed \ac{RAM} is a term that is used to address into registers. 
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of dist_ram_example is
+	type t_slv8 is array (natural range <>) of std_logic_vector(7 downto 0);
+	signal f_dist_ram : t_slv8(0 to 9);
+	signal f_result   : t_slv8(0 to 9);
+begin
+
+p_dist_ram : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		f_result(0) <= f_dist_ram(0) xor f_dist_ram(1);
+		f_result(1) <= f_dist_ram(1) xor f_dist_ram(2);
+		f_result(2) <= f_dist_ram(2) xor f_dist_ram(3);
+		f_result(3) <= f_dist_ram(3) xor f_dist_ram(4);
+		f_result(4) <= f_dist_ram(4) xor f_dist_ram(5);
+		f_result(5) <= f_dist_ram(5) xor f_dist_ram(6);
+		f_result(6) <= f_dist_ram(6) xor f_dist_ram(7);
+		f_result(7) <= f_dist_ram(7) xor f_dist_ram(8);
+		f_result(8) <= f_dist_ram(8) xor f_dist_ram(9);
+		f_result(9) <= f_dist_ram(9) xor f_dist_ram(0);
+	end if;
+end process;
+\end{VHDLlisting}
+
+In this example, every clock cycle uses the contents of the f\_dist\_ram. When the code is written this way the registers are populated with the data on the \ac{FPGA} on each clock cycle the \emph{XOR} gate has its input directly wired to each instantation of an \ac{XOR} gate. The number of \ac{XOR} gates needed for this example is eight for each address and there are $10$ addresses. We need $80$ total \ac{XOR} gates. As a note we could have written this code in a for loop but this is a little more straight forward in terms of understanding distributed \ac{RAM}. Also f\_result will be implemented in distributed \ac{RAM} since we access more than two addresses in one clock cycle. 
+
+If we addressed only two elements in a clock cycle then we would be able to use \ac{BRAM} on the \ac{FPGA}. \ac{BRAM} is dedicated memory on the \ac{FPGA} that, when used, does not use \ac{FPGA} logic or registers. Using \ac{BRAM} is a better solution for larger blocks of data so that we are not using up our \ac{FPGA} resources. 
+
+In most modern \ac{FPGA}s the \ac{BRAM} is dual-port. These two ports can addressed into the \ac{BRAM} every clock cycle but we are limited to only $2$ addresses. There does exist one-port \ac{BRAM} so be sure to know which type you are targeting on your particular \ac{FPGA} to ensure your \ac{BRAM} is not inferred by the vendor tools as distributed \ac{RAM}.
+
+Now we can reimplement our earlier example with the use of \ac{BRAM}. Even though we can use two ports on the \ac{BRAM} we are only going to use one. In this way we can have one port that reads the data and one port that writes the data. 
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of block_ram_example is
+	type t_slv8 is array (natural range <>) of std_logic_vector(7 downto 0);
+	signal f_block_ram : t_slv8(0 to 9);
+	signal f_result    : t_slv8(0 to 9);
+	signal f_addr      : unsigned(3 downto 0) := (others => '0');
+begin
+
+p_bram_ram : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		f_addr <= f_addr + 1;
+		
+		if f_addr = 9 then
+			f_result(9) <= f_dist_ram(9) xor f_dist_ram(0);
+			f_addr <= (others => '0');
+		else
+			f_result(to_integer(f_addr)) <= f_dist_ram(to_integer(f_addr)) xor 
+										    f_dist_ram(to_integer(f_addr+1));
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+
+The biggest change that we needed to make was to introduce an address register to the code to increment through the $10$ addresses. Since we have this wrap around case at the end we needed to split up how address nine was handled. We now only have eight \ac{XOR} gates used instead of the $80$ used in the previous example. However, we do take $10$ clock cycles now to calculate the result. Depending on the application $10$ clocks may be too long or if \ac{FPGA} resources are running low then choosing hardware reuse may be the answer. 
+	
+For the first two types of memory the data rate in which they can handle is determined by the clock speed and the width of the data being stored. The wider bus of data that is being stored the higher the data rate but more resources on the \ac{FPGA} are used. For a very high data rate the \ac{FPGA} can be interfaced to \ac{DDR}-\ac{RAM}. The interface to \ac{DDR}-\ac{RAM} is much more complicated but the vendor tools do provide some \ac{IP}. The \ac{IP} needs to be configured for the particular \ac{FPGA} and \ac{DDR}-\ac{RAM} chip that will be targeted. The vendor tools also provide a behavioral simulation model that can help you setup your interfacing to the application side of their \ac{IP}. 
+
+There two common ways to interface to the \ac{IP}. The first way is an \ac{AXI4}-Streaming interface. In this interface the \ac{IP} core has a ready signal has ready signals that when asserted you can start another transaction. There are four ready signals, two for read operations and two for writting operations. There is a ready signal for data and one for the address. When you are looking to make a transaction you first check the ready signal if the ready signal is high then you assert valid when the data or address is valid. 
+
+If the highest data rates are needed you can set up \ac{AXI4} burst transactions. This interfacing scheme is mostly the same as above but here you only need to send in one address for each burst of data words. The number of data words in a burst is accurately named the burst length. In this scheme the address is incremented by the \ac{DDR}-\ac{RAM} word size times the burst length.  
+
+The example we will use for interfacing with \ac{DDR}-\ac{RAM} is the writing channel but the reading channel is equivalent. We will use a \ac{FIFO} for the data, which is advantageous in two ways. First we can use a dual-clock \ac{FIFO}, which ensures the data is on the \ac{DDR}-\ac{RAM} user-interface clock, denoted in the code by \emph{ui\_clk}. Data is loaded into the \ac{FIFO} on another clock but is written into \ac{DDR}-\ac{RAM} on the \emph{ui\_clk}. 
+
+The second advantage is that we can use a different sized write and read data widths. You generally will not be operating on the data in the \ac{FPGA} fabric in the same bus widths as the user interface bus width. The bus width to \ac{DDR}-\ac{RAM} is determined by the data-rate of \ac{DDR}-\ac{RAM} but the data-rate of the processing algorithms should be lower than that of \ac{DDR}-\ac{RAM} to allow for some overhead processing. For this reason we can setup our dual-clock \ac{FIFO} to have a smaller input and have the read bus width be the same as the bus width for the \ac{DDR}-\ac{RAM} user interface. 
+
+An example is useful to illustrate these ideas. First, our user-interface data bus size is $128$ bits on the user-interface clock. Lets say for this example that we process $32$ bits in the same amount of time as one clock cycle of the user-interface clock. As a side note, there are some concepts here in crossing clock domains. Please reference \ref{sec:??} for more details on how to get data from a different clock domain to the user-interface clock domain, in particular the data rate considerations. Here we say that whether the other clock domain is faster or slower we equivantly have $32$ bits processed per \emph{ui\_clk} period.  
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of ddr_ram_example is
+	constant k_ddr_addr_inc: integer := 1;
+	
+	signal f_ddr_curr_addr : unsigned(31 downto 0);
+	signal f_ddr_awdata    : std_logic_vector(31 downto 0);
+	signal w_ddr_awrdy     : std_logic := '0';
+	signal f_ddr_awdv      : std_logic := '0';
+
+	signal f_ddr_wdata     : std_logic_vector(127 downto 0);
+	signal w_ddr_wrdy      : std_logic := '0';
+	signal f_ddr_wdv       : std_logic := '0';
+
+	signal w_fifo_data     : std_logic_vector(127 downto 0); 
+	signal w_fifo_pempty   : std_logic;
+	signal f_fifo_pempty   : std_logic;
+	signal w_fifo_empty    : std_logic;
+	signal f_fifo_rden     : std_logic;	
+begin
+
+p_ddr_ram : process(ui_clk)
+begin
+	if rising_edge(ui_clk) then
+		f_fifo_pempty <= w_fifo_pempty;
+		
+		-- Default values
+		f_ddr_awdv <= '0';
+		f_fifo_rden <= '0';
+		
+		-- Address Channel
+		if w_ddr_awrdy = '1' then
+			if f_fifo_pempty = '1' and w_fifo_pempty = '0' then
+				f_ddr_awdv <= '1';
+				f_ddr_awdata <= std_logic_vector(f_ddr_curr_addr);
+				f_ddr_curr_addr <= f_ddr_curr_addr + k_ddr_addr_inc;
+			end if;		
+		end if;
+		
+		-- Data Channel
+		if w_ddr_wrdy = '1' then
+			if w_fifo_empty = '0' then
+				f_fifo_rden <= '1';
+				f_ddr_wdv <= '1';
+				f_ddr_wdata <= w_fifo_data;
+			end if;			
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+
+Since we have $32$ bits processed per clock cycle we can set our \ac{FIFO}'s programmable empty flag to be $4$. In this case we then have an empty flag that is deasserted when there is enough data to write one \ac{DDR}-\ac{RAM} word. In this case we assume our burst length is one. In general we set our programmable empty flag to be the minimum amount of data required for a full transaction. 
+
+To start a write transaction we use an edge detector in the w\_fifo\_pempty signal. An edge detector consists of registering the signal then the if statement is conditioned on both the wire (w\_fifo\_pempty) and the register (f\_fifo\_pempty). In this case we are detecting the falling edge of the pempty flag to start our write transaction process.
+
+We also have pointed out in the code that there is a concept of default value is \ac{VHDL}. Some may have the option that using default values like this can a little questionable in terms of coding style. While we do agree with the need for code style and practices. We really make a mess of the code with having to use all the \emph{else} clauses in this example. The author believe that it is of better style to show that by default the value is zero (in this case) and there are a few cases where those signals are set to one. The use of default values assumes that the synthesizer of the code puts a higher priority on the assignments lower in the \ac{VHDL} file. 
+
+Finally moving on to data storage that is non-volitle. If we want to be able to use the data stored after a power cycle then we will need to store the data in an interfaced flash chip or if there is a lot of data, on the order of \ac{MB}, \ac{GB}, or even \ac{TB}s then we need to use a \ac{HDD} or \ac{SSD}. The most common example of using a flash chip connected to an \ac{FPGA} is for the configuration bit-stream itself. Once a design is completed the configuration bit-stream can be stored in a flash chip then over a \ac{SPI} interface the \ac{FPGA} is able to go out and get its configuration at power up. 
+
+The solution to store \ac{GB} and \ac{TB} of information to a \ac{HDD} or \ac{SSD} is done through the \ac{SATA} interface. The \ac{SATA} interface stack can be implemented on the \ac{FPGA} and the data can be sent by the \ac{SATA} protocol to the drive. To implement the \ac{SATA} protocol is a huge undertaking since the standard is rather complex \cite{sata_std}. However there is \ac{IP} that can be purchased to provide a quick solution to your data storing needs. 	
+	
 \section{VHDL Intro}
-	<TODO Section VHDL Intro : NOT DONE>
+	<TODO Section VHDL Intro : PROOF READ>
+	
+There are plenty of great books out there for the current \ac{VHDL} syntax. There are even better webpages out there that will provide many different examples. This book aims to introduce the \ac{VHDL} langauge with helpful examples that will get you productive at \ac{VHDL} and quickly seeing what you can do with \ac{VHDL}. There is no substitute for trying the examples yourself, but sometimes its hard to get started. If you take these examples and try to compile them yourself and simulate them. Working through the tool's design flow will get you acquainted with the development environment. Then you can start to change the example code, making it your own to accomplish a task that is not directly covered here. Then the concepts that are being taught here will have been absorbed more fully.
+
+The sections below are not meant to be an exhaustive survey of the \ac{VHDL} language. The sections below are showing some helpful attributes of the \ac{VHDL} language. First we will talk about signal types. We will then move on to the most common signal type, state machines. We can then move on to subprograms, such as functions and procedures. The next topic is generics which will help our code be more portable and configurable. File \ac{IO} is helpful when making testbenches. After which we will move on to more advanced topics in \ac{VHDL}.
 
 \subsection{Signal Types}
-	<TODO Subsection Signal Types : NOT DONE>
+	<TODO Subsection Signal Types : PROOF READ>
 
-\subsection{Sequential Statements}
-	<TODO Subsection Sequential Statements : NOT DONE>
+The first and most common signal type we will talk about the std\_logic data type. This is how we represent a bit in the \ac{FPGA}. The signal can be assigned a one or a zero. But there is also a need to \emph{tri-state} or set \ac{IO} to a high-impedance state which can be done with the std\_logic signal type. 
 
-\subsection{Subprograms}
-	<TODO Subsection Subprograms : NOT DONE>
+An example of how to make a signal of type std\_logic is shown below along with how to assign the signal in a process.
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of std_logic_example is
+	signal f_sl_example_zero     : std_logic;
+	signal f_sl_example_one      : std_logic;
+	signal f_sl_example_highz    : std_logic;
+begin
+
+p_sl_example : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		f_sl_example_zero  <= '0';
+		f_sl_example_one   <= '1';
+		f_sl_example_highz <= 'Z';
+	end if;
+end process;
+\end{VHDLlisting}
+
+This example shows the registering of a zero bit, a one bit, and high-impedance. Next we will look at a vector of std\_logic.
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of std_logic_example is
+	signal f_slv_example  : std_logic_vector(7 downto 0);
+begin
+
+p_sl_example : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		f_slv_example <= (others => '0');
+	end if;
+end process;
+\end{VHDLlisting}
+
+The std\_logic\_vector is constrainted by array indices. In this case the \emph{7 downto 0} constraints the array. The keyword \emph{downto} denotes the direction of the indices. Of course it grammatically makes sense but also by indexing the array like this sets the \ac{MSB} to be the seventh bit. We can make the zeroth bit the \ac{MSB} by constrainting the array with \emph{0 to 15}. Next in the example with use the keyword \emph{others}. In this case the keyword \ac{others} takes the place for all the indices. So this statement \emph{others => '0'} sets all the elements of the array to zero. 
+	
+The std\_logic\_vector in general can be thought of as a bus with a defined width. The bus can also be thought of as a set of registers that drives the bus. However, if we want to interpret the set of registers as a numeric value there are two other types \ac{VHDL} has defined that we can use. The use of these types is encouraged since standard operations are already defined, like addition, subtraction, and multiplication. 
+
+The types \emph{signed} and \emph{unsigned} can be used to represent fixed point numbers in \ac{VHDL}. These types are constrainted just like std\_logic\_vector and are cleared with the same \emph{others} keyword. There will also be a time where you want to initalize these types to decimal values which are easy to read. But typing in a numerical value is actually of type \emph{integer} and since \ac{VHDL} is strongly typed a \emph{signed} or \emph{unsigned} signal type can not initalized by an integer. For this reason you can use the function \emph{to\_signed} or \emph{to\_unsigned}. For example:
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of std_logic_example is
+	signal f_unsigned_example : unsigned(7 downto 0) := to_unsigned(127,8);
+	signal f_signed_example   : signed(7 downto 0)   := (others => '0');
+begin
+
+p_sl_example : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		
+		f_unsigned_example <= f_unsigned_example + 1;
+		f_signed_example   <= f_signed_example   + 1;
+		
+		if f_unsigned_example = 128 then
+			f_unsigned_example <= (others => '1');
+		end if;
+		
+		if f_signed_example = -64 then
+			f_signed_example <= to_signed(-65,f_signed_example'length);
+		end if;		
+	end if;
+end process;
+\end{VHDLlisting}
+
+which has quite a few things goig on here. First we will look at the \emph{unsigned} signal first. The range of values for an \emph{unsigned}	data type is $2^b-1$ where $b$ is the number of bits. For our example $b=8$ so this means with the \emph{unsigned} signal we have we can represent $[0,255]$. We also see that the inital value is set in the initial condition to be $127$. Once this code starts to execute the value will be incremented to $128$ then in the next clock cycle the if statement condition equates to true so we set the value to all ones or $256$. The next clock cycle increments the value which rolles the value back to zero. Then after $128$ clock cycles we reset the signal to $256$ again. 
+
+For the \emph{signed} example the range for a signed value is $[-2^{b-1},2^{b-1}-1]$ or $[-127,128]$. The inital condition sets the signed value to zero. Once the code starts running the signed value is incremented for 128 clock cycles. Once the max is reached the \emph{signed} value rolls over to $-127$ and is incremented for $63$ clock cycles until it equals $-64$ making the if statement condition true. At which point the value is set back to $-65$ then the next clock cycle it is incremented to $-64$ then in the next clock cycle the value is set back to $-65$ in the if statement. 
+
+Now that we know how to represent numbers and buses we can now move on to arrays of numbers and buses. For this, \ac{VHDL} provides the ability to create types. We will see three examples where we can make unconstrainted types for use as needed. Sometimes programmers will define these types in a common package that they use on every project. That way they aren't re-defining the same types many times. Here are a few examples
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of std_logic_example is
+	type t_slv is array (natural range <>) of std_logic_vector;
+	type t_us8 is array (natural range <>) of unsigned(7 downto 0);
+	type t_s_L10 is array (0 to 9) of signed;
+
+	signal f_slv_array_example : t_slv(0 to 3)(7 downto 0) := (others => (others => '0'));
+	signal f_us_array_example  : t_us8(0 to 4)             := (others => (others => '0'));
+	signal f_s_array_example   : t_s_L10(7 downto 0)       := (others => (others => '0'));
+begin
+\end{VHDLlisting}
+
+First we look at the std\_logic\_vector array example. In this example both the array and the bus is unconstrainted. So when we use the type we need to specify the range for both how wide the bus will be but also how many buses there will be. In the example the bus width is eight with the \ac{MSB} as the seventh bit. There are four of these buses indexed zero to three. 
+
+Next we have the \emph{unsigned} array example. In this example the \emph{unsigned} number is constrained to eight bits but the number of elements in the array is unconstrained. So when we use the type we can say how many numbers we need to represent. Which we do for the signal f\_us\_array\_example when we say we want five elements, zero to four. 
+
+Finally our last example which admittedly does not get used very often. This example was used for completeness but the need for defining types like this does not happen regularly. Here we constrain in the type declaration the number of elements you want. But when we use the type we need to constraint the number of bits in the \emph{signed} value. 
+
+A quick note on the concept of endianness. Endianness is used in memory orgainization where a processor for example expects the next number of bits. There are two types \emph{little endian} and \emph{big endian}. In both cases there is a concept of atomic number of bits. In this case when we constrain our examples to eight bits in each bus, signed, or unsigned type. If eight bits is our atomic number of bits, we can not write into these signal less than eight bits at a time, then if we want to store $32$ bits where we place the \ac{MSB} and \ac{LSB} defines the endiannes. If \ac{MSB} is placed at an address and the address is incremented for the four subsequent parts of our $32$ bit value then we are using the \emph{big endian} format. However, if we write the \ac{LSB}s first and increment the address then we have \emph{little endian}. Keep this in mind when you index into the arrays. If some signals are \emph{0 to N} but others are \emph{N downto 0} there many be some data swapping. Or if you are interfacing to an external chip that requires your memory orgainized in a particular way you may think the data is correct but its just at the wrong address.  
+	
 
 \subsection{State Machines}
-	<TODO Subsection State Machines : NOT DONE>
+	<TODO Subsection State Machines : PROOF READ>
+
+The state machine construct can be very useful in hardware design. In a state machine control logic dictates what happens next. Since an \ac{FPGA} can do so much in parallel a state machine can help ensure tasks are happening when they need to. The process in which a state machine serializes logic can be detrimental to the data rate of a system, so care needs to be taken to ensure the state machine is used where it needs to be. 
+
+A good time in which to use a state machine is when there are a lot of input to a system. The inputs here mean the inputs to making decisions. These would be the inputs to the state machine. They do not have to be inputs to the \ac{FPGA} as a whole. Most likely the inputs will be a mixture of internal calculation results and external \ac{IO} pins driving the state machine. 
+
+A good example of a state machine is in the \ac{UART} communication protocol. A state machine is used to take action when the receive line goes low, wait for a bit duration, take a bit reading, and end the transmission. In this example the states are sequential. We can not wait for a bit duration before getting the start of the transmission signal we would not know when to start counting. Clearly the states are descrete and sequential for a state machine to be applied. 
+
+Now we will explore an example where we should not use a state machine. Consider an image processing system where images are come into the \ac{FPGA} serially. This interface can take many forms but in any case it take a certain duration to have a full image in the \ac{FPGA}. The system then looks for something in the image, maybe an edge detection algorithm is ran on the image. Next once the edge detection in complete an algorithm checks a database and determines if some of the edges are \emph{worth noting}, this criteria is not relavant here since the specific application is not defined. The point here is we are detecting edges for a reason, and once an interesting one is found we save it into a data base. 
+
+At first glance this system looks very sequential. The steps are clearly marked, acquire image, edge detect, check database, store if needed. But there is a fundamental difference in this system than there is in the \ac{UART} case. In the \ac{UART} you can not start a transmission while you are in the middle of one, if you are acquiring a bit from the receive wire and waiting a bit duration there is no way the start of another transmission can occur. In the image procecssing application we can start the acquistion of the next image and start running the edge detection algorithm on it while storing the first image in the database. In short the state machine reduces or maybe eliminates the ablility to pipline the algorithm. The number one advantage of an \ac{FPGA} is piplining.
+
+Now that we understand when to use state machines we can focus on the syntax of the state machine. In the example state machine commands are passed as inputs to the state machine and the state machine change the outputs accordingly. To define a state machine we use an enumeration type in \ac{VHDL}. The code here show an example of this. 
+
+\begin{VHDLlisting}[tabsize=8]
+type sm_command_handler is (s_idle, s_reset, s_parse_command, s_set_outputs, s_clear_outputs);
+signal s_currstate : sm_command_handler := s_idle;
+\end{VHDLlisting}
+
+The code first defines the names of all the states in the state machine. In hardware each of these states are mapped to a bit value depending on the number of states. In this case there are five states. The signal \emph{s\_currstate} is then $log_2\{{Number of States}\}$ bits. Here \emph{s\_currstate} is $log_2\{5\}=3$ bits wide. As we get a more and more complicated state machine the number of states grows, which in turn grows the number of bits in \emph{s\_currstate}. The problem with this is that in each clock cycle the \ac{FPGA} logic must compare \emph{s\_currstate} with each of the states in the state machine to drive the logic in the current state. This comparing takes time and may result in timing failure. In general state machine should be as small as possible.
+
+\begin{VHDLlisting}[tabsize=8]
+entity command_handler is
+port(i_clk       : in    std_logic;
+	 i_rst       : in    std_logic;
+	 i_cmd_dv    : in    std_logic;
+	 i_cmd       : in    std_logic_vector(3 downto 0);
+	 i_addr1     : in    std_logic_vector(7 downto 0);
+	 i_addr2     : in    std_logic_vector(7 downto 0);
+	 o_result    :   out std_logic_vector(31 downto 0);
+	 o_result_dv :   out std_logic;
+	 o_busy      :   out std_logic
+);
+end entity command_handler;
+\end{VHDLlisting}
+
+
+\begin{VHDLlisting}[tabsize=8]
+process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		case s_currstate is
+			when s_idle => 
+				if i_cmd_dv = '1' then
+					f_cmd    <= i_cmd;
+					f_addr1  <= i_addr1;
+					f_addr2  <= i_addr2;
+					f_data1  <= 
+					s_currstate <= s_parse_command;
+				end if;
+			when s_reset => 
+				if i_rst = '1' then
+					f_cmd <= (others => '0');
+					f_addr1 <= (others => '0');
+					f_addr2 <= (others => '0');
+					f_result <= (others => '0');
+					f_result_dv <= '0';
+					s_currstate <= s_idle;
+				end if;
+			when s_parse_command => 
+			when s_set_outputs => 
+			when s_clear_outputs => 
+		end case;
+	end if;
+end process;
+\end{VHDLlisting}
+ 
+
+\subsection{Subprograms}
+	<TODO Subsection Subprograms : PROOF READ>
+
+There are two types of subprograms in \ac{VHDL}. The first is a function. The largest benefit of functions is that they provide a certain level of code reuseability and readability. Our first example is a demonstration of this where we can calculate the $log_2$ of a natural number. This function is very useful when selecting the sizes of buses and numerical values. Often times you know the maximum number you'd like to respresent but then you need to find a calculator to determine the number of bits you need. This function saves you from that. 
+
+The \emph{log2} function also provides readability. When reading \ac{VHDL} it is helpful to understand why bit widths are what they are. By specifing right in the code what we are taking the \emph{log} of we can deduce the need for the width. 
+
+Moving on to how functions are defined; which can be defined in a package or before the \emph{begin} keyword in the architecture declaration. The choice for where we should define them is entirely up to the programming but usually in a package is convenient you only need to write them once, they are defined for the entity declaration, and you can write overloaded functions for each input type. There are also a little more room for comments if needed without detracting from the original purpose of the \ac{VHDL} entity you are writing. 
+	
+\begin{VHDLlisting}[tabsize=8]
+function log2(
+	constant n : in natural
+) return natural is
+	variable r : natural := 0;
+begin
+	while ((2**r) < n) loop
+		r := r + 1;
+	end loop;
+	return r;
+end function log2;
+\end{VHDLlisting}
+
+The \emph{log2} function provided calculates the fixed point $log_2$. For this function, if used in an entity or signal declaration the function is evaluated at compile time. This means that the result will be the only thing that is synthesized. If we wanted to change the result of the log2 function we would need to rebuild our \ac{FPGA}. 
+
+The second type of subprogram in \ac{VHDL} is a \emph{procedure}. A popular use for \emph{procedure} is in testbenches. To generate testbenches that have fully coverage of valid inputs we can generalize testbenching inputs into a \emph{procedure} then pass randomly generated inputs into the \emph{procedure} to automate testing. 
+
+\begin{VHDLlisting}[tabsize=8]
+procedure write32(addr : in std_logic_vector(7 downto 0);
+				  data : in std_logic_vector(31 downto 0) ) is
+begin
+	w_bram_addr <= addr;
+	w_bram_data <= data;
+	w_bram_wren <= '1';
+end procedure;
+\end{VHDLlisting}
+
+Our \emph{procedure} example is going to show how to write to a \ac{BRAM} address. After we write this \emph{procedure} we can can call it to write a value to the \ac{BRAM} without the few lines of code to toggle all the lines. More elaborate testbenches and simulations will have \emph{procedure}s that call \emph{procedure}s adding more complexity while saving time since the code only needs to be written once. 
+
 
 \subsection{Generics}
-	<TODO Subsection Generics : NOT DONE>
+	<TODO Subsection Generics : PROOF READ>
 
+Generics help make code reconfigurable at instantation time. This means that you can write a \ac{VHDL} entity that can be instantiated in a higher level \ac{VHDL} entity and it could be configured differently for each instantiation. An example will illustrate this usage. 
+
+\begin{VHDLlisting}[tabsize=8]
+-- generic_multiplier.vhd
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity generic_multiplier is
+generic(g_bitwidth : integer)
+port(i_clk     : in    std_logic;
+	 i_rst     : in    std_logic;
+	 i_data_dv : in    std_logic;
+	 i_data_a  : in    signed(g_bitwidth-1 downto 0);
+	 i_data_b  : in    signed(g_bitwidth-1 downto 0);
+	 o_data_dv :   out std_logic; 
+	 o_mul_res :   out signed(2*g_bitwidth-1 downto 0)
+);
+end entity generic_multiplier;
+
+architecture rtl of generic_multiplier is
+	signal f_a, f_b  : signed(g_bitwidth-1 downto 0);
+	signal f_res_out : signed(2*g_bitwidth-1 downto 0);
+	signal f_idv     : std_logic;
+	signal f_odv     : std_logic;
+begin
+
+	o_data_dv <= f_odv;
+	o_mul_res <= f_res_out;
+
+	p_calc_mult : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_idv  <= '0';
+				ff_idv <= '0';
+				f_odv  <= '0';
+			else
+				-- Register Inputs
+				f_idv <= i_data_dv;
+				f_a <= i_data_a;
+				f_b <= i_data_b;
+							
+				-- Assign Output Registers
+				f_odv <= f_idv;
+				f_res_out <= f_a*f_b;		
+			end if;
+		end if;	
+	end process;
+
+end rtl;
+	 
+\end{VHDLlisting}
+	
+We see in the example that we made the bit width of the input data be generic. With this implementation we don't have to write a synchronous multiplier block for each bit width we are considering to use. Instead we can configure this block with different bit widths, like this;
+
+\begin{VHDLlisting}[tabsize=8]
+architecture rtl of multiple_multiplies is
+	constant k_bw_1    : integer := 8;
+	signal w_d1_dv,    : std_logic;
+	signal w_d1_a,     : signed(k_bw_1);
+	signal w_d1_b,     : signed(k_bw_1);
+	signal w_d1_odv,   : std_logic;
+	signal w_d1_r      : signed(2*k_bw_1);
+
+	constant k_bw_2    : integer := 37;
+	signal w_d2_dv,    : std_logic;
+	signal w_d2_a,     : signed(k_bw_2);
+	signal w_d2_b,     : signed(k_bw_2);
+	signal w_d2_odv,   : std_logic;
+	signal w_d2_r      : signed(2*k_bw_2);
+begin
+
+u_gm_1 : generic_multiplier
+generic map(g_bitwidth => k_bw_1);
+port map(i_clk      => i_clk,
+		 i_rst      => i_rst,
+		 i_data_dv  => w_d1_dv,
+		 i_data_a   => w_d1_a,
+		 i_data_b   => w_d1_b,
+		 o_data_dv  => w_d1_odv,
+		 o_mul_res  => w_d1_r
+);
+u_gm_2 : generic_multiplier
+generic map(g_bitwidth => k_bw_2);
+port map(i_clk      => i_clk,
+		 i_rst      => i_rst,
+		 i_data_dv  => w_d2_dv,
+		 i_data_a   => w_d2_a,
+		 i_data_b   => w_d2_b,
+		 o_data_dv  => w_d2_odv,
+		 o_mul_res  => w_d2_r
+);
+end rtl;
+\end{VHDLlisting}
+
+Here we have instantiated the same generic\_multiplier twice. For the one labeled u\_gm\_1 then \emph{signed} inputs are eight bits of resolution with the output being twice as big at $16$ bits. We reused the same code for u\_gm\_2 with $37$ bit inputs and $74$ bit outputs. Generics are a great way to reuse configurable code at compile time.
+	
 \subsection{File IO}
-	<TODO Subsection File IO : NOT DONE>
+	<TODO Subsection File IO : PROOF READ>
 
+Reading and writing signal values to a text file is a great way to analyze the accuracy of a \ac{VHDL} module. Reading data in from a test file provides the ability to control the inputs and have the ability to reproduce calculations of all internal logic which can be monitored for correctness. Intermediate and final results can be written out to a text file to ensure all the bugs are out of the \ac{VHDL}. 
+
+First we can look at reading a text file and provide the data as a stimulus to the \ac{VHDL} components being tested. 
+
+\begin{VHDLlisting}[tabsize=8]
+-- textfileread.vhd
+
+library	ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+	use std.textio.all;
+	
+entity textfileread is 
+	generic(g_filename : string;
+		    g_bitwidth : integer
+	);
+	port(i_clk    : in    std_logic;
+	     i_en     : in    std_logic;
+	     o_data   :   out std_logic_vector(g_bitwidth-1 downto 0);
+		 o_dv     :   out std_logic	
+	);
+end entity textfileread;
+
+architecture tb of textfileread is
+	signal f_data_out : std_logic_vector(g_bitwidth-1 downto 0) := (others => '0');
+	signal f_dv       : std_logic := '0';
+	signal f_integer  : integer;
+	
+begin
+	o_data <= f_data_out;
+	o_dv <= f_dv;
+
+	p_readfile : process
+		file fid       : text open read_mode is g_filename;		
+		variable rline : line;
+		variable data  : integer;
+		
+	begin
+		wait until rising_edge(i_clk);
+		if i_en = '1' then
+			readline(fid, rline);
+			read(rline, data);
+			f_integer <= data;
+			f_data_out <= std_logic_vector(to_signed(data,g_bitwidth));
+			f_dv <= '1';			
+		else
+			f_dv <= '0';
+			f_data_out <= (others => '0');
+		end if;
+		
+		if endfile(fid) then
+			f_dv <= '0';
+			f_data_out <= (others => '0');
+			wait;
+		end if;		
+	end process;
+end tb;
+\end{VHDLlisting}
+
+In the example code we first have two generics to understand. The file name for which this component will read is specificed by g\_filename. When specificing the filename you can use relative paths to nagivate to other directories. Usually a high level language such as MATLAB, Python, or Julia will generate the test vector and you may want to organize your directory structure where navigation away from the current working directory is needed. 
+
+The second generic is the bitwidth of the output signal. The output signal is of type std\_logic\_vector constrainted by the generic g\_bitwidth. We will soon see that the file stores integers which are then converted into std\_logic\_vector. For this reason if we generate a file that has larger numbers than what can be represented by the bitwidth specified when instantiated the simulator will error.
+
+Moving on from the generics we have the input and output signals to the component. The first input is a clock. On this clock's rising edge we will read data from the file if the component is enabled. The second input is the enable line where no data is output when i\_en is low. Once asserted data is read from the file and output on the next port, o\_data. The data valid flag is also asserted when valid data is coming out of the core. 
+
+It is also possible to start reading the file and then disable the core. If this is the case the core can be reenabled and the reading of data will start from the spot left off. Most importantly is to use the text file reading to accurately simulate the interface between the \ac{FPGA} code you are testing and the peripheral that the textfile reading is simulating.
+
+For example if you have interfaced an \ac{FPGA} to a camera. A camera sends data into the \ac{FPGA} in a certain order with a certain format. This textfileread entity can be instantiated into a module called camera\_model to simulate accurately how to interface to the camera. Solving interfacing issue with a simulation will avoid hours of headache when moving to the real hardware. 
+
+Once we have data being launched into the \ac{VHDL} we need to check data integrity at the output of the \ac{DUT}. To do this in an automated fashion we can write the data to a text file. It may also be useful, depending on the complexity of the \ac{DUT} to write out intermediate steps of the processig algorithm to a text file. This way you can analyze data integrity at each stage of the processing. Sometimes small error in early procesing blocks can manifest as very large error in later blocks. To solve these errors you will want to test each block separately then the system wired together needs to be tested as well. 
+
+Finally we can look at some example \ac{VHDL} that writes data to a text file. 
+
+\begin{VHDLlisting}[tabsize=8]
+-- textfilewrite.vhd
+
+library	ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+	use std.textio.all;
+	
+entity textfilewrite is 
+	generic(g_filename : string;
+	        g_bitwidth : integer);
+	port(i_clk      : in    std_logic;
+		 i_dv       : in    std_logic;
+		 i_data     : in    std_logic_vector(g_bitwidth-1 downto 0)
+	);
+end entity textfilewrite;
+
+architecture tb of textfilewrite is
+	signal f_writing_out : std_logic := '1';
+begin
+	p_writefile : process
+		file fid  : text open write_mode is g_filename;
+		variable wline : line;
+	begin
+		
+		wait until rising_edge(i_clk);
+		-- Valid Data to write
+		if i_dv = '1' then
+			write(wline, to_integer(signed(i_data)));
+			writeline(fid, wline);
+		end if;
+	end process;
+end tb;
+\end{VHDLlisting}
+
+Once again we have the same two generics, the filename and bitwidth which are used the same way here. This time we have only inputs to the block where we write the i\_data signal to the text file as an integer at the rising edge of the input clock and if the data is valid indicated by the i\_dv flag. 
+	
 \section{VHDL Advanced}
-	<TODO Section VHDL Advanced : NOT DONE>
+	<TODO Section VHDL Advanced : PROOF READ>
+
+This section covers an array of topics that are generally considered to be more advanced in \ac{FPGA} design. There are concepts here that apply only when \ac{VHDL} is running on hardware. Or more importantly concepts that if violated may not manifest as an error in a simulation but once on hardware the data integrity is lost. This then pushes the debugging of the code to hardware which is always harder than simulation. 
+
+Concepts covered here are the use of asynchronous resets. In general synchronous resets are preferred but here we can talk about how to use asynchronous resets correctly. Next we will discuss heirarchy in \ac{VHDL} the use of heirarchy can aid in making complex designs managable. Next is piplining and data rates. If you are using an \ac{FPGA} you want to process a lot of data. The use of piplining is the most important aspect and concept in an \ac{FPGA} and is the best way to increase your the data rate your implemention is able to handle. 
+
+Finally we discuss clock domain crossings. Multiple clocks exist in a design usually because a peripheral requires the use of another clock. If you only have one peripheral that requires a clock, or provides the clock with the data, referred to as \emph{source synchronous} data. Then you may use that clock to do all the processing. If thats the case then maybe you only need one clock. In general it is recommended to minimize the number of clocks used in a design. Every time a clock domain is crossed there is a chance for data corruption if not done correctly. These types of issues are the worst to debug in an \ac{FPGA}. 
 	
 \subsection{Asynchronous Resets}
-	<TODO Subsection Asynchronous Resets : NOT DONE>
+	<TODO Subsection Asynchronous Resets : PROOF READ>
+	
+This section is on asynchronous resets, but first we will discuss synchronous resets so that we can compare what changes when we move to an asynchronous reset. First the goal of a reset is to clear data from vital registers in an effort to set the state of the core to an initial state. In this initial state there won't be any data from previous calculations to corrupt the upcoming calculations. 
+
+When a reset flag is enabled we clear registers. As we found out in the section \section{sec:regs} when registers are set we use a clock to write a value. We also saw that setup and hold times apply to writing data into a register. These rules apply when clearing registers as well. When we synchronously reset a register the vendor tools have all the relavant information to run timing-analysis for us to ensure setup and hold times are met for this clearing. 
+
+We can see an example of a synchronous reset here:
+
+\begin{VHDLlisting}[tabsize=8]
+p_sreset : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		if i_rst = '1' then
+			f_idv <= '0';
+		else
+			f_idv <= i_dv;
+			f_data <= i_data;		
+		end if;	
+	end if;
+end process;
+\end{VHDLlisting}
+
+There are two things to note in this example. First the i\_rst signal inside the rising\_edge clause. That is what makes this a synchronous reset. The second thing to note is that only the data valid flag needs to be reset since the data in f\_data is only used if f\_idv is high. The usage of f\_data isn't presented here but f\_idv is the flag that denotes that f\_data is valid. 
+
+When this code is analyzed by the timing analysis tools the f\_idv register knows the clock frequency of i\_clk and can properly ensure the timing of the clearing operation. 
+
+Now, moving on to asynchronous resets. In asynchronous resets the reset logic is outside the rising\_edge. We see example code here
+
+\begin{VHDLlisting}[tabsize=8]
+p_areset : process(i_clk, i_arst)
+begin
+	if i_arst = '1' then
+		f_idv <= '0';
+	elsif rising_edge(i_clk) then
+		f_idv <= i_dv;
+		f_data <= i_data;		
+	end if;
+end process;
+\end{VHDLlisting}
+
+First thing to note is that the reset line here i\_arst is in the sensitivity list. If the reset wasn't in the sensitivity list then a simulation that attempted to test the timing of the reset line wouldn't show any errors since the i\_arst line would only be evaluated when the clock had an event. If the reset were enabled at the falling edge of the clock then the simuation would catch it but this does not simulation the intended nature that the i\_arst line can be enable regardless of the clock. 
+
+The next thing to note is that the i\_arst signal is outside the rising\_edge clause. That means that the tools can't perform timing-analysis on f\_idv when being cleared, which is fine, the timing-analysis tools do not need to run on this if the asynchronous reset is held for \emph{a few} clock cycles. If the asynchronous resest is enabled only for a fraction of the clock then there is a good chance the reset won't take place. 
+
+We can now add a little more complexity to the design to show what can go wrong with asynchronous resets, consider:
+
+\begin{VHDLlisting}[tabsize=8]
+p_areset : process(i_clk, i_arst)
+begin
+	if i_arst = '1' then
+		s_currstate <= s_reset;
+	elsif rising_edge(i_clk) then
+		case s_currstate is
+			when s_reset => 
+			.
+			.
+			.
+		end case;
+	end if;
+end process;
+\end{VHDLlisting}
+
+For this expanded example we added a state machine to the process. When the asynchronous reset is enable and held long enough but then asynchronously released unpredictable actions can occur. To understand this we need to understand what is happening on the \ac{FPGA}. On the \ac{FPGA} the signal s\_currstate is $log_2\{Number of States\}$ bits wide. Those bits must be routed on the \ac{FPGA} to control the logic on the \ac{FPGA}, essentially these $log_2\{Number of States\}$ bits enable logic to evaluate. Well depending on the number of states and how full the \ac{FPGA} is the routing can delay some of the bits enough to miss the setup and hold times. So some bits of your state machine are registered successfully in this clock cycle but other bits are not valid until next clock cycle. If this is the case you are in an invalid state and will probably never get corrected. 
+
+The solution for this is simple. Whether or not your reset is synchronous, release the reset synchronously. So where this comes up mostly is when an off chip source controlls a reset line for \ac{FPGA} logic. Since the signal is coming from off the chip and there is no clock associated with the reset we have to treat it asynchronously. So lets imagine we have a top level entity where the inputs are coming in from off-chip. 
+
+\begin{VHDLlisting}[tabsize=8]
+p_async2sync_rst : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		f_arst <= i_arst;
+		ff_rst <= f_arst;
+	end if;
+end process;
+\end{VHDLlisting}
+		
+Once we have double-registered the asynchronous the result is synchronous and can be used as the reset for any block instantiated. So now if we look back at our asynchronous reset processes if we use ff\_rst instead of the i\_arst then we are safe since ff\_rst will be released synchronously, but this would be bad programming style. Leaving the block asynchronous but depending on the block that instantiates it to provide a synchronous reset is at least asking the user to make sure that is resets are functioning. Or worst case unpredictable behavior will occur. 
+		
 		
 \subsection{Hierarchy} 
 	<TODO Subsection Hierarchy : NOT DONE>
 
+Even simple goals for an \ac{FPGA} design can get complex quickly. Also, readability of a design is imporant when coming back to your own code even after just a couple of months or weeks. Breaking down the problem into small enough pieces where you can understand what a particular component does is vital. Breaking down the problem helps in so many ways. First and formost you can hold off the feeling of being overwhelmed by the entire task. Just focus on one peice at a time. 
+
+You can also testbench and throughly test a small component. Make it rock solid then move on to another small component. You will feel accomplished by finishing the first block but also when you eventually connect up that block to other thoroughly test components the only debugging you need to do is the interfacing between to blocks. And with a little practice you will be writing blocks with tested and common interfaces, there are a few out there that can easy integration such as \ac{AXI} and \ac{AXI} with no back pressure. 
+	
 \subsection{Pipelining}
 	<TODO Subsection Pipelining : NOT DONE>
 
@@ -417,6 +1388,116 @@ one cold
 
 \subsection{Clock Domain Crossing}
 	<TODO Subsection Clock Domain Crossing : NOT DONE>
+	
+Clock domain crossings are difficult. They are difficult because first the issues are rather abstract and behavioral simulations will not find issues in clock crossings. Next they are difficult because you have to break way from the vendor tools running timing analysis for you. When you cross a clock domain boundary you have to tell the tools to ignore the logic that crosses or bridges the clock domain. So we now have a situation where whether or not the code is correct the tools tell you the build fails timing. 
+
+To correct the build from failing timing with need to write timing constraints. When we write this timing constraint we are telling the tools that we don't care if a certain path fails timing because we know that we crossed to the new clock domain safely. Because of this, it is recommended that we only use certain structures for clock domain crossings. 
+	
+The first structure is the simplest. In this case we want to cross one bit from clock domain \emph{A} to clock domain \emph{B}. The goal here would be to say use an enable line in one clock domain on another clock domain. So here we can see an example of what not to do. 
+
+\begin{VHDLlisting}[tabsize=8]
+p_clkA : process(i_clk_a)
+begin
+	if rising_edge(i_clk_a) then
+		if f_start_flag_strobe = '0' and w_start_flag_strobe = '1' then
+			f_clka_en <= '1';
+		end if;
+		if f_end_flag_strobe = '0' and w_end_flag_strobe = '1' then
+			f_clka_en <= '0';
+		end if;
+	end if;
+end process;
+
+p_clkB : process(i_clk_b)
+begin
+	if rising_edge(i_clk_b) then
+		-- UNSAFE CLOCK CROSSING
+		if f_clka_en = '1' then
+			<Clock B User Logic>
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}	
+	
+Here we see that we use a signal in clock domain \emph{B} when it was directly assigned in clock domain \emph{A}. The signals f\_start\_flag\_strobe and f\_end\_flag\_strobe are example only example signals. In the code we detect the rising\_edge of both signals. If the \emph{start} signal is asserted then we enable the logic on clock domain \emph{B}, but once the \emph{end} signal is asserted we disable the logic in clock domain \emph{B}. We also assume nothing about the clock relationship. There isn't a known phase offset or difference in frequency. 
+
+If the time between the \emph{start} signal's rising edge and the \emph{end} signal's rising edge is large enough then the \emph{Clock B User Logic} will execute. If the time is large enough depends on the clock frequencies but in general this is bad practice. We can fix the above code by double registering f\_clka\_en. 
+
+\begin{VHDLlisting}[tabsize=8]
+p_clkA : process(i_clk_a)
+begin
+	if rising_edge(i_clk_a) then
+		if f_start_flag_strobe = '0' and w_start_flag_strobe = '1' then
+			f_clka_en <= '1';
+		end if;
+		if f_end_flag_strobe = '0' and w_end_flag_strobe = '1' then
+			f_clka_en <= '0';
+		end if;
+	end if;
+end process;
+
+p_clkB : process(i_clk_b)
+begin
+	if rising_edge(i_clk_b) then
+		ff_clka_en <= f_clka_en;
+		fff_clka_en <= ff_clka_en;
+		if fff_clka_en = '1' then
+			<Clock B User Logic>
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}	
+
+In this case there is a false path between ff\_clka\_en and f\_clka\_en. Once the timing constraint is included in the design then the timing report should be clear of timing errors. The reason why we need the false path constraint is becase we don't know when (in relation to f\_clka\_en) ff\_clka\_en gets the true value of f\_clka\_en. There could be a clock cycle or two where ff\_clka\_en is \emph{metastable} meaning that value could be a one or a zero. 
+
+Now if we can to cross an entire bus to another clock domain we cannot just double register all the bits in the bus. This is because of the \emph{metastablity} previously described. If one bit crosses fast than another we have no way of knowing which is correct. For this we will need a dual-clock \ac{FIFO}. 
+
+A dual-clock \ac{FIFO} is the simplest way to cross a bus to another clock domain. The quickest way to get a dual-clock \ac{FIFO} is the generate some vendor \ac{IP} and configure it as a dual-clock \ac{FIFO}. 
+
+Here is a simple example of using a dual-clock \ac{FIFO}.
+
+\begin{VHDLlisting}[tabsize=8]
+p_write_to_fifo : process(i_clk_a)
+begin
+	if rising_edge(i_clk_a) then
+		if w_full = '0' then
+			f_idv <= '1';
+			f_idata <= i_data;
+		else
+			f_idv <= '0';
+		end if;
+	end if;	
+end process;
+
+p_read_from_fifo : process(i_clk_b)
+begin	
+	if rising_edge(i_clk_b) then
+		if w_empty = '0' then
+			f_rden <= '1';
+		end if;
+	end if;
+end process;
+
+u_dual_clk_fifo : enity work.dual_clk_fifo
+port map(i_clka  => i_clka, 
+		 i_wren  => f_idv,
+		 i_data  => f_idata,
+		 o_full  => w_full
+		 
+		 o_clka  => i_clkb,
+		 i_rden  => f_rden,
+		 o_data  => w_odata,
+		 o_dv    => w_odv,
+		 o_empty => w_empty
+);
+\end{VHDLlisting}
+
+The architecture of this component instantiates a dual-clock fifo, but it also has two prcoesses that are sensitive to the two clocks that are inputs. Data comes in on clock \emph{A}, written into the \ac{FIFO} if the \ac{FIFO} is not full. Then when the \ac{FIDO} become not empty, which is usually a couple of clock cycles after data is written into the \ac{FIFO}, the data is read back out on the \emph{B} clock. The output wires from the \ac{FIFO} could either be outputs of the block for be connected to logic that is ran on the \emph{B} clock domain. 
+
+One question you may have is that if you read the data out on the clock cycle that the \ac{FIFO} is not empty, how could the \ac{FIFO} ever overflow. Meaning why do you need to check the w\_full flag. Some \ac{FIFO}s have been implemented in a way that if you write when they are full, or read when they are empty the \ac{FIFO} will corrupt data inside and be put into a weird that that the \ac{FIFO} must be reset to use it again. So always check the status flags. They are provided for a reason.
+
+Also, we don't know if this \ac{FIFO} as written will overflow. If the average data rate going into the \ac{FIFO} is higher than the output data rate then the provider of data must throttle data appropriately to avoid data being dropped. 
+
 	
 \section{TCL Scripting}
 	<TODO Section TCL Scripting : NOT DONE>
@@ -432,3 +1513,8 @@ one cold
 \subsection{Automate Build Tools}
 	<TODO Subsection Automate Build Tools : NOT DONE>
 	<TODO Subsection Automate Build Tools : INSERT CODE tcl build tools>
+
+	
+	
+		
+	
