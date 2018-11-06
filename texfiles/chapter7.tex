@@ -487,17 +487,349 @@ The \ac{UART} transmitter operates in a similar fashion. The transmitter's job i
 
 The rest of the lines generally work as follows but some chips use a slight variation to the descriptions below. General SPI code can be altered to meet specific chip standards. The datasheet for the chip you are trying to interface to should be consulted to ensure proper operation. 
 
-The chip-select (CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the CS lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{FPGA}. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our CS line were active low it could be called CSn. 
+The \ac(CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the CS lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{FPGA}. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our CS line were active low it could be called CSn. 
 
 The last lines of the SPI bus to discuss are the data lines. These lines are named \ac{MOSI} and \ac{MISO}. The names of course tell you the direction and who drives the pins. Sometimes if \ac{IO} pins are limited there is a shared data line. This is possible because it is understood that the master controls communication if the master is reading data from the slave then the master releases control of the data line in time for the slave to control the line. Care must be taken to ensure that there isn't contention on the line. If both slave and master drive the pin communication will fail. 	
 
+Next we can look at an implementation of a \ac{SPI}-Master. Shown here
 
+\begin{VHDLlisting}[tabsize=4]
+-- spi_master.vhd
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
 	
+entity spi_master is
+	generic(g_sclkrate  : integer;
+			g_word_size : integer)
+	port(i_clk      : in    std_logic;
+		 i_rst      : in    std_logic;
+		 
+		 o_spi_clk  :   out std_logic;
+		 o_spi_mosi :   out std_logic;
+		 i_spi_miso : in    std_logic;
+		 o_spi_ncs  :   out std_logic;
+		
+		 i_rd_nwr   : in    std_logic;
+		 i_wrdataen : in    std_logic;
+		 i_wr_data  : in    std_logic_vector(g_word_size-1 downto 0);
+		
+		 o_rd_data  :   out std_logic_vector(g_word_size-1 downto 0);
+		 o_rd_dv    :   out std_logic;
+		 o_busy     :   out std_logic	
+	);
+end entity spi_master;
+
+architecture rtl of spi_master is
+	signal f_clk_counter : unsigned(31 downto 0);
+	signal f_o_sclk      : std_logic := '0';
+	signal f_o_mosi      : std_logic := '0';
+	signal f_o_ncs       : std_logic := '0';
+	
+	signal f_o_rd_dv     : std_logic := '0';
+	signal f_rd_data     : std_logic_vector(g_word_size-1 downto 0);
+	
+	type sm_spi is (s_idle, s_transfer, s_end);
+	signal s_spi         : sm_spi := s_idle;
+	
+	signal f_wr_data     : std_logic_vector(g_word_size-1 downto 0);
+	signal f_rx_data     : std_logic_vector(g_word_size-1 downto 0);
+	
+	signal f_data_c      : unsigned(7 downto 0);
+	signal f_data_rd_c   : unsigned(7 downto 0);
+	
+	
+begin
+
+	o_busy      <= f_busy;
+	o_spi_clk   <= f_o_sclk; 
+    o_spi_mosi  <= f_o_mosi;
+    o_spi_ncs   <= f_o_ncs; 
+	
+	o_rd_data <= f_o_rd_dv;
+	o_rd_dv   <= f_rd_data;
+
+	p_gen_sclk : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_clk_counter <= (others => '0');
+			else
+				f_clk_counter <= f_clk_counter + 1;
+				if f_clk_counter = g_sclkrate then
+					f_o_sclk <= '0';
+					f_clk_counter <= (others => '0');
+				elsif f_clk_counter = g_sclkrate/2 then
+					f_o_sclk <= '1';
+				end if;
+			end if;		
+		end if;
+	end process;
+
+	p_launch_data : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				s_spi <= s_idle;
+				f_busy <= '0';
+				f_o_ncs <= '1';
+			else
+				ff_o_sclk <= f_o_sclk;
+				case s_spi is
+					when idle =>
+						f_busy <= '0';
+						f_o_ncs <= '1';
+						f_o_rd_dv <= '1';
+						if i_wrdataen = '1' then
+							s_spi <= s_transfer;
+							f_wr_data <= i_wr_data;
+							f_busy <= '1';
+							f_rd_nwr <= i_rd_nwr;
+							f_data_c <= to_unsigned(f_wr_data'high,f_data_c'length);
+							f_data_rd_c <= (others => '0');
+						end if;
+					when s_transfer => 
+						-- Falling Edge of SCLK
+						if ff_o_sclk = '1' and f_o_sclk = '0' then
+							f_o_ncs <= '0';
+							f_o_mosi <= f_wr_data(to_integer(f_data_c));
+							f_data_c <= f_data_c - 1;
+							if f_data_c = 0 then
+								f_data_c <= to_unsigned(f_wr_data'high,f_data_c'length);
+								s_spi <= s_end;
+							end if;
+						end if;					
+
+						-- Rising Edge of SCLK
+						if ff_o_sclk = '0' and f_o_sclk = '1' then
+							f_rx_data(to_integer(f_data_rd_c)) <= i_spi_miso;
+							f_data_rd_c <= f_data_rd_c + 1;
+						end if;
+					when s_end => 
+						s_spi <= s_idle;
+						if f_rd_nwr = '1' then
+							-- Reading data from slave
+							f_o_rd_dv <= '1';
+							f_rd_data <= f_rx_data;
+						end if;				
+				end case;
+			end if;
+		end if;	
+	end process;
+
+
+end rtl;
+\end{VHDLlisting}
+
+This \ac{VHDL} uses a state machine to control when the data is sent and received. We see in the first process the \ac{SPI} clock is generated and sent out the \emph{SCLK} port. There may be certain circumstances where you don't want to clock always running. You can gate the output of the clock with the busy signal to ensure they clock is running only when it is needed. 
+
+Looking closer at the \ac{VHDL} first we see we use two generics. The first generic is \emph{g\_sclkrate}, which is used to determine the \ac{SPI} clock speed. The \ac{SPI} clock speed is the clock speed of i\_clk divided by \emph{g\_sclkrate}. So if we have a $100$\ac{MHz} clock input and \emph{g\_sclkrate} is $4$ then \emph{o\_spi\_clk} will have a frequency of $25$\ac{MHz}. The generic helps us use the same spi\_master code for different chips that have different interfacing speeds. 
+
+Next we have a the generic \emph{g\_word\_size}. The generic determines the number of bits being transferred in one transaction. The ports of our entity first list our clock and reset signals. Then we have the four \ac{IO} pins for the \ac{SPI} protocol. Then we have a flag that says whether we are writing data to the slave or reading data from the slave. Next we have the write data and write data valid. Followed by the read data and read data valid. And lastly we have a busy signal that lets the instantiating core know that we are currently busy spending out data. This is important because in one clock cycle the \ac{SPI}-Master is given \emph{g\_word\_size} data bits, but many clock cycles later, depending on the \ac{SPI} clock speed, the transfer is complete. 
+
+Next we look in the architecture of the \ac{SPI}-Master and in the first process of the architecture we generate the \ac{SPI} clock, denoted \emph{f\_o\_sclk}. We use a counter that counts up to \emph{g\_sclkrate}. As the counter gets to half of \emph{g\_sclkrate} we deassert the clock then when we reach \emph{g\_sclkrate} we assert the clock. 
+
+The next process launches data on the \ac{SPI} bus. First we wait in the state \emph{s\_idle} until write data valid is asserted. Whether we are reading data from the slave or writing data to the slave we have to start the transaction by have the master enable the \ac{CS} line. The amount of data includes the amount of data that will be read back from the slave as well. Usually the \ac{SPI} master writes an address and the rest of the data is the data at the specified address.
+
+Once data is loaded into the \ac{SPI}-Master the state machine transitions to the \emph{s\_transfer} state. In this state we first look for the falling edge of the \ac{SPI} clock, at which, we assign data to the \ac{MOSI} line starting with the \ac{MSB}. We wait for falling edges over and over again until we have launched all the data. Then we transition to the \emph{s\_end} state. But also in the \emph{s\_transfer} state we look for the rising edge of the \ac{SPI} clock. Here we register what is coming in on the \ac{MISO} line. 
+
+Once we are in the \emph{s\_end} state we go back to \emph{s\_idle}, but before we do if we were performing a read operation then we set the outputs providing valid data at the output ports. 
+
+Now we should go back and discuss the reasoning for using the rising edge and falling edge of the \ac{SPI} clock. We launch the data on the falling edge of the \ac{SPI} clock because we want to have the maximum possible time for the data to be stable when the receiver of the data samples it at the rising edge. Just like when we wait for the rising edge of the clock to register the input we want the data to be stable. 
+
 \subsection{Inter-Integrated Circuit (I2C) Bus}
 	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : NOT DONE>
 
+The \ac{I2C} bus communication protocol is similar to the \ac{SPI} interface in that it is used for inter chip communication. The major advantage to \ac{I2C} is that is uses half the lines as \ac{SPI}. You may be thinking who cares about the number of \ac{IO} pins a chip takes but this can be an issue with interfacing to a few peripherals, especially when a few of them are high speed \ac{LVDS}. In this case saving a few \ac{IO} pins per chip is necessary to ensure \ac{IO} pins are available for a high speed \ac{ADC} or \ac{DDR} memory chip. 	
+	
+In the \ac{I2C} bus there are two wires, clock and data. And similar to \ac{SPI} each chip that you interface to will have a different clock speed and signal timing associated with the chip. For the \ac{I2C} example we show what happens when we know the chip has 32 bits per transaction. 	
+	
+In the \ac{I2C} protocol data is sent in eight bit chunks. So to interface to the 32 bit transaction size we break the transaction down into four - eight bit sections and ensure we have an acknowledge bit at the end of each eight bit section. 
+	
+We can look at some example code to see how this is done in \ac{VHDL}.	
+
+\begin{VHDLlisting}[tabsize=4]
+-- i2c_write.vhd
+
+library ieee;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
+
+
+entity i2c_write is
+    port(i_clk        : in    std_logic;
+         i_rst        : in    std_logic;
+         -- I2C Ports 
+         b_sda        : inout std_logic;
+         o_scl        :   out std_logic;
+         -- App 
+         i_data       : in    std_logic_vector(31 downto 0);
+         i_dv         : in    std_logic;
+         o_busy       :   out std_logic
+    );
+end entity i2c_write;
+
+architecture rtl of i2c_write is 
+    constant k_start_cond     : integer := 144;
+	
+    constant k_clks_per_scl_h : integer := 500;
+    constant k_clks_per_scl   : integer := k_clks_per_scl_h*2;
+	constant k_end_cond       : integer := 144 + k_clks_per_scl_h;
+	
+    -- Input Regs
+    signal f_data    : std_logic_vector(31 downto 0) := (others => '0');
+    	
+    -- Output Regs
+    signal f_busy    : std_logic := '0';
+    signal f_sda     : std_logic := '1';
+    signal f_scl     : std_logic := '1';
+
+	constant k_n_data_frames : integer := 3;
+    signal f_cc      : unsigned(11 downto 0) := (others => '0');
+    signal f_os      : unsigned(7 downto 0) := (others => '0');
+	signal f_ndframes: unsigned(3 downto 0) := (others => '0');
+    signal f_ack_bit : std_logic := '1';
+	signal f_done    : std_logic := '0';
+
+    type sm_states is (s_idle, s_init_frame, s_reset_start_cond, s_ack_bit, s_write_data_frame, s_end);
+    signal s_i2c  : sm_states := s_idle;
+begin
+
+    o_busy <= f_busy;
+
+    b_sda <= f_sda;
+    o_scl <= f_scl;
+
+    p_i2c : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                s_i2c <= s_idle;
+				f_sda <= '1';
+                f_scl <= '1';
+				f_done <= '0';
+            else
+                case s_i2c is
+                    when s_idle => 
+                        f_sda <= '1';a
+                        f_scl <= '1';
+						f_done <= '0';
+						f_ack_bit <= '1';
+						f_os <= to_unsigned(31,8);
+                        if i_dv = '1' then
+                            f_data <= i_data;
+                            s_i2c <= s_init_frame;
+                            f_sda <= '0'; -- Assumes point to point I2C
+                            f_busy <= '1';
+                        end if;
+                    when s_init_frame => 
+                        -- Start Condition deassert SDA
+                        f_cc <= f_cc + 1;
+                        if f_cc = k_start_cond then
+                            f_cc <= (others => '0');
+                            f_scl <= '0';
+                            f_sda <= f_data(to_integer(f_os));
+                            s_i2c <= s_write_data_frame;
+                        end if;
+					when s_reset_start_cond => 
+						f_cc <= f_cc + 1;
+						f_sda <= '1';
+                        if f_cc = k_end_cond then
+                            f_cc <= (others => '0');
+							s_i2c <= s_init_frame;
+                            f_sda <= '0';
+                        end if;
+                    when s_ack_bit => 
+                        f_cc <= f_cc + 1;
+                        if f_cc = k_clks_per_scl_h then
+                            f_scl <= '1';
+                            f_ack_bit <= b_sda;
+                        end if; 
+                        if f_cc = k_clks_per_scl then
+							f_scl <= '0';
+							f_cc <= (others => '0');
+                            if f_ack_bit = '0' then
+                                -- Success
+								if f_done = '0' then
+									s_i2c <= s_write_data_frame;
+									f_sda <= f_data(to_integer(f_os));
+								else
+									f_sda <= '0';
+									s_i2c <= s_end;
+								end if;
+                            else
+                                -- Fail -- Reset
+                                s_i2c <= s_idle;
+                            end if;
+                        end if;
+                    when s_write_data_frame => 
+                        f_cc <= f_cc + 1;
+						f_ack_bit <= '1';
+						
+                        if f_cc = k_clks_per_scl_h then
+                            f_scl <= '1';
+                            f_os <= f_os - 1;
+                        end if; 
+						
+                        if f_cc = k_clks_per_scl then
+							f_scl <= '0';
+                            f_cc <= (others => '0');
+							if f_os = 23 then
+								f_sda <= 'Z';
+								s_i2c <= s_ack_bit;
+								f_done <= '0';
+                            elsif f_os = 15 then
+								f_sda <= 'Z';
+								s_i2c <= s_ack_bit;
+								f_done <= '0';
+                            elsif f_os = 7 then
+								f_sda <= 'Z';
+								s_i2c <= s_ack_bit;
+								f_done <= '0';
+                            elsif f_done = '1' then
+								f_sda <= 'Z';
+                                s_i2c <= s_ack_bit;
+							else
+								f_sda <= f_data(to_integer(f_os));
+								if f_os = 0 then
+									f_done <= '1';
+								end if;
+                            end if;
+                        end if;
+					when s_end =>
+						f_cc <= f_cc + 1;
+						if f_cc = k_clks_per_scl_h then
+                            f_scl <= '1';
+                        end if; 
+						
+                        if f_cc = k_end_cond then
+                            f_cc <= (others => '0');
+							f_sda <= '1';
+							s_i2c <= s_idle;
+                        end if;
+                end case;
+            end if;
+        end if;
+    end process;
+end rtl;
+\end{VHDLlisting}
+
+For this implementation we know that we are going to send $32$ bits so we don't need a generic to specify the data width. As far as the other inputs of the block we have the system clock as well as the reset line. The two \ac{I2C} lines clock and data. And finally the data the send with a data valid flag and a busy signal. 
+
+For the \ac{I2C} implementation we again start off the state \emph{s\_idle}. Once $32$ bits are provided to the core with the data valid flag we move to the \emph{s\_init\_frame}. In this state we set the timing between the deassertion of SDA and the falling edge of the clock. This timing is specified in the data sheet for the chip that you will be interfacing to. 
+
+Next we start the data frame in \emph{s\_write\_data\_frame}. Where we set the current bit of \emph{f\_data} to the output on the falling edge. Then after each eight bit section we jump to \emph{s\_ack\_bit} which ensure data is being sent successfully to the \ac{I2C}-Slave.
+
+Finally after sending all $32$ bits the done flag is asserted and we end the transaction. 
+	
+	
 \subsection{Texas Instruments universal Parallel Port (uPP)}
 	<TODO Subsection Texas Instruments universal Parallel Port (uPP) : NOT DONE>
+	
+A \ac{TI}-\ac{DSP} is an embedded processor that specializes in operations specific to signal processing. What that means is that the \ac{MAC} structure is used often in \ac{FIR} filter design, calculating \ac{FFT}s, and even some matrix multiplication calculations. The \ac{DSP} is equipped with with the ability to perform parallel \ac{MAC} operations. Depending on the specific processor you can expect eight parallel \ac{MAC} operations. 
+
+The \ac{DSP} a very powerful processing platform with the added hardware to the ease of development in the C programming language. Because of these reasons is it popular to interface a \ac{DSP} to an \ac{FPGA}. With both chips on a \ac{PCB} you get the best of both worlds. 
 
 \section{Data Processing Projects}
 	<TODO Section Data Processing Projects : NOT DONE>

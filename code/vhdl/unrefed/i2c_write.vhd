@@ -57,6 +57,9 @@ begin
         if rising_edge(i_clk) then
             if i_rst = '1' then
                 s_i2c <= s_idle;
+				f_sda <= '1';
+                f_scl <= '1';
+				f_done <= '0';
             else
                 case s_i2c is
                     when s_idle => 
