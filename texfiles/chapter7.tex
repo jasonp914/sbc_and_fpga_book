@@ -831,6 +831,282 @@ A \ac{TI}-\ac{DSP} is an embedded processor that specializes in operations speci
 
 The \ac{DSP} a very powerful processing platform with the added hardware to the ease of development in the C programming language. Because of these reasons is it popular to interface a \ac{DSP} to an \ac{FPGA}. With both chips on a \ac{PCB} you get the best of both worlds. 
 
+To leverage having an \ac{FPGA} interface to a \ac{TI} - \ac{DSP} we need to communicate data between the two chips quickly. \ac{TI} has dedicated pins on their part specifically for this task. The \ac{TI} \ac{uPP} bus offers $16$ bit width data bus, with a start, clock, enable, and wait pins to control data flow. The \ac{TI} part also offers to send and receive data at \ac{DDR}. 
+
+First to look at how the \ac{uPP} bus works we will look at the transmitter from the \ac{FPGA} to the \ac{TI}-\ac{DSP}. The \ac{VHDL} that defines the transmitter include to generics. The first generic is the \ac{DMA} size. For the \ac{FPGA} the \ac{DMA} size is the transfer length. The second generic is the \ac{uPP} clock rate ratio, which defines the clock speed for the transfers. 
+
+Next we will define the \ac{IO} to the component. First the the clock and the reset line for the core. Next are the control lines for the \ac{uPP} bus, clock, start, enable, and wait. We also have the $16$ bit data bus. Finally we have the application signals that are used for the \ac{IO} between the other \ac{FPGA} logic and this core. 
+
+After the signal declarations we start the architecture block with defining the outputs. We set the outputs first so that if you are looking at the block later you know what is being calculated. After we assign the full flag for the \ac{FIFO} we set the four \ac{uPP} control lines. 
+
+We now move on to the process where we transmit data. We first reset some registers, then we define a state machine. The state machine defines two states, idle and transfer. While in idle we wait until the input \ac{FIFO} is not empty. If the input \ac{FIFO} isn't empty then we have data to transfer. Once we detect the empty flag is zero we read the data and move to the transfer state. 
+
+Once in the transfer state we first assign the data out of the \ac{FIFO} when the \ac{FIFO} data valid is high. Next when the f\_upp\_clk\_strobe is high we are at a rising edge of the upp\_clk. We generate this strobe in a process later. For now we just assume the strobe is high for a clock cycle when the upp\_clk has a rising edge. 
+
+If the clock strobe is high we then check the wait signal from the receiver. The wait signal is how the receiver stalls the transmitter. So if the wait signal is low we enable the \ac{uPP} transfer, read from the \ac{FIFO}, and increment the transfer count. Then if the transfer count is zero then we assert the \ac{uPP} start signal. If we are at the \ac{DMA} transfer size then we have completed the transfer then we go back to the idle state. 
+
+However, if \ac{uPP} wait is asserted or if the clock strobe isn't high then we disable reading from the \ac{FIFO}. The only time we disable the \ac{uPP} transfer is when \ac{uPP} wait is asserted since the transfer stalls. If the clock strobe is not high that means we do not want to read from the \ac{FIFO} but we are still within a clock cycle of the \ac{uPP} clock. 
+
+The next instantiation is the \ac{FIFO} itself with the port map. Which is then followed by a process that generates the \ac{uPP} clock, and the \ac{uPP} clock strobe. First we have a reset the clears the clock counter and holds the clock low. We leave it to the user logic to hold the transmitter in reset when not in use. 
+
+When the core is not held in reset we first register the clock so that we can detect the rising edge. Next we count clock cycles so that we can toggle the \ac{uPP} clock based on the clock ratio specified by the instantiation. Finally we use the registering of the \ac{uPP} clock to detect the rising edge of the \ac{uPP} clock and assert and de-assert the strobe used in the first process accordingly.
+
+\begin{VHDLlisting}[tabsize=2]
+-- upp_tx.vhd
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity upp_tx is
+	generic(g_dma_size      : integer := 4096;
+			g_upp_clk_ratio : integer := 200)
+	port(i_clk           : in    std_logic;
+		 -- Used async | release sync
+	     i_rst           : in    std_logic;
+		 
+		 -- uPP IO
+		 o_upp_clk       :   out std_logic; 
+		 o_upp_start     :   out std_logic;
+		 o_upp_enable    :   out std_logic;
+		 i_upp_wait      : in    std_logic;
+		 
+		 o_upp_data      :   out std_logic_vector(15 downto 0);
+		 
+		 -- App Interface
+		 i_tx_data       : in    std_logic_vector(15 downto 0);
+		 i_tx_data_dv    : in    std_logic	
+		 o_tx_fifo_full  :   out std_logic	
+	);
+end entity upp_tx;
+
+architecture rtl of upp_tx is
+	constant k_upp_clk_ratio_half : integer := g_upp_clk_ratio/2;
+	signal w_tx_fifo_full : std_logic;
+	
+	signal f_clk_count      : unsigned(log2(g_upp_clk_ratio)-1 downto 0);
+	signal f_tx_word_count  : unsigned(log2(g_dma_size)-1 downto 0);
+	signal f_upp_clk        : std_logic;
+	signal ff_upp_clk       : std_logic;
+	signal f_upp_clk_strobe : std_logic;
+	signal f_upp_start      : std_logic;
+	signal f_upp_enable     : std_logic;
+	signal f_upp_data       : std_logic_vector(15 downto 0);
+	                        
+	signal f_fifo_rden      : std_logic;
+	signal w_fifo_dout      : std_logic_vector(15 downto 0);
+	signal w_fifo_rddv      : std_logic;
+	signal w_fifo_empty     : std_logic;
+	
+	type sm_upptx is (s_idle, s_transfer, s_end);
+	signal s_curr_state : sm_upptx := s_idle;
+
+begin
+
+	o_tx_fifo_full <= w_tx_fifo_full;
+	o_upp_clk      <= f_upp_clk;
+	o_upp_start    <= f_upp_start ;
+	o_upp_enable   <= f_upp_enable;
+	o_upp_data     <= f_upp_data;
+	
+	p_tx_data : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				s_curr_state <= s_idle;
+				f_upp_start <= '0';
+				f_upp_enable <= '0';
+				f_tx_word_count <= (others => '0');
+			else
+				case s_curr_state is
+					when s_idle => 
+						f_upp_start <= '0';
+						f_upp_enable <= '0';
+						f_tx_word_count <= (others => '0');
+						
+						if w_fifo_empty = '0' then
+							s_curr_state <= s_transfer;
+							f_fifo_rden <= '1';
+						end if;					
+					when s_transfer => 
+						if w_fifo_rddv = '1' then
+							f_upp_data <= w_fifo_dout;
+						end if;
+						
+						if f_upp_clk_strobe = '1' then
+							-- Rising Edge of upp clk
+							if i_upp_wait = '0' then
+								f_upp_enable <= '1';
+								f_fifo_rden <= '1';
+								f_tx_word_count <= f_tx_word_count + 1;
+							
+								case f_tx_word_count is
+									when 0 => 
+										f_upp_start <= '1';
+									when g_dma_size => 
+										s_curr_state <= s_end;
+									when others =>
+										f_upp_start <= '0';
+								end case;			
+							else
+								-- Transfer is stalled
+								f_upp_enable <= '0';
+								f_fifo_rden <= '0';
+							end if;							
+						else
+							f_fifo_rden <= '0';
+						end if;
+					
+					when s_end => 
+				
+				end case;
+			end if;
+		end if;
+	end process;
+	
+	
+	u_tx_fifo : entity work.tx_fifo
+	port map(wrclk => i_clk, 
+			 wren  => i_tx_data_dv,
+			 din   => i_tx_data,
+			 full  => w_tx_fifo_full,
+	
+			 rdclk => f_upp_clk,
+			 rden  => f_fifo_rden,
+			 dout  => w_fifo_dout,
+			 rddv  => w_fifo_rddv,
+			 empty => w_fifo_empty	
+	);
+	
+	p_gen_upp_clk : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_clk_count <= (others => '0');
+				f_upp_clk <= '0';
+			else
+				ff_upp_clk <= f_upp_clk;
+			
+				f_clk_count <= f_clk_count + 1;
+				if f_clk_count = k_upp_clk_ratio_half then
+					-- Toggle UPP Clk
+					f_upp_clk <= not f_clk_count;
+					f_clk_count <= (others => '0');
+				end if;
+				
+				if ff_upp_clk = '0' and f_upp_clk = '1' then
+					-- Generate upp clock strobe
+					f_upp_clk_strobe <= '1';
+				else
+					f_upp_clk_strobe <= '0';
+				end if;
+				
+			end if;
+		end if;	
+	end process;
+\end{VHDLlisting}
+
+
+\begin{VHDLlisting}[tabsize=4]
+-- upp_rx.vhd
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity upp_rx is
+	generic(g_dma_size : integer := 4096)
+	port(i_clk           : in    std_logic;
+		 -- Used async | release sync
+	     i_arst          : in    std_logic;
+		 
+		 -- uPP IO
+		 i_upp_clk       : in    std_logic; 
+		 i_upp_start     : in    std_logic;
+		 i_upp_enable    : in    std_logic;
+		 o_upp_wait      :   out std_logic;
+		 
+		 i_upp_data      : in    std_logic_vector(15 downto 0);
+		 
+		 -- App interface
+		 o_upp_busy      :   out std_logic;
+		 o_rx_data_empty :   out std_logic;
+		 i_rx_data_rden  : in    std_logic;
+		 o_rx_data_dv    :   out std_logic;
+		 o_rx_data       :   out std_logic_vector(15 downto 0)	
+	);
+end entity upp_rx;
+
+
+architecture rtl of upp_rx is
+	
+	signal f_rx_data_dv   : std_logic;
+	signal f_rx_data      : std_logic_vector(15 downto 0);
+	signal w_rx_fifo_full : std_logic;
+	signal f_upp_busy     : std_logic;
+	
+	signal f_dma_count    : unsigned(log2(g_dma_size)-1 downto 0);
+	
+	
+	
+begin
+
+	o_upp_wait <= w_rx_fifo_full;
+	o_upp_busy <= f_upp_busy; 
+
+	u_rx_fifo : entity work.rx_fifo
+	port map(wrclk => i_upp_clk, 
+			 wren  => f_rx_fifo_wren,
+			 din   => f_rx_fifo_data,
+			 full  => w_rx_fifo_full,
+	
+			 rdclk => i_clk,
+			 rden  => i_rx_data_rden,
+			 dout  => o_rx_data,
+			 rddv  => o_rx_data_dv,
+			 empty => o_rx_data_empty	
+	);
+
+	p_rx_data : process(i_upp_clk, i_arst)
+	begin
+		if i_arst = '1' then
+			f_dma_count <= (others => '0');
+			f_rx_data_dv <= '0';
+			f_upp_busy <= '0';
+		elsif rising_edge(i_upp_clk) then
+			f_upp_start <= i_upp_start;
+			if f_upp_start = '0' and i_upp_start = '1' then	
+				-- Start DMA transfer
+				f_upp_busy <= '1';
+			end if;
+			
+			if f_dma_count = g_dma_size-1 then
+				-- DMA Transfer Complete
+				f_dma_count <= (others => '0');
+			end if;
+		
+			if i_upp_enable = '1' then
+				-- Load uPP data into rx fifo
+				f_dma_count <= f_dma_count + 1;
+				f_rx_fifo_data <= i_upp_data;
+				f_rx_fifo_wren <= '1';
+			else
+				-- uPP Transfer Stalled.
+				f_rx_fifo_wren <= '0';
+			end if;
+		end if;
+	end process;
+
+	
+end rtl;
+\end{VHDLlisting}
+
+
+
+
+
+
+
 \section{Data Processing Projects}
 	<TODO Section Data Processing Projects : NOT DONE>
 
