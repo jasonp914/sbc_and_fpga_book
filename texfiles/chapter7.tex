@@ -275,7 +275,7 @@ This section of projects gets data in to and out from the \ac{FPGA}. The list of
 Although these projects are simple and great starting exercises you will reuse these blocks a lot when interfacing to different peripherals. We will discuss making these blocks generic so that they can be used with minimal changes on a variety of projects.
 
 \subsection{Universal Asynchronous Receiver-Transmitter (UART)}
-	<TODO Subsection Universal Asynchronous Receiver-Transmitter (UART) : NOT DONE>
+	<TODO Subsection Universal Asynchronous Receiver-Transmitter (UART) : PROOF READ>
 	
 The \ac{UART} is a very common low speed protocol. It's primary use is commanding and controlling the FPGA to do a task when a user issues the command through a general purpose computer. The \ac{UART} is also great for status or debugging what is happening on the \ac{FPGA}.
 
@@ -481,7 +481,7 @@ The \ac{UART} transmitter operates in a similar fashion. The transmitter's job i
 	
 
 \subsection{Serial Peripheral Interface (SPI)}
-	<TODO Subsection Serial Peripheral Interface (SPI) : NOT DONE>
+	<TODO Subsection Serial Peripheral Interface (SPI) : PROOF READ>
 
 \ac{SPI} is commonly used for inter-chip communication where a chip is configured by a SPI master. The SPI master initiates all traffic between the SPI master and SPI slave. The slave chip only responses to commands from the master. The SPI bus consists of four wires; clock, chip select, input data, and output data. Since there is a clock we know this protocol is synchronous. The clock is driven by the master and the clock rate is the only way to change the data rate of the communications. In general the \ac{SPI} bus is capable of a higher data rate than the UART.
 
@@ -639,7 +639,7 @@ Once we are in the \emph{s\_end} state we go back to \emph{s\_idle}, but before 
 Now we should go back and discuss the reasoning for using the rising edge and falling edge of the \ac{SPI} clock. We launch the data on the falling edge of the \ac{SPI} clock because we want to have the maximum possible time for the data to be stable when the receiver of the data samples it at the rising edge. Just like when we wait for the rising edge of the clock to register the input we want the data to be stable. 
 
 \subsection{Inter-Integrated Circuit (I2C) Bus}
-	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : NOT DONE>
+	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : PROOF READ>
 
 The \ac{I2C} bus communication protocol is similar to the \ac{SPI} interface in that it is used for inter chip communication. The major advantage to \ac{I2C} is that is uses half the lines as \ac{SPI}. You may be thinking who cares about the number of \ac{IO} pins a chip takes but this can be an issue with interfacing to a few peripherals, especially when a few of them are high speed \ac{LVDS}. In this case saving a few \ac{IO} pins per chip is necessary to ensure \ac{IO} pins are available for a high speed \ac{ADC} or \ac{DDR} memory chip. 	
 	
