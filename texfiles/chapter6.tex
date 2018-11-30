@@ -1,6 +1,30 @@
 \chapter{Single Board Computer Programming Basics}
 	<TODO Chapter Single Board Computer Programming Basics : NOT DONE>
 
+Once you get your \ac{SBC} in the mail and you open it up what do you do? You read the getting started guide, you plug in the the \ac{SD} card, plug in a monitor, plug in a keyboard and mouse. The \ac{SBC} boots up to a linux desktop or command line and waits for your input. 
+
+This Chapter is about what you can do with the \ac{SBC} after it boots up. There are many projects you can do with the \ac{SBC} and we will discuss the most popular \ac{SBC}, the \ac{RPi}. We will show examples of how to use the \ac{RPi} but most of the examples here apply to any linux distribution. 
+
+\section{Linux Basics}
+	<TODO Section Linux Basics : NOT DONE>
+
+The first thing that you will need to get used to in Linux is the command line. At the command line the programmer types in the commands they want to run. In this interface processing power is not wasted on rendering the \ac{GUI} or handling \ac{UI} events. The overhead of a \ac{GUI} takes away from processing the tasks you are trying to perform. 
+
+Next we will introduce aliases to make issuing common commands easier. Aliases allow you to use a shorter phase for common commands you execute, this is particularly helpful if the commands being ran have many parameters that are the same. Aliases save keystrokes per command, so long commands that are ran frequently are usually first to be aliased. 
+
+We will then turn to the concept of \emph{Cron-Jobs}. In Linux we can setup a Cron-Job that can be ran any interval with a one minute resolution. Once scheduled, a script can be ran to scan for malware, move files, or clean up some old data. A good candidate script for a Cron-Job is one that needs regularly ran and takes a while to perform. 
+
+Finally we discuss popular programming languages. We will discuss the basics of three languages. The first we look at C/C++. The strength of C/C++ is that it is a low level language with a high efficiency rating. Next is Python, which is gaining a lot of popularity, particularly in machine learning applications. Since Python is more abstract from bare metal we sacrifice efficiency but we gain a lot from Python. Finally, we discuss a newer language named \emph{Julia}, which shows many promising attributes.  
+	
+\subsection{The Terminal}
+	<TODO Subsection The Terminal : NOT DONE>
+
+\subsection{Aliases}
+	<TODO Subsection Aliases : NOT DONE>
+	
+\subsection{Cron-Jobs}
+	<TODO Subsection Cron-Jobs : NOT DONE>
+
 \section{Programming Languages}
 	<TODO Section Programming Languages : NOT DONE>
 
@@ -15,18 +39,6 @@
 
 \subsubsection{Julia}
 	<TODO Subsubsection  Julia : NOT DONE>
-
-\section{Linux Basics}
-	<TODO Section Linux Basics : NOT DONE>
-
-\subsection{The Terminal}
-	<TODO Subsection The Terminal : NOT DONE>
-
-\subsection{Cron-Jobs}
-	<TODO Subsection Cron-Jobs : NOT DONE>
-
-\subsection{Aliases}
-	<TODO Subsection Aliases : NOT DONE>
 
 \section{Controlling GPIO}
 	<TODO Section Controlling GPIO : NOT DONE>

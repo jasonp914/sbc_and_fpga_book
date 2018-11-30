@@ -45,8 +45,6 @@ The second difference to consider is that on an \ac{FPGA} the data is not likely
 
 Third, we are writing the \ac{FIR} filter ourselves. So having a MATLAB function that handles the calculation for us does not help us understand how the \ac{FIR} filter works. So we need to do the calculations our selves in MATLAB so that we can compare our intermediate steps in MATLAB to our intermediate steps in \ac{RTL}. Since we know MATLAB's function works we can compare our calculation result to the MATLAB function's result to make sure our math is correct.
 
-
-
 One last change seen in this new MATLAB script is to notice that some key signals are written to text files. The purpose of writing the signal to be filtered and the filter result to a file is so that we can test the \ac{RTL} with the exact same data. If we test the \ac{RTL} \ac{FIR} filter with the same data we can make debugging a little easier because we know what the results should be and if there is a difference we can find it immediately. We write the result to a text file because we can have the testbench check the result for us using assert statements. Automating the checking allows use to run a lot of data through the filter so make sure we do not have data overflow. Data overflow or wrapping occurs with multiplication or addition were the result can not be represented by the number of bits used. If there is a bug in our code that does not protect against overflow the only way we will find it is by launching a lot of data.  With the hardware system model in MATLAB complete we can start writing the testbench and \ac{RTL} for the \ac{FIR} filter.
 
 	<TODO Subsection System Level Model with Hardware : INSERT CODE fir filter hw model>

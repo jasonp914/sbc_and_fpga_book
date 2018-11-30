@@ -825,7 +825,7 @@ Finally after sending all $32$ bits the done flag is asserted and we end the tra
 	
 	
 \subsection{Texas Instruments universal Parallel Port (uPP)}
-	<TODO Subsection Texas Instruments universal Parallel Port (uPP) : NOT DONE>
+	<TODO Subsection Texas Instruments universal Parallel Port (uPP) : PROOF READ>
 	
 A \ac{TI}-\ac{DSP} is an embedded processor that specializes in operations specific to signal processing. What that means is that the \ac{MAC} structure is used often in \ac{FIR} filter design, calculating \ac{FFT}s, and even some matrix multiplication calculations. The \ac{DSP} is equipped with with the ability to perform parallel \ac{MAC} operations. Depending on the specific processor you can expect eight parallel \ac{MAC} operations. 
 
@@ -1006,8 +1006,19 @@ begin
 	end process;
 \end{VHDLlisting}
 
+Now that we have seen how the \ac{FPGA} transmits data we will transition to how the \ac{FPGA} received data from the \ac{TI}-\ac{DSP}. Once again in the entity declaration we have a clock and a reset. We next have the \ac{uPP} \ac{IO} lines. These lines are just like the transmitter's \ac{IO} lines in reverse direction. Finally we have the application logic lines. 
 
-\begin{VHDLlisting}[tabsize=4]
+In the architecture declaration we have the internal signal definitions. These include the the internal registers for the data received by the core, the busy signal that is an output to the other \ac{FPGA} logic, and a \ac{DMA} count to ensure we have all the data we expect. We also have a signal that is a wire that is the full flag from the receive \ac{FIFO}.
+
+We move past the begin keyword to the instantiated code. First we see the output declarations. As part of our coding style and guidelines we assign the outputs right after the begin to ensure other reviewers of our code can find the results for our core. Immediately after we assign some of the outputs we see an instantiation of a \ac{FIFO}. Here we need a dual clock \ac{FIFO} since the \ac{uPP} clock is different than the system clock. The dual clock \ac{FIFO} defines the reset of the outputs of the core. 
+
+The port map of the \ac{FIFO} is separated into two section the write section and read section. The write section is controlled by a process which we will discuss later. The read section is of the \ac{FIFO} is controlled by logic external to this core. The read clock is the system clock and the read enable is an input to the core. The read data, read data valid, and empty signals are all outputs to inform the external user logic. 
+
+We move to the receive data process. In this process we first have a synchronous reset. In the reset we clear the \ac{DMA} transfer count the receive data valid and \ac{uPP} busy signal. While not in reset we resister the \ac{uPP} start signal. Then we edge detect the \ac{uPP} start signal and if detect the rising edge of the start signal we assert the busy signal. Next we check the \ac{DMA} transfer count and if we are at the end of the transfer we de-assert the busy signal. 
+
+The last if statement registers data of the \ac{uPP} data bus. If the transfer is enabled then we increment the \ac{DMA} count, register the data bus, and assert the write enable line for the \ac{FIFO}. If \ac{uPP} enable is low then we de-assert write enable. This process fills up the \ac{FIFO} and the external logic pulls data from the \ac{FIFO} but the \ac{FIFO} should be configured to be to be able to support the \ac{DMA} length. 
+
+\begin{VHDLlisting}[tabsize=2]
 -- upp_rx.vhd
 
 library ieee;
@@ -1017,8 +1028,7 @@ library ieee;
 entity upp_rx is
 	generic(g_dma_size : integer := 4096)
 	port(i_clk           : in    std_logic;
-		 -- Used async | release sync
-	     i_arst          : in    std_logic;
+	     i_rst           : in    std_logic;
 		 
 		 -- uPP IO
 		 i_upp_clk       : in    std_logic; 
@@ -1047,15 +1057,14 @@ architecture rtl of upp_rx is
 	
 	signal f_dma_count    : unsigned(log2(g_dma_size)-1 downto 0);
 	
-	
-	
 begin
 
 	o_upp_wait <= w_rx_fifo_full;
 	o_upp_busy <= f_upp_busy; 
 
 	u_rx_fifo : entity work.rx_fifo
-	port map(wrclk => i_upp_clk, 
+	port map(i_rst => i_rst,
+			 wrclk => i_upp_clk, 
 			 wren  => f_rx_fifo_wren,
 			 din   => f_rx_fifo_data,
 			 full  => w_rx_fifo_full,
@@ -1069,62 +1078,532 @@ begin
 
 	p_rx_data : process(i_upp_clk, i_arst)
 	begin
-		if i_arst = '1' then
-			f_dma_count <= (others => '0');
-			f_rx_data_dv <= '0';
-			f_upp_busy <= '0';
-		elsif rising_edge(i_upp_clk) then
-			f_upp_start <= i_upp_start;
-			if f_upp_start = '0' and i_upp_start = '1' then	
-				-- Start DMA transfer
-				f_upp_busy <= '1';
-			end if;
-			
-			if f_dma_count = g_dma_size-1 then
-				-- DMA Transfer Complete
+		if rising_edge(i_upp_clk) then
+			if i_rst = '1' then
 				f_dma_count <= (others => '0');
-			end if;
-		
-			if i_upp_enable = '1' then
-				-- Load uPP data into rx fifo
-				f_dma_count <= f_dma_count + 1;
-				f_rx_fifo_data <= i_upp_data;
-				f_rx_fifo_wren <= '1';
+				f_rx_data_dv <= '0';
+				f_upp_busy <= '0';
 			else
-				-- uPP Transfer Stalled.
-				f_rx_fifo_wren <= '0';
+				f_upp_start <= i_upp_start;
+				if f_upp_start = '0' and i_upp_start = '1' then	
+					-- Start DMA transfer
+					f_upp_busy <= '1';
+				end if;
+				
+				if f_dma_count = g_dma_size-1 then
+					-- DMA Transfer Complete
+					f_dma_count <= (others => '0');
+					f_upp_busy <= '0';
+				end if;
+			
+				if i_upp_enable = '1' then
+					-- Load uPP data into rx fifo
+					f_dma_count <= f_dma_count + 1;
+					f_rx_fifo_data <= i_upp_data;
+					f_rx_fifo_wren <= '1';
+				else
+					-- uPP Transfer Stalled.
+					f_rx_fifo_wren <= '0';
+				end if;
 			end if;
 		end if;
-	end process;
-
-	
+	end process;	
 end rtl;
 \end{VHDLlisting}
 
-
-
-
-
-
-
 \section{Data Processing Projects}
-	<TODO Section Data Processing Projects : NOT DONE>
+	<TODO Section Data Processing Projects : PROOF READ>
+	
+We now transition to \ac{VHDL} examples that are processing data. The first example calculates the multiplication of two matrices. Matrix multiplication has applications in signal processing and machine learning. We next look at the knapsack problem. In this problem we are looking to maximize the reward which is applicable to \ac{FPGA} development itself. Finally we present some signal processing examples, a \ac{FIR} filter and an \ac{NCO}, both of which are used regularly in \ac{DSP} applications. 
 
 \subsection{Strassen's Matrix Multiplication}
-	<TODO Subsection Strassen's Matrix Multiplication : NOT DONE>
+	<TODO Subsection Strassen's Matrix Multiplication : PROOF READ>
+	
+Matrix multiplication is a common operation is \ac{DSP}, machine learning, and graphics processing applications. Here we look at how to make matrix multiplication more efficient. Matrix multiplication in general is $\mathbf{O}(n^3)$. To make the algorithm more efficient in terms of \ac{FPGA} resource we will use the Strassen matrix multiplication. 
+
+In essence the Strassen matrix multiplication reduces the number of multiplies required. Since the dedicated multiply resources are very advantageous we look to minimize the usage if we can. To multiply very large matrices we need to use the dedicated multiply blocks efficiently. The Strassen matrix multiply does this optimally for reducing input matrices to a $2 \times 2$.
+
+We are going to calculate the matrix multiplication $\mathbf{A}\mathbf{B}=\mathbf{C}$. We assume that $\mathbf{A}$ and $\mathbf{B}$ have specific dimensions, namely, the number of rows and columns equate to a power of 2. If the matrices you want to multiply are not powers of $2$ you can zero pad each dimension. Each dimension is zero padded to $2^k$ where $k$ is an integer. If both $\mathbf{A}$ and $\mathbf{B}$ have dimensions that are $2^k$ then the matrix multiplication can be recursively reduced to a number of $2 \times 2$ matrices. 
+
+To calculate a $2 \times 2$ matrix multiply we turn to the Strassen algorithm. The input to the Strassen algorithm are the two matrices $\mathbf{A}$ and $\mathbf{B}$. Each matrix is indexed into by a row and column;
+
+\begin{equation}
+\mathbf{A}=
+\begin{bmatrix}
+  a_{1,1} & a_{1,2} \\
+  a_{2,1} & a_{2,2} \\
+ \end{bmatrix},~~~~~~~~~~~~~
+\mathbf{B}=
+\begin{bmatrix}
+  b_{1,1} & b_{1,2} \\
+  b_{2,1} & b_{2,2} \\
+ \end{bmatrix}.
+\end{equation}
+
+Then the Strassen algorithm defines some intermediate values as:
+
+\begin{eqnarray}
+\label{eq:capp}
+P &=& (a_{1,1} + a_{2,2})(b_{1,1} + b_{2,2})\\
+Q &=& (a_{2,1} + a_{2,2})b_{1,1}          \\
+R &=& a_{1,1}(b_{1,2} - b_{2,2})\\
+S &=& a_{2,2}(b_{2,1} - b_{1,1})\\
+T &=& (a_{1,1} + a_{1,2})b_{2,2}  \\        
+U &=& (a_{2,1} - a_{1,1})(b_{1,1} + b_{1,2})\\
+V &=& (a_{1,2} - a_{2,2})(b_{2,1} + b_{2,2})
+\label{eq:capv}
+\end{eqnarray}
+
+And finally with the intermediate values defined the elements of the result matrix, $\mathbf{C}$, are calculated,
+
+\begin{eqnarray}
+c_{1,1} &=& P + S - T + V\\
+c_{1,2} &=& R + T\\
+c_{2,1} &=& Q + S\\
+c_{2,2} &=& P + R - Q + U
+\label{eq:couts}
+\end{eqnarray}
+
+Now that the algorithm is defined we will spend the reset of this section discussing how we can implement the Strassen Matrix Multiplication algorithm in \ac{VHDL}. Before we start implementing the algorithm we first must think about what the expected data rate is going to be. Since the Strassen algorithm helps with reducing the number of multiplies required from eight to seven we won't see a huge savings in \ac{FPGA} resources with small matrix multiplies. Our target implementation is going to be handling very large matrices that will be parted down to many $2 \times 2$ matrix multiplication. For this implementation we expect to instantiate this block many times so that we can handle all the data as it is streaming in. 
+
+So for this implementation we want to be able to handle the two input matrices in parallel and data can be valid every clock cycle. So after the latency of the core is over we will have resulting $\mathbf{C}$ matrices every clock cycle. This implementation will be able to handle the largest data rates possible. 
+
+To get started with this implementation we start with an entity declaration,
+
+\begin{VHDLlisting}[tabsize=2]
+-- matrix_multiply_strassen.vhd
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity matrix_multiply_strassen is
+	generic(g_bitwidth : integer)
+	port(i_clk    : in    std_logic;
+		 i_rst    : in    std_logic;
+		 
+		 i_dv     : in    std_logic;
+		 i_a_11   : in    signed(g_bitwidth-1 downto 0);
+		 i_a_12   : in    signed(g_bitwidth-1 downto 0);
+		 i_a_21   : in    signed(g_bitwidth-1 downto 0);
+		 i_a_22   : in    signed(g_bitwidth-1 downto 0);
+		
+		 i_b_11   : in    signed(g_bitwidth-1 downto 0);
+		 i_b_12   : in    signed(g_bitwidth-1 downto 0);
+		 i_b_21   : in    signed(g_bitwidth-1 downto 0);
+		 i_b_22   : in    signed(g_bitwidth-1 downto 0);
+		 
+		 o_dv     :   out std_logic;
+		 o_c_11   :   out signed(2*g_bitwidth-1 downto 0);
+		 o_c_12   :   out signed(2*g_bitwidth-1 downto 0);
+		 o_c_21   :   out signed(2*g_bitwidth-1 downto 0);
+		 o_c_22   :   out signed(2*g_bitwidth-1 downto 0)	
+	);
+end entity matrix_multiply_strassen;
+\end{VHDLlisting}
+
+The entity declaration for \emph{matrix\_multiply\_strassen}has one generic which sets the bit width for the elements of the matrices. The port definitions start with the clock and reset, then the two matrix inputs, with four elements each along with a single data valid line for both matrices. This interface puts the responsibility of ensuring the data is ready and valid in a single clock cycle on the instantiating core. The last set of signals are the output, the four elements of the matrix $\mathbf{C}$ and a data valid line. 
+
+Now we will move on the architecture block of the core. First we define a shift register for the data valid line. The shift register keeps track of the pipeline stage. If the data was valid in a clock cycle then the data calculation and the valid is registered. In this way the valid flag follows along with the data. 
+
+\begin{VHDLlisting}[tabsize=2]
+signal f_i_dv : std_logic_vector(5 downto 0);
+
+-- Stage 1 : Register Inputs
+signal f_a_11 : signed(g_bitwidth-1 downto 0);
+signal f_a_12 : signed(g_bitwidth-1 downto 0);
+signal f_a_21 : signed(g_bitwidth-1 downto 0);
+signal f_a_22 : signed(g_bitwidth-1 downto 0);
+signal f_b_11 : signed(g_bitwidth-1 downto 0);
+signal f_b_12 : signed(g_bitwidth-1 downto 0);
+signal f_b_21 : signed(g_bitwidth-1 downto 0);
+signal f_b_22 : signed(g_bitwidth-1 downto 0);
+\end{VHDLlisting}
+
+We now look at the signals that are going to be used in each stage of calculation. In the signal declaration section we organize and comment the groups of signals so that as our \ac{VHDL} files get larger we can orgainize the file in a logical order which helps keeps the logic more manageable. 
+
+The first stage of calculation is registering the inputs under the data valid line. It is a good habit to register the inputs and outputs of any block that you write. This way when you instantiate the core you won't have to worry about if another core registers it's outputs. If you are using other people's code that doesn't register outputs and if you don't register inputs then its likely that those paths will be the first to fail timing. 
+
+If the code you are interfacing to does register the outputs and you register the inputs the synthesizer is reliable enough to remove one register. This practice is very helpful when you are trying to achieve the highest data rate possible. Once we have made this core fully pipelined then the only other way to increase the data rate is to increase the clock speed. To run this core at the highest possible clock speed we will be glad to have the extra registers in the code. 
+
+The process that registers the inputs is shown here. 
+
+\begin{VHDLlisting}[tabsize=2]
+p_s1 : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_i_dv <= (others => '0');
+			else
+				f_i_dv <= f_i_dv(f_i_dv'high-1 downto 0) & i_dv;
+				
+				if i_dv = '1' then
+					f_a_11  <= i_a_11;
+				    f_a_12  <= i_a_12;
+				    f_a_21  <= i_a_21;
+				    f_a_22  <= i_a_22;
+				    f_b_11  <= i_b_11;
+				    f_b_12  <= i_b_12;
+				    f_b_21  <= i_b_21;
+				    f_b_22  <= i_b_22;
+				end if;
+			end if;
+		end if;
+	end process;
+\end{VHDLlisting}
+
+Under the rising edge clause of this process we first check the reset line. If the reset line is asserted we only need to clear the data valid shift register. Clearing these registers ensure no data is output from the core. Next we shift in the data valid input into our shift register. This signal is what will be used in the subsequent processes to know when data is valid. Finally we register all the inputs under the single data valid. 
+
+\begin{VHDLlisting}[tabsize=2]
+-- Stage 2 : Term Calculations
+signal ff_p_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_p_t2 : signed(g_bitwidth-1 downto 0);
+signal ff_q_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_q_t2 : signed(g_bitwidth-1 downto 0);
+signal ff_r_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_r_t2 : signed(g_bitwidth-1 downto 0);
+signal ff_s_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_s_t2 : signed(g_bitwidth-1 downto 0);
+signal ff_t_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_t_t2 : signed(g_bitwidth-1 downto 0);
+signal ff_u_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_u_t2 : signed(g_bitwidth-1 downto 0);
+signal ff_v_t1 : signed(g_bitwidth-1 downto 0);
+signal ff_v_t2 : signed(g_bitwidth-1 downto 0);
+\end{VHDLlisting} 
+
+In stage two we declare signals that are used in the addition or subtraction calculations in \eq{eq:capp}-\eq{eq:capv}. In the signal names we use the notation $t1$ or $t2$ to indicate the two operands of the multiplication in each equation. 
+
+\begin{VHDLlisting}[tabsize=2]
+p_s2 : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if f_i_dv(0) = '1' then
+				ff_p_t1 <= f_a_11 + f_a_22;
+				ff_p_t2 <= f_b_11 + f_b_22;
+				ff_q_t1 <= f_a_21 + f_a_22;
+				ff_q_t2 <= f_b_11;
+				ff_r_t1 <= f_a_11;
+				ff_r_t2 <= f_b_12 - f_b_22;
+				ff_s_t1 <= f_a_22;
+				ff_s_t2 <= f_b_21 - f_b_11;
+				ff_t_t1 <= f_a_11 + f_a_12;
+				ff_t_t2 <= f_b_22;
+				ff_u_t1 <= f_a_21 - f_a_11;
+				ff_u_t2 <= f_b_11 + f_b_12;
+				ff_v_t1 <= f_a_12 - f_a_22;
+				ff_v_t2	<= f_b_21 + f_b_22;
+			end if;
+		end if;
+	end process;
+\end{VHDLlisting}
+
+For each term we follow \eq{eq:capp}-\eq{eq:capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline next clock cycle overwriting our data. So we need to register it in this process.
+
+\begin{VHDLlisting}[tabsize=2]
+-- Stage 3 : P,Q,R,S,T,U,V Calculations
+signal fff_p   : signed(2*g_bitwidth-1 downto 0);
+signal fff_q   : signed(2*g_bitwidth-1 downto 0);
+signal fff_r   : signed(2*g_bitwidth-1 downto 0);
+signal fff_s   : signed(2*g_bitwidth-1 downto 0);
+signal fff_t   : signed(2*g_bitwidth-1 downto 0);
+signal fff_u   : signed(2*g_bitwidth-1 downto 0);
+signal fff_v   : signed(2*g_bitwidth-1 downto 0);
+\end{VHDLlisting}
+
+The third stage calculates the intermediate variables in the Strassen algorithm. The size of the result of a multiply operation is bigger. Just like when we multiply $9 \times 9 = 81$ we need more bits to handle the range of the possible results. 
+
+\begin{VHDLlisting}[tabsize=2]
+p_s3 : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		if f_i_dv(1) = '1' then
+			fff_p <= ff_p_t1 * ff_p_t2;
+			fff_q <= ff_q_t1 * ff_q_t2;
+			fff_r <= ff_r_t1 * ff_r_t2;
+			fff_s <= ff_s_t1 * ff_s_t2;
+			fff_t <= ff_t_t1 * ff_t_t2;
+			fff_u <= ff_u_t1 * ff_u_t2;
+			fff_v <= ff_v_t1 * ff_v_t2;
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+
+The process that calculates the multiplication is shown here. Under the third pipeline stage data valid we calculate all the intermediate values $P$ - $V$. 
+
+\begin{VHDLlisting}[tabsize=2]
+-- Stage 4 : C term calculations
+signal f4_c11_t1 : signed(2*g_bitwidth-1 downto 0);
+signal f4_c11_t2 : signed(2*g_bitwidth-1 downto 0);
+signal f4_c12_t1 : signed(2*g_bitwidth-1 downto 0);
+signal f4_c21_t1 : signed(2*g_bitwidth-1 downto 0);
+signal f4_c22_t1 : signed(2*g_bitwidth-1 downto 0);
+signal f4_c22_t2 : signed(2*g_bitwidth-1 downto 0);
+               
+-- Stage 5 : Output calculations
+signal f5_c11    : signed(2*g_bitwidth-1 downto 0);
+signal f5_c12    : signed(2*g_bitwidth-1 downto 0);
+signal f5_c21    : signed(2*g_bitwidth-1 downto 0);
+signal f5_c22    : signed(2*g_bitwidth-1 downto 0);
+\end{VHDLlisting}
+
+The reset of the signal declarations have the same bit width as the multiplication result. We declare the two terms for the final output in stage four and the four element results are calculated in stage five. 
+
+\begin{VHDLlisting}[tabsize]
+p_s4 : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		if f_i_dv(2) = '1' then
+			f4_c11_t1 <= fff_p + fff_s;
+		    f4_c11_t2 <= fff_t + fff_v;
+		    f4_c12_t1 <= fff_r + fff_t;
+		    f4_c21_t1 <= fff_q + fff_s;
+		    f4_c22_t1 <= fff_p + fff_r;
+		    f4_c22_t2 <= fff_q + fff_u;
+		
+		end if;
+	end if;
+end process;
+\end{VHDLlisting}
+
+In the calculation of stage four we calculate the terms in \eq{eq:couts}. The additions are calculated under the data valid line for stage four and once complete they are ready for the final stage of calculation. 
+
+\begin{VHDLlisting}[tabsize=2]
+p_s5 : process(i_clk)
+begin
+	if rising_edge(i_clk) then
+		if f_i_dv(3) = '1' then
+			f5_c11 <= f4_c11_t1 - f4_c11_t2;
+		    f5_c12 <= f4_c12_t1;
+		    f5_c21 <= f4_c21_t1;
+		    f5_c22 <= f4_c22_t1 - f4_c22_t2;
+		end if;
+	end if;
+end process;
+\end{VHDLlisting} 
+
+The final stage, stage five, is calculated once again from \eq{eq:couts} where for terms $c_{1,1}$ and $c_{2,2}$ a subtraction is needed but the other two elements are already final but we need to register them again to ensure data is aligned. 
+
+\begin{VHDLlisting}[tabsize=2]
+-- Assign Outputs
+o_dv   <= f_i_dv(5);
+o_c_11 <= f5_c11;
+o_c_12 <= f5_c12;
+o_c_21 <= f5_c21;
+o_c_22 <= f5_c22;
+\end{VHDLlisting}
+
+After the final stage is calculated and registered we can use these registers as the output registers so now all we need to do is assign them as the output. At this point we need the fifth data valid in the shift register to denote that the output is valid. 
+
+This shift register denotes the latency of the core. If we put in data at clock cycle zero. It will take six clock cycles to get valid data out. Note that index five in the data valid array is actually the sixth element since the array is zero indexed. 
 
 \subsection{Knapsack Problem}
 	<TODO Subsection Knapsack Problem : NOT DONE>
 
 \subsection{Digital Signal Processing}
-	<TODO Subsection Digital Signal Processing : NOT DONE>
+	<TODO Subsection Digital Signal Processing : PROOF READ>
+	
+A common application for \ac{FPGA}s is \ac{DSP}. In this section we discuss the implementation of common \ac{DSP} functions. Here will discuss the \ac{FIR} filter and an \ac{NCO}. Which are both vital in a \ac{DSP} application. 
 
 \subsubsection{Finite Impulse Response Filter}
-	<TODO Subsubsection  Finite Impulse Response Filter : NOT DONE>
+	<TODO Subsubsection  Finite Impulse Response Filter : PROOF READ>
 
+There are many needs for \ac{FIR} filters in \ac{DSP}. Here we will present one type of \ac{FIR} filter that is quite useful. The type of filter we will be implementing in this section is the \emph{half-band \ac{FIR} \ac{LPF}}. Breaking down the name we first know what a \ac{FIR} filter is and does which depending on the impulse response attenuates some frequencies while keeping other frequencies of interest. 
+
+The \emph{half-band} aspect of this filter refers to the ability of the filter to reduce the bandwidth of the filtered signal by half. The reduction of bandwidth of the filtered signal reduces the data rate of the system after the filter. You may be asking why would you have a higher data-rate coming into the \ac{FPGA} from the \ac{ADC} than you would need. The data-rate coming into the \ac{FPGA} is dependent on the \ac{IF} used in the \ac{RF} front-end and the \ac{ADC} sample rate. 
+
+The \ac{IF} used in the front-end is usually standard and your selection of the \ac{IF} is fixed. What you do have control over is the \ac{ADC} sampling rate. The main input parameter used in deciding your sampling rate is the bandwidth of the signal you are interested in, since your sampling rate needs to be at least twice the bandwidth of the signal you are interested in. 
+
+Once the \ac{ADC} sampling rate is chosen we can start interfacing the \ac{ADC} to the \ac{FPGA}. The data lines are routed to the \ac{FPGA} along with a clock if the \ac{ADC} is has a source-synchronous interface. In any case the data is registered on the \ac{FPGA} and now we have another design parameter to decide. What processing speed are we going to use. In general we can slow the clock down and process multiple samples in parallel or speed the clock up and have more clocks per sample. In either case we need to consider the algorithm in which we are implementing. 
+
+With all that said we will assume moving forward all of those parameters have been worked out. What happens quite frequently is that the bandwidth of the received signal is twice as large as we are interested in so we are going to decimate by two. To decimate by two we need to filter out the aliases to avoid sampling interference. This filter is called an anti-alias filter. So the filter we are going to design here is going to be out anti-alias filter. The data is then sent out of the core where the data valid line is dropped every other sample to perform the decimation by two. 
+
+\begin{VHDLlisting}[tabsize=2]
+-- halfbandLPF.vhd
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity halfbandLPF is 
+	generic(g_bitwidth : integer := 16;
+	        g_ncoeffs  : integer := 35);
+	port(
+			i_clk      : in    std_logic;
+			i_reset    : in    std_logic;
+			i_data     : in    std_logic_vector(g_bitwidth-1 downto 0);
+			i_dv       : in    std_logic;
+			o_data     :   out std_logic_vector(2*g_bitwidth-1 downto 0);
+			o_dv       :   out std_logic	
+	);
+end entity halfbandLPF;
+
+architecture rtl of halfbandLPF is 
+	type T_Sbw is array (natural range<>) of signed(g_bitwidth-1 downto 0);
+	type T_S2bw is array (natural range<>) of signed(2*g_bitwidth-1 downto 0);
+	signal f_x_mix    : T_Sbw(0 to g_ncoeffs-1) := (others => (others => '0'));
+	signal f_dv_shift : std_logic_vector(0 to g_ncoeffs-1) := (others => '0');
+	
+	-- Length of this vector is Ceil((g_ncoeffs-1)/4)+1
+	-- These coefficients need to be loaded externally
+	signal f_h_uni      : T_Sbw(0 to 9) := (x"0026",x"FFA6",x"00BD",x"FEA0",x"0261",x"FC05",x"06BC",x"F350",x"2870",x"4000");
+
+	signal ff_mix_add   : T_Sbw(0 to 9) := (others => (others => '0'));
+	signal fff_add_mult : T_S2bw(0 to 9) := (others => (others => '0'));
+	
+	signal f4_sum_s1    : T_S2bw(0 to 4) := (others => (others => '0'));
+	signal f5_sum_s2    : T_S2bw(0 to 2) := (others => (others => '0'));
+	signal f6_sum_s3    : T_S2bw(0 to 1) := (others => (others => '0'));
+	signal f7_sum_s4    : signed(2*g_bitwidth-1 downto 0) := (others => '0');
+begin
+	o_data <= std_logic_vector(f7_sum_s4);
+	o_dv <= f_dv_shift(6);
+
+	p_calc : process(i_clk) is
+	begin
+		if rising_edge(i_clk) then
+			if i_reset = '1' then
+				f_dv_shift <= (others => '0');
+			elsif i_dv = '1' then
+				-- Shift Register Data
+				f_x_mix(34) <= signed(i_data);
+				f_x_mix(0 to g_ncoeffs-2) <= f_x_mix(1 to g_ncoeffs-1);
+				
+				-- Shift Register Data Valid
+				f_dv_shift(0) <= i_dv;
+				f_dv_shift(1 to g_ncoeffs-1) <= f_dv_shift(0 to g_ncoeffs-2);
+				
+				-- Take advantage of symmetric filter. 
+				ff_mix_add(0) <= f_x_mix(0) + f_x_mix(34);
+				ff_mix_add(1) <= f_x_mix(2) + f_x_mix(32);
+				ff_mix_add(2) <= f_x_mix(4) + f_x_mix(30);
+				ff_mix_add(3) <= f_x_mix(6) + f_x_mix(28);
+				ff_mix_add(4) <= f_x_mix(8) + f_x_mix(26);
+				ff_mix_add(5) <= f_x_mix(10) + f_x_mix(24);
+				ff_mix_add(6) <= f_x_mix(12) + f_x_mix(22);
+				ff_mix_add(7) <= f_x_mix(14) + f_x_mix(20);
+				ff_mix_add(8) <= f_x_mix(16) + f_x_mix(18);
+				ff_mix_add(9) <= f_x_mix(17);
+				
+				-- Multiply Impulse response. 
+				for i in 0 to 9 loop
+					fff_add_mult(i) <= ff_mix_add(i) * f_h_uni(i);
+				end loop;				
+				
+				-- Start of the adder tree.
+				for i in 0 to 4 loop
+					f4_sum_s1(i) <= fff_add_mult(2*i) + fff_add_mult(2*i+1);
+				end loop;
+				
+				f5_sum_s2(2) <= f4_sum_s1(4);
+				for i in 0 to 1 loop
+					f5_sum_s2(i) <= f4_sum_s1(2*i) + f4_sum_s1(2*i+1);
+				end loop;
+				
+				f6_sum_s3(0) <= f5_sum_s2(0) + f5_sum_s2(1);
+				f6_sum_s3(1) <= f5_sum_s2(2);
+								
+				-- Result of adder tree.
+				f7_sum_s4 <= f6_sum_s3(0) + f6_sum_s3(1);
+			end if;			
+		end if;
+	end process;
+end rtl;
+\end{VHDLlisting}
+	
+In the entity declaration we have two generics defined. The first the is bit-width of the input samples. The second is the number of coefficients or taps in the \ac{FIR} filter. The port declarations have the clock, reset, input, and output data lines. We notice that the output is twice the bit width as the input since the \ac{FIR} taps are the same bit width as the input data and we multiply the data by the taps getting twice the bit-width in growth. 
+
+In the architecture block before the \emph{begin} keyword we define two types. Each of which is an array one for the input data width and the other twice the input data width. The first signal that is declared is a shift register for the input data and a data valid shift register is defined after. 
+
+Next we have signal that is initialized to a set of 10 coefficients. We first develop the \ac{FIR} filter with the taps already in place so that we know there are not any issues we loading the coefficients externally. Loading the coefficients externally would make this \ac{FIR} filter implementation the most flexible and very easy to reuse the the data-rates were to change in future projects. Lastly defined are signals for five stages of an adder tree.
+
+After the \emph{begin} keyword we have the outputs being assigned. Next we move to a calculation process that has a synchronous reset. Then we have the shift register for the data. Then another shift register for the data valid. This implementation assumes that the input is directly from an \ac{ADC} so once the data valid is asserted the input is always valid. 
+
+Next we take advantage of the symmetric filter taps used in this \ac{FIR} filter to reduce the number of multiples. To do this we need to add the data at various indices together. Then in the next stage the impulse response is multiplied by the summation in the previous step. After which the ten values are summed in an adder tree where the number of adders is $log_2$ of the number of elements left to add. 
+	
 \subsubsection{Numerically Controlled Oscillator}
-	<TODO Subsubsection  Numerically Controlled Oscillator : NOT DONE>
+	<TODO Subsubsection  Numerically Controlled Oscillator : PROOF READ>
+	
+An \ac{NCO} is used to generate \emph{sine} and \emph{cosine} waves on an \ac{FPGA}. The generation of sinusoidal waves is beneficial for digitally mixing signals. In this section we discuss how to make an \ac{NCO} in two parts. First a phase accumulator is used to generate an address which is used to index in to a \ac{BRAM} which is assigned as the output. 
+
+\begin{VHDLlisting}[tabsize=2]
+-- nco.vhd
+
+library ieee;
+	ieee.std_logic_1164.all;
+	ieee.numeric_std.all;
+	
+entity nco is
+generic(g_phinc_width : integer;
+	    g_bitwidth    : integer;);
+port(i_clk        : in    std_logic;
+	 i_rst        : in    std_logic;
+	 i_enable     : in    std_logic;
+	 i_phz_init   : in    unsigned(g_phinc_width-1 downto 0);
+	 i_phz_dv     : in    std_logic;
+	 i_phinc_init : in    unsigned(g_phinc_width-1 downto 0);
+	 i_phinc_dv   : in    std_logic;
+	 o_nco_data   :   out unsigned(g_bitwidth-1 downto 0);
+	 o_nco_dv     :   out std_logic
+);
+end 
+
+architecture rtl of nco is
+	type t_us_g is array (natural range <>) of unsigned(g_bitwidth-1 downto 0);
+	signal f_bram       : t_us_g(0 to 2**g_phinc_width-1);
+	signal f_phz_accum  : unsigned(g_phinc_width-1 downto 0);
+	signal f_phinc      : unsigned(g_phinc_width-1 downto 0);
+	signal f_nco_data   : unsigned(g_bitwidth-1 downto 0);
+	signal f_nco_dv     : std_logic := '0';
+	signal ff_nco_dv    : std_logic := '0';
+begin
+
+	o_nco_data <= f_nco_data;
+	o_nco_dv   <= ff_nco_dv;
+	
+	p_init : process(i_clk)
+	begin
+		if rising_edge(i_clk) then
+			if i_rst = '1' then
+				f_phz_accum <= (others => '0');
+				f_nco_dv <= '0';
+			else
+				if i_phz_dv = '1' then
+					f_phz_accum <= i_phz_init;
+				end if;
+				
+				if i_phinc_dv = '1' then
+					f_phinc <= i_phinc_init;
+				end if;
+				
+				f_nco_dv <= i_enable;
+				ff_nco_dv <= f_nco_dv;
+				f_nco_data <= f_bram(to_integer(f_phz_accum));
+				if i_enable = '1' then
+					f_phz_accum <= f_phz_accum + f_phinc;
+				end if;				
+			end if;
+		end if;	
+	end process;
+end rtl;
+\end{VHDLlisting}
+
+The entity declaration starts with the generic declarations. We have a generic that determines the phase increment width, denoted \emph{phinc\_width}. We also define a generic that determines the bit width of the \ac{NCO} output. The difference here is that our frequency resolution in our \ac{NCO} is independent of our dynamic range of our sinusoidal wave. 
+
+We move on to the port definitions of the core. We, of course, have the clock and reset. Next we have an enable line that activates the core in producing outputs. Then two data lines with corresponding valid flags for phase initial value and phase increment value, each of which are discussed later on. Finally the output of the \ac{NCO} with a valid line. 
+
+In the architecture block we first define signals for internal use of the core. The core uses a \ac{BRAM} to store the \ac{LUT} for the sinusoid, for which we need a type definition. Next we have the phase accumulator. Then we have the registered phase increment. Finally registers for the outputs are defined.
+
+After the \emph{begin} keyword, we first assign the outputs that are calculated later in the core. Next, we have the only process in the core. The process is a synchronous process that resets the phase accumulation register and the output data valid register. If not in reset then the output of the \ac{NCO} is calculated. 
+
+While not in reset we perform three major tasks. First of which is registering the initial phase input. The initial phase allows the entity that instantiates the \ac{NCO} to determine the starting phase of the sinusoid. The second major task is the registration of the \emph{phase increment} once registered, the phase increment is used in the third major task.
+
+The third major task has two parts. While the enable is high the phase accumulator is incremented by the phase increment. The phase increment is used as an address into a \ac{BRAM}. The \ac{BRAM} is initialized with a sinusoid that is sampled by the phase accumulator. As the phase accumulator rolls over in unsigned value the sinusoid \ac{BRAM} cycles over the next period of the wave being generated. The sinusoid is an output of the core. 
 
 \section{Security in Hardware}
-	<TODO Section Security in Hardware : NOT DONE>
-hardware virus is hard. 
+	<TODO Section Security in Hardware : PROOF READ>
+
+There is a fundamental difference in programming a processor and designing hardware, as we have seen in this chapter. Consider the differences, when programming a processor there is an atomic instruction that is executed with references to register addresses. However, in an \ac{FPGA}, data is registered with no way of accessing the data by address and no way of changing the \ac{FPGA} configuration without erasing the data. 
+
+Due to the trusted nature of hardware, which an \ac{FPGA} is configurable hardware, \ac{FPGA}s are finding a place as a front-line malicious packet detection. If a data packet comes over the network that is detected as malicious then appropriate action can be taken. 
