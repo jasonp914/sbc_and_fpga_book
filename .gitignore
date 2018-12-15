@@ -1,0 +1,15 @@
+stupid_test
+filepath
+
+# Tex Generated files
+*.aux
+*.log
+*.toc
+*.gz
+toc_mostreviewed
+texfiles/template_Article.pdf
+
+
+*.swp
+*~
+*.out

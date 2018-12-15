@@ -128,9 +128,7 @@ begin
                         end if; 
 						
                         if f_cc = k_clks_per_scl then
-							
-                            
-                            f_scl <= '0';
+							f_scl <= '0';
                             f_cc <= (others => '0');
 							if f_os = 23 then
 								f_sda <= 'Z';
