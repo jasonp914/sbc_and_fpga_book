@@ -503,8 +503,70 @@ A quick note about handling signals that have a large bandwidth. For higher band
 
 Now we have all of our parameters for our implementation. We will be using an \ac{ADC} sampling at $105$ \ac{MHz} our signal that has up to $40$ \ac{MHz} of bandwidth. The signal processing on the \ac{FPGA} will be running at the same clock speed $105$ \ac{MHz} and we are going to design our \ac{VHDL} to be able to handle data inputs every clock cycle.
 
-\subsection{Test Benching - Module Level}
-	<TODO Subsection Test Benching - Module Level : NOT DONE>
+\subsection{Module Design}
+ <TODO Subsection Module Design : PROOF READ>
 
+For each of the seven modules that will be used in the transceiver we will walk through how we are going to design each one. First we will discuss whether we will use existing \ac{IP} from the \ac{FPGA} vendor or write the \ac{VHDL} ourselves. Then we will talk about the input and output interfacing that we will use to ensure proper operation when the system is wired together. 
+
+A quick note on using vendor \ac{IP}. The vendor \ac{IP} is generated for the part you are targeting, so the resulting logic is optimized for the hardware you are using. It is also quick, you can treat the \ac{IP} as a black box and not wonder what is inside it. All you need to do is interface to the \ac{IP} and you are ready to move on to the next module.
+
+However, vendor \ac{IP} is not portable. If you decide to upgrade to a new \ac{FPGA} in the same family you will need to regenerate the \ac{IP}. In most cases this isn't an issue but if they upgrade the logic inside and that has to change the interface then you will need to redesign your interfacing code. If you decide to completely switch \ac{FPGA} vendors then the new \ac{IP} may not be the same at all, if it exists. So to use vendor \ac{IP} is a decision that you should consciously make and be aware of the implications. 
+ 
+{\bf \emph{Preamble Detection Block}}
+
+We will be using a \emph{Preamble} to synchronize the receiver to the transmitted waveform. This means that we need to detect the preamble as accurately as possible in time. If our estimate is off we will introduce phase error in our receiver which can cause a reduction in performance.
+
+The preamble is a known sequence at the transmitter and receiver and the optimal detection method is a matched filter. We can very easily write our own or we can use a \ac{FIR} filter generator from the vendor \ac{IP}. We will choose to write our own, since the filter structure is easy to implement.
+
+{\bf \emph{\ac{FFT} Block}}
+
+The \ac{FFT} operation a little more complex than the \ac{FIR} filter. For this  block we will be using the \ac{IP} the vendor provides. We will also be writing an \ac{FFT} wrapper block in \ac{VHDL} that takes our common interface and maps it to the \ac{IP} this way if we do switch \ac{FPGA}s all we will need to do is rewrite the wrapper.
+
+For this application we could see \ac{OFDM} blocks come in back to back. Right now we haven't determined what the speed in which the \ac{OFDM} block will arrive. Because of this we will be using the streaming architecture for the \ac{FFT} operation. This means that new samples can always be provided to the core.
+
+The streaming architecture is the correct architecture for our application but there is also a burst architecture where once a frame of data is provided the core it is busy and cannot accept any more time domain samples until all the frequency domain samples are read out.
+
+{\bf \emph{Tone Separator Block}}
+
+The output of the \ac{FFT} block is $N$ subcarrier samples. Each subcarrier is either a data tone or pilot tone. The Tone Separator Block will split the tones into the two streams. The pilot tones are routed to the block that estimates the impulse response and the data tones are routed to a \ac{FIFO}.
+
+{\bf \emph{\ac{FIFO} Block}}
+
+The \ac{FIFO} block stores the data tones until the \emph{Equalize Block} block is ready for them. The \ac{FIFO} must be big enough to hold all $N$ samples even though we know that some of them will be used for pilots. We need room for all $N$ in case we find out that we can use a channel estimate for multiple \ac{OFDM} blocks. If we can then we will overflow a \ac{FIFO} that is smaller than $N$.
+
+For this block we will use the \ac{IP} for the \ac{FIFO}. In this case the interface to the \ac{FIFO} is pretty simple and doesn't change very often. If we go to another ac{FPGA} they likely have a similar interface.
+
+{\bf \emph{Matrix Multiply Block}}
+
+The input to the Matrix Multiply Block is the set of received pilot tones. The received pilot tones are multiplied by the pre-computed inverse \ac{DFT} matrix. We want to make sure this block is generic enough for our wireless channel. We can assume the pilot tones are always at the same indices. In some transceivers they vary the placement of the pilots. For this implementation we will pre-compute and store the entire $(N\times N)$ inverse \ac{DFT} matrix so that we can programmatically place the pilots as needed.
+
+The output of this block is the estimated impulse response. The estimated impulse response is of length $L$. The output of this block will need to zero padd out to $N$ so the next block, the \ac{FFT}, can operate on a full frame of data. There isn't any \ac{IP} that will handle these calculations for us we will be writing \ac{VHDL} ourselves.
+
+{\bf \emph{Equalize Block}}
+
+The input to the Equalize Block is the estimated frequency response of the channel and the data tones. As the estimated frequency response is sent into this block all $N$ subcarrier will be streaming in. This block ensures the correct channel estimate tone is equalizing the correct received data tone.
+
+As our \ac{VHDL} lines up the two complex samples they are provided to \ac{IP} that does the division operation. The division operation is performed by a fully pipelined \ac{CORDIC} \ac{IP} and the equalized samples are the output of this block.
+
+{\bf \emph{Symbol Detect Block}} 
+ 
+As equalized data tones are input to the Symbol Detect Block they are mapped back to bits. We will need to write the \ac{VHDL} that also takes as an input what constellation size we will be using. We will start with the easiest $4$\ac{QAM} constellation and add more functionality as needed. 
+
+\subsection{Test Benching - Module Level}
+	<TODO Subsection Test Benching - Module Level : PROOF READ>
+
+There are two reasons to testbench each module separately. The first is that when we first write any of these blocks it is likely we will have a bug. If we can isolate our bugs to a particular module then it will be easier to find the bug. Also, it has been known to happen where a bug actually causes something to work. This can be very frustrating when the bug has slightly different inputs and all of a sudden, something we had working is now broken. Turns out it was always broken we just didn't catch it.
+
+The next reason from testbenching each module is that our simulations run faster. When we run the module level simulations we want to thoroughly test all the features of the block. All possible and valid inputs must be tested. This ensures that when we put the entire system together we will have a working design.
+	
 \subsection{Test Benching - System Level}
-	<TODO Subsection Test Benching - System Level : NOT DONE>
+	<TODO Subsection Test Benching - System Level : PROOF READ>
+
+The system level simulation is one in which we simulate the top level transceiver design. This simulation includes all the modules wired up together. If we did our job correctly in the \emph{Module Level} testbench then we have a working transceiver. This testbench ensures this is the case. Sometimes it is hard to make sure we have all possible cases tested in the module level testing.
+
+Another reason to have this level of testing is if you are waiting for the hardware. If the \ac{FPGA} you are going to put your transceiver on is not available yet, then you do the full system level simulation.
+
+The system level simulation will take longer. Which may be worth it if there is someone else on the design team that is looking for performance metrics. The simulation results are a great indicator of the performance that will be seen on the hardware.
+
+	
+	

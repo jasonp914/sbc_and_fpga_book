@@ -71,9 +71,6 @@ Near the end of the testbench we keep our processes that are simple. Like the cl
 <TODO Subsection HDL with testbenches : INSERT CODE textfileread>
 
 We now are going to look into how the textfileread entity works. The first feature to notice is that the filename to read from is a generic. The generic allows us to reuse the block to read from different files. We saw this in the testbench were we read both the input and results from MATLAB with this same block. Another needed feature that is needed is the enable input to the block, which allows us to hold off the data until we are ready to start comparing with the result of the \ac{FIR} filter. The rest of the file consists of calling functions in the TextIO package.
-
-	
-	
 	
 \subsection{Synthesis and verify resource usage}
 	<TODO Subsection Synthesis and verify resource usage : PROOF READ>
