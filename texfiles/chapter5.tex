@@ -1,25 +1,47 @@
 \chapter{FPGA Programming Basics}
-	<TODO Chapter FPGA Programming Basics : NOT DONE>
+	<TODO Chapter FPGA Programming Basics : PROOF READ>
 
+To get started with programming an \ac{FPGA} we first need to gain an understanding of the \ac{FPGA} vendor tools. Each \ac{FPGA} vendor has its own tools to interface to their chips. This Chapter starts off with a quick introduction to each vendor and an overview to the software. 
+
+After the software section the rest of the chapter talks in detail of how to write code that will be running on any of the \ac{FPGA}s. The topics included in the reset of the chapter are number representation, basic gates, combinatorial and sequential logic, counters, shift registers, memory, and an introduction to \ac{VHDL} constructs such as signal types. 
+	
 \section{Installing Software}
-	<TODO Section Installing Software : NOT DONE>
+	<TODO Section Installing Software : PROOF READ>
 
+This section discusses installing software for each of the \ac{FPGA} vendor's software. The software for all four \ac{FPGA} vendors is available on Windows and Linux. In particular Windows 7 and Windows 10 are supported. For Linux the CentOS and Ubuntu distributions are supported. 
+	
 \subsection{Xilinx}
-	<TODO Subsection Xilinx : NOT DONE>
+	<TODO Subsection Xilinx : PROOF READ>
 
+Xilinx is one of the major vendors who have about 50\% of the \ac{FPGA} market share. They have a wide variety of products from small lower power devices like their Artix line of \ac{FPGA} to the top of the line UltraScale+ line of \ac{FPGA}s.
+
+The programming software that needs to be installed to interface to the Xilinx \ac{FPGA} is called Vivado. The newest version as of this written is 2018.3. Xilinx releases new versions of their software every quarter. See xilinx.com for more details. 	
+	
 \subsection{Altera}
-	<TODO Subsection Altera : NOT DONE>
+	<TODO Subsection Altera : PROOF READ>
 
+Intel Altera is the second leading \ac{FPGA} vendor with about 37\% of the market share. They seem to specialize in larger \ac{FPGA}. Their low-power solutions can't really compete with the other vendors. Intel Altera \ac{FPGA}s range in size from the smaller Cyclone series to the large Stratix series. 
+
+The software that is used to interface to the Intel Altera \ac{FPGA}s is the Quartus line of software. The Quartus Prime software the latest software released by Intel Altera with updates coming out when available. See intel.com/FPGA for more information.
+	
 \subsection{Microsemi}
-	<TODO Subsection Microsemi : NOT DONE>
+	<TODO Subsection Microsemi : PROOF READ>
 
+The Microsemi \ac{FPGA}s share the remaining small market share. They specialize in low-power and radiation hardened \ac{FPGA}s. The number of applications that demand these specialties are limited resulting in a smaller market share. However, for a battery powered application like \ac{IoT} applications the Microsemi \ac{FPGA} could play a larger role. The IGLOO2 is the smallest \ac{FPGA} with the best low-power rating, the mid-range \ac{FPGA} is the PolarFire, and the largest \ac{FPGA} is the SmartFusion2. 
+
+The Libero software is used to program each of the \ac{FPGA}s listed above. The Libero software is currently on Version 11.7, however if a PolarFire \ac{FPGA} is targeted then there is a special version of the software call Libero PolarFire. Visit	mircosemi.com for more information. 
+	
 \subsection{Lattice}
-	<TODO Subsection Lattice : NOT DONE>
+	<TODO Subsection Lattice : PROOF READ>
+	
+The Lattice Semiconductor specializes in low cost small form factor \ac{FPGA}s. These smallest \ac{FPGA} is the \emph{iCE} series with the larger Lattice \ac{FPGA}s referred to as the \emph{ECP} series. 
+
+The Lattice Diamond software is used to compile and program you Lattice FPGA. The Lattice Diamond software is currently on its 3.10 version with two service packs available. See latticesemicom/fpga for more information. 
 
 \section{Number Representation}
 	<TODO Section Number Representation : PROOF READ>
 
-Number representation on an \ac{FPGA} is not like number representation on a desktop computer. On a desktop computer you have 64 bits of floating point precision. On an \ac{FPGA} you can define the precision you'd like to keep through your processing.Although some find number representation cumbersome and tedious the flexibility the \ac{FPGA} offers is quite an advantage. A straight forward example is if your algorithm doesn't need 64 bits of precision then you don't need to spend the time fetching 64 bits from memory. Even in this little example we see an advantage, but there are other subtle advantages to having the ability to adjust numerical precision throughout the data processing chain.
+Number representation on an \ac{FPGA} is not like number representation on a desktop computer. On a desktop computer you have 64 bits of floating point precision. On an \ac{FPGA} you can define the precision you'd like to keep through your processing.Although some find number representation cumbersome and tedious the flexibility the \ac{FPGA} offers is quite an advantage. A straight forward example is if your algorithm doesn't need $64$ bits of precision then you don't need to spend the time fetching 64 bits from memory. Even in this little example we see an advantage, but there are other subtle advantages to having the ability to adjust numerical precision throughout the data processing chain.
 
 In the reset of this section we discuss both fixed point and floating point number representations. The fixed point representation offers higher performance with the trade off of precision. There is quantization error when converting numbers to fixed point. The floating point representation discussion introduces the \ac{IEEE} standard for floating point.
 	
@@ -385,7 +407,7 @@ end rtl;
 \subsubsection{Multiplexers and De-multiplexers}
 	<TODO Subsubsection  Multiplexers and De-multiplexers : PROOF READ>
 	
-Multiplexers and De-multiplexers are the mechanisms used to control data routing. Similar to an \ac{if} statement, the \ac{mux} is used to determine under a condition where to route data. The inputs to a \ac{mux} are the $N$ data paths and a select bus that is $\log_{2}N$ wide. The output is a single data path which is assign one of the inputs based on the select lines. 
+Multiplexers and De-multiplexers are the mechanisms used to control data routing. Similar to an \emph{if} statement, the \emph{mux} is used to determine under a condition where to route data. The inputs to a \emph{mux} are the $N$ data paths and a select bus that is $\log_{2}N$ wide. The output is a single data path which is assign one of the inputs based on the select lines. 
 
 A simple case is where the data path is a single bit. 
 
@@ -402,7 +424,7 @@ Parity bits are commonly used in wired, very low bit error rate communications. 
 
 Another draw back is that we have to send nine bits instead of eight. There is an overhead for this protection. This may seem neglidgeable but it is worth noting that over billions of transactions the added time can ammount to hours. This only matters when automated testing is desired and the number of trials needs to be large. 
 
-Next we will look at how to calculate the parity bit in \ac{VHDL}. The parity bit is the result of the data being \ac{xor}'d together.
+Next we will look at how to calculate the parity bit in \ac{VHDL}. The parity bit is the result of the data being \emph{xor'd} together.
 
 \begin{VHDLlisting}[tabsize=4]
 -- parity_generator.vhd
@@ -515,7 +537,7 @@ A operation of a register has three inputs and an output. The first input is a c
 
 The data is subject to setup and hold times with relation to the rising edge of the clock. For a register to store the correct value the data the value needs to be present at the register a certain amount of time prior to the rising edge of the clock the time required is referred to the setup time, often denoted as $T_S$. The data must also be stable through the rising edge and after for a duration of the hold time, denote $T_H$. Both $T_S$ and $T_H$ are \ac{FPGA} dependent but are mostly affected by the size of process or gate implemented on the \ac{FPGA} silicon. Other than gate size there are some manufacturing variances that are captured by the manufacturer's speed grades. If you require a faster \ac{FPGA} the more recent \ac{FPGA}s are having smaller process sizes to meet the demand for faster chips. 
 
-For someone getting started with \ac{FPGA}s the above message can be intimidating. The process for ensuring $T_S$ and $T_H$ are met is called \ac{Timing Verification} the vendor tools provide a timing analysis tool and report that will be presented to you after the code is synthesized and routed. If there is a problem the tools will highlight the problematic path and you can fix the path by adding more registers to the data path or by reducing the clock speed. 
+For someone getting started with \ac{FPGA}s the above message can be intimidating. The process for ensuring $T_S$ and $T_H$ are met is called \emph{Timing Verification} the vendor tools provide a timing analysis tool and report that will be presented to you after the code is synthesized and routed. If there is a problem the tools will highlight the problematic path and you can fix the path by adding more registers to the data path or by reducing the clock speed. 
 
 Getting back to the third and final input to our register, the enable. The enable is also subjected to the same setup and hold time requirments but it can disable the register from storing the input data. This feature if very helpful when looking to register values when a certain condition is reached. If we are always interested in storing the data then we can tie the enable high.
 
@@ -715,7 +737,7 @@ end process;
 
 We added the update of bit zero and we also added setting an output assignment. We could further make this \ac{PN} generator a little most user friendly by added an enable line to control when data is output from the block.
 
-The \ac{PN} generator goes by another name, \ac{LFSR}. Breaking this name down we surely understand the \ac{Shift Register} portion since we implemented a the \ac{LFSR} or \ac{PN} generator with a shift register. The linear part of the name applies since the \ac{LFSR} is a linear system \cite{??}. The \emph{feedback} portion of the name applies to the indices that are fed back to the zeroth index. In the above example the bits $18$, $17$, $16$, and $13$ are fed-back.
+The \ac{PN} generator goes by another name, \ac{LFSR}. Breaking this name down we surely understand the \emph{Shift Register} portion since we implemented a the \ac{LFSR} or \ac{PN} generator with a shift register. The linear part of the name applies since the \ac{LFSR} is a linear system \cite{??}. The \emph{feedback} portion of the name applies to the indices that are fed back to the zeroth index. In the above example the bits $18$, $17$, $16$, and $13$ are fed-back.
 
 	
 \subsubsection{Memory and Storage}
@@ -751,7 +773,7 @@ begin
 end process;
 \end{VHDLlisting}
 
-In this example, every clock cycle uses the contents of the f\_dist\_ram. When the code is written this way the registers are populated with the data on the \ac{FPGA} on each clock cycle the \emph{XOR} gate has its input directly wired to each instantation of an \ac{XOR} gate. The number of \ac{XOR} gates needed for this example is eight for each address and there are $10$ addresses. We need $80$ total \ac{XOR} gates. As a note we could have written this code in a for loop but this is a little more straight forward in terms of understanding distributed \ac{RAM}. Also f\_result will be implemented in distributed \ac{RAM} since we access more than two addresses in one clock cycle. 
+In this example, every clock cycle uses the contents of the f\_dist\_ram. When the code is written this way the registers are populated with the data on the \ac{FPGA} on each clock cycle the \emph{XOR} gate has its input directly wired to each instantiation of an \emph{XOR} gate. The number of \emph{XOR} gates needed for this example is eight for each address and there are $10$ addresses. We need $80$ total \emph{XOR} gates. As a note we could have written this code in a for loop but this is a little more straight forward in terms of understanding distributed \ac{RAM}. Also f\_result will be implemented in distributed \ac{RAM} since we access more than two addresses in one clock cycle. 
 
 If we addressed only two elements in a clock cycle then we would be able to use \ac{BRAM} on the \ac{FPGA}. \ac{BRAM} is dedicated memory on the \ac{FPGA} that, when used, does not use \ac{FPGA} logic or registers. Using \ac{BRAM} is a better solution for larger blocks of data so that we are not using up our \ac{FPGA} resources. 
 
@@ -783,7 +805,7 @@ begin
 end process;
 \end{VHDLlisting}
 
-The biggest change that we needed to make was to introduce an address register to the code to increment through the $10$ addresses. Since we have this wrap around case at the end we needed to split up how address nine was handled. We now only have eight \ac{XOR} gates used instead of the $80$ used in the previous example. However, we do take $10$ clock cycles now to calculate the result. Depending on the application $10$ clocks may be too long or if \ac{FPGA} resources are running low then choosing hardware reuse may be the answer. 
+The biggest change that we needed to make was to introduce an address register to the code to increment through the $10$ addresses. Since we have this wrap around case at the end we needed to split up how address nine was handled. We now only have eight \emph{XOR} gates used instead of the $80$ used in the previous example. However, we do take $10$ clock cycles now to calculate the result. Depending on the application $10$ clocks may be too long or if \ac{FPGA} resources are running low then choosing hardware reuse may be the answer. 
 	
 For the first two types of memory the data rate in which they can handle is determined by the clock speed and the width of the data being stored. The wider bus of data that is being stored the higher the data rate but more resources on the \ac{FPGA} are used. For a very high data rate the \ac{FPGA} can be interfaced to \ac{DDR}-\ac{RAM}. The interface to \ac{DDR}-\ac{RAM} is much more complicated but the vendor tools do provide some \ac{IP}. The \ac{IP} needs to be configured for the particular \ac{FPGA} and \ac{DDR}-\ac{RAM} chip that will be targeted. The vendor tools also provide a behavioral simulation model that can help you setup your interfacing to the application side of their \ac{IP}. 
 
@@ -903,11 +925,11 @@ begin
 end process;
 \end{VHDLlisting}
 
-The std\_logic\_vector is constrainted by array indices. In this case the \emph{7 downto 0} constraints the array. The keyword \emph{downto} denotes the direction of the indices. Of course it grammatically makes sense but also by indexing the array like this sets the \ac{MSB} to be the seventh bit. We can make the zeroth bit the \ac{MSB} by constrainting the array with \emph{0 to 15}. Next in the example with use the keyword \emph{others}. In this case the keyword \ac{others} takes the place for all the indices. So this statement \emph{others => '0'} sets all the elements of the array to zero. 
+The std\_logic\_vector is constrained by array indices. In this case the \emph{7 downto 0} constraints the array. The keyword \emph{downto} denotes the direction of the indices. Of course it grammatically makes sense but also by indexing the array like this sets the \ac{MSB} to be the seventh bit. We can make the zeroth bit the \ac{MSB} by constraining the array with \emph{0 to 15}. Next in the example with use the keyword \emph{others}. In this case the keyword \emph{others} takes the place for all the indices. So this statement \emph{others => '0'} sets all the elements of the array to zero. 
 	
 The std\_logic\_vector in general can be thought of as a bus with a defined width. The bus can also be thought of as a set of registers that drives the bus. However, if we want to interpret the set of registers as a numeric value there are two other types \ac{VHDL} has defined that we can use. The use of these types is encouraged since standard operations are already defined, like addition, subtraction, and multiplication. 
 
-The types \emph{signed} and \emph{unsigned} can be used to represent fixed point numbers in \ac{VHDL}. These types are constrainted just like std\_logic\_vector and are cleared with the same \emph{others} keyword. There will also be a time where you want to initalize these types to decimal values which are easy to read. But typing in a numerical value is actually of type \emph{integer} and since \ac{VHDL} is strongly typed a \emph{signed} or \emph{unsigned} signal type can not initalized by an integer. For this reason you can use the function \emph{to\_signed} or \emph{to\_unsigned}. For example:
+The types \emph{signed} and \emph{unsigned} can be used to represent fixed point numbers in \ac{VHDL}. These types are constrained just like std\_logic\_vector and are cleared with the same \emph{others} keyword. There will also be a time where you want to initialize these types to decimal values which are easy to read. But typing in a numerical value is actually of type \emph{integer} and since \ac{VHDL} is strongly typed a \emph{signed} or \emph{unsigned} signal type can not initialized by an integer. For this reason you can use the function \emph{to\_signed} or \emph{to\_unsigned}. For example:
 
 \begin{VHDLlisting}[tabsize=4]
 architecture rtl of std_logic_example is
@@ -933,11 +955,11 @@ begin
 end process;
 \end{VHDLlisting}
 
-which has quite a few things goig on here. First we will look at the \emph{unsigned} signal first. The range of values for an \emph{unsigned}	data type is $2^b-1$ where $b$ is the number of bits. For our example $b=8$ so this means with the \emph{unsigned} signal we have we can represent $[0,255]$. We also see that the inital value is set in the initial condition to be $127$. Once this code starts to execute the value will be incremented to $128$ then in the next clock cycle the if statement condition equates to true so we set the value to all ones or $256$. The next clock cycle increments the value which rolles the value back to zero. Then after $128$ clock cycles we reset the signal to $256$ again. 
+which has quite a few things going on here. First we will look at the \emph{unsigned} signal first. The range of values for an \emph{unsigned}	data type is $2^b-1$ where $b$ is the number of bits. For our example $b=8$ so this means with the \emph{unsigned} signal we have we can represent $[0,255]$. We also see that the initial value is set in the initial condition to be $127$. Once this code starts to execute the value will be incremented to $128$ then in the next clock cycle the if statement condition equates to true so we set the value to all ones or $256$. The next clock cycle increments the value which rolls the value back to zero. Then after $128$ clock cycles we reset the signal to $256$ again. 
 
-For the \emph{signed} example the range for a signed value is $[-2^{b-1},2^{b-1}-1]$ or $[-127,128]$. The inital condition sets the signed value to zero. Once the code starts running the signed value is incremented for 128 clock cycles. Once the max is reached the \emph{signed} value rolls over to $-127$ and is incremented for $63$ clock cycles until it equals $-64$ making the if statement condition true. At which point the value is set back to $-65$ then the next clock cycle it is incremented to $-64$ then in the next clock cycle the value is set back to $-65$ in the if statement. 
+For the \emph{signed} example the range for a signed value is $[-2^{b-1},2^{b-1}-1]$ or $[-127,128]$. The initial condition sets the signed value to zero. Once the code starts running the signed value is incremented for 128 clock cycles. Once the max is reached the \emph{signed} value rolls over to $-127$ and is incremented for $63$ clock cycles until it equals $-64$ making the if statement condition true. At which point the value is set back to $-65$ then the next clock cycle it is incremented to $-64$ then in the next clock cycle the value is set back to $-65$ in the if statement. 
 
-Now that we know how to represent numbers and buses we can now move on to arrays of numbers and buses. For this, \ac{VHDL} provides the ability to create types. We will see three examples where we can make unconstrainted types for use as needed. Sometimes programmers will define these types in a common package that they use on every project. That way they aren't re-defining the same types many times. Here are a few examples
+Now that we know how to represent numbers and buses we can now move on to arrays of numbers and buses. For this, \ac{VHDL} provides the ability to create types. We will see three examples where we can make unconstrained types for use as needed. Sometimes programmers will define these types in a common package that they use on every project. That way they aren't re-defining the same types many times. Here are a few examples
 
 \begin{VHDLlisting}[tabsize=4]
 architecture rtl of std_logic_example is
@@ -1289,7 +1311,7 @@ Once again we have the same two generics, the filename and bitwidth which are us
 
 This section covers an array of topics that are generally considered to be more advanced in \ac{FPGA} design. There are concepts here that apply only when \ac{VHDL} is running on hardware. Or more importantly concepts that if violated may not manifest as an error in a simulation but once on hardware the data integrity is lost. This then pushes the debugging of the code to hardware which is always harder than simulation. 
 
-Concepts covered here are the use of asynchronous resets. In general synchronous resets are preferred but here we can talk about how to use asynchronous resets correctly. Next we will discuss heirarchy in \ac{VHDL} the use of heirarchy can aid in making complex designs managable. Next is piplining and data rates. If you are using an \ac{FPGA} you want to process a lot of data. The use of piplining is the most important aspect and concept in an \ac{FPGA} and is the best way to increase your the data rate your implemention is able to handle. 
+Concepts covered here are the use of asynchronous resets. In general synchronous resets are preferred but here we can talk about how to use asynchronous resets correctly. Next we will discuss hierarchy in \ac{VHDL} the use of hierarchy can aid in making complex designs manageable. Next is pipelining and data rates. If you are using an \ac{FPGA} you want to process a lot of data. The use of pipelining is the most important aspect and concept in an \ac{FPGA} and is the best way to increase your the data rate your implementation is able to handle. 
 
 Finally we discuss clock domain crossings. Multiple clocks exist in a design usually because a peripheral requires the use of another clock. If you only have one peripheral that requires a clock, or provides the clock with the data, referred to as \emph{source synchronous} data. Then you may use that clock to do all the processing. If thats the case then maybe you only need one clock. In general it is recommended to minimize the number of clocks used in a design. Every time a clock domain is crossed there is a chance for data corruption if not done correctly. These types of issues are the worst to debug in an \ac{FPGA}. 
 	
@@ -1506,7 +1528,7 @@ port map(i_clka  => i_clka,
 );
 \end{VHDLlisting}
 
-The architecture of this component instantiates a dual-clock fifo, but it also has two prcoesses that are sensitive to the two clocks that are inputs. Data comes in on clock \emph{A}, written into the \ac{FIFO} if the \ac{FIFO} is not full. Then when the \ac{FIDO} become not empty, which is usually a couple of clock cycles after data is written into the \ac{FIFO}, the data is read back out on the \emph{B} clock. The output wires from the \ac{FIFO} could either be outputs of the block for be connected to logic that is ran on the \emph{B} clock domain. 
+The architecture of this component instantiates a dual-clock \ac{FIFO}, but it also has two processes that are sensitive to the two clocks that are inputs. Data comes in on clock \emph{A}, written into the \ac{FIFO} if the \ac{FIFO} is not full. Then when the \ac{FIFO} become not empty, which is usually a couple of clock cycles after data is written into the \ac{FIFO}, the data is read back out on the \emph{B} clock. The output wires from the \ac{FIFO} could either be outputs of the block for be connected to logic that is ran on the \emph{B} clock domain. 
 
 One question you may have is that if you read the data out on the clock cycle that the \ac{FIFO} is not empty, how could the \ac{FIFO} ever overflow. Meaning why do you need to check the w\_full flag. Some \ac{FIFO}s have been implemented in a way that if you write when they are full, or read when they are empty the \ac{FIFO} will corrupt data inside and be put into a weird that that the \ac{FIFO} must be reset to use it again. So always check the status flags. They are provided for a reason.
 
@@ -1514,21 +1536,49 @@ Also, we don't know if this \ac{FIFO} as written will overflow. If the average d
 
 	
 \section{TCL Scripting}
-	<TODO Section TCL Scripting : NOT DONE>
+	<TODO Section TCL Scripting : PROOF READ>
+
+\ac{TCL} scripting is a great way to automate common tasks. In this section we will outline three common tasks that \ac{TCL} scripts can be used effectively. First you can automatically update the version number in your \ac{FPGA} build. Automatically updating the build number is useful to keep track of changes. 
+
+Next we can automate the simulation process. These is useful if there are many options you'd like to simulate. If the options are independent we can automate the simulation of each of the options in parallel where your multiple cored computer can simulate all the options at once. If the options (or number of inputs) are not independent then we can setup a longer simulation that runs the simulations with all the possible inputs.
+
+Finally we can automate the build process. This is useful since the build process for large \ac{FPGA}s can take hours. And if they build process is automated you don't need to come back to your computer in a few hours to start the next step in the build chain. The \ac{TCL} script starts the next phase automatically.
 
 \subsection{Version Update}
-	<TODO Subsection Version Update : NOT DONE>
+	<TODO Subsection Version Update : PROOF READ>
 	<TODO Subsection Version Update : INSERT CODE tcl update version>
 
+If you are debugging builds it can sometimes be an issue as you are generating multiple builds to remember which build has which features in it. As you make updates to the code you can (and should) keep a log of what you are changing. These changes are then linked to build numbers. Automating the version update process you won't need to be concerned if you forgot to update the verion number.
+	
+To update the version number the \ac{TCL} script reads in the \ac{HDL} source file. Then the \ac{TCL} script finds the constant in your \ac{HDL} and increments the build number and writes it back into the file. 
+
+After completing this \ac{TCL} script we need to make sure that the build chain calls the \ac{TCL} script. The vendor tools allow you to call a \ac{TCL} script at any stage of the build process. You can have the increment version number \ac{TCL} script run at the end of the chain. This way if you want to reset the build number you can directly in the code and the next build will have your reset build number. 
+	
 \subsection{Automate Simulations}
-	<TODO Subsection Automate Simulations : NOT DONE>
+	<TODO Subsection Automate Simulations : PROOF READ>
 	<TODO Subsection Automate Simulations : INSERT CODE tcl automate simulations>
 
+The tool chain to compile and run a simulation can be started in a \ac{TCL} script. When first starting it seems like a lot of overhead to get all the simulation scripts setup and to maintain them but once the design is close to being finished automating the simulation environment is very useful and saves a lot of time. 
+
+You can use makefiles to start all the simulations. This process is more popular if developing in LInux but is possible in Windows. Depending on your simulator you will need to call the \emph{compile}, \emph{elaborate}, \emph{wave}, and \emph{run} steps for simulation. 
+
+The \emph{compile} step generates object files for the simulator to work with. As you make changes to your code you will need to update the object files to test the changes that you are making. 
+
+The next step is \emph{elaborate}. In \emph{elaborate} the simulation optimizer is either turned on or off. It is also possible to set optimization levels of different levels of hierarchy in the design. These controls are very helpful when you are debugging a specific section of code but want to the reset of the design to simulate as quickly as possible.
+
+If final two steps are sometimes combined. The \emph{wave} and \emph{run} steps are used to determine with signals are going to be logged in the wave file. The wave file is what is viewed when the simulation is over. The reason the \emph{wave} and \emph{run} steps are combined is that you may know when the problems are occurring. If this is the case then you can set up your simulation to log no signals, which speeds up the simulation, until you get to the problem area. At this point you can log the files and start the simulation again. This process of add or remove signals and running the simulation for a duration can be done repeatedly as needed. 
+	
 \subsection{Automate Build Tools}
-	<TODO Subsection Automate Build Tools : NOT DONE>
+	<TODO Subsection Automate Build Tools : PROOF READ>
 	<TODO Subsection Automate Build Tools : INSERT CODE tcl build tools>
 
-	
+The build tools can be automated with \ac{TCL} scripts. This means that we call the \emph{synthesis}, \emph{place and route}, and \emph{write bitstream} tools in sequence. Some of the vendor tools will generate a \ac{TCL} script for you that then can be maintained outside of the \ac{GUI}, but it at least gives you a starting point. 
+
+Or you can create your build \ac{TCL} script from scratch. The first step in your \ac{TCL} script will be to generate the \emph{synthesis} results. This step takes all the source \ac{HDL} file and generates a \emph{netlist} which consists of all the signals that are in the design. The \emph{netlist} also has information on how all the signals are connected to each other.
+
+The \emph{netlist} is then the input to the second step. The second step is the \emph{place and route} step. In this step the specific \ac{FPGA} chip is considered, where the amount of resources on the \ac{FPGA} are picked out or \emph{placed} and then the resources are wired together with configuring the switching matrices on the \ac{FPGA} fabric. This step can take quite some time if the amount of logic in the \ac{FPGA} is almost fully utilized. 
+
+Finally the \emph{write bitstream} step takes in the \emph{place and route} information and orgainizes the information into a file that can then be loaded onto the \ac{FPGA}. As the programmer sends the bitstream to the \ac{FPGA} the \ac{FPGA} knows the organization of the bits so it configures the \ac{LUT}s and switching matrices as desired for proper functionality. 
 	
 		
 	

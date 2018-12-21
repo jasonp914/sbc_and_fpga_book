@@ -166,7 +166,7 @@ cp -r /home/user/workspace /home/user/backup/
 The python script \emph{copy\_files.py} copies all the files and sub-folders of the user workspace to user backup. 
 	
 \section{Programming Languages}
-	<TODO Section Programming Languages : NOT DONE>
+	<TODO Section Programming Languages : PROOF READ>
 
 Choosing a programming language first depends on the algorithm or task you are trying to accomplish. Just like using a shovel to dig the foundation for a skyscraper you also wouldn't use a bulldozer to make a sandcastle. It is important to choose the correct tool for the job. 	
 	
@@ -304,7 +304,7 @@ From scratch we would start with a declaring a \emph{main}. We also increase the
 As you develop more code and more complex programs you will see you code base grow so that you don't have to rewrite code all the time you can start called your other functions so you can spend your time write new more complex functions. 
 
 \subsubsection{Python}
-	<TODO Subsubsection  Python : NOT DONE>
+	<TODO Subsubsection  Python : PROOF READ>
 
 Now we will transition from C to Python. The biggest difference between the two languages is the use of indentation for code scope. In C curly-brackets are used for scope differentiation. For example, after an if statement the code that is executed distinguished by using $\{\}$. In Python we end the if statement conditional with a colon, then the indentation marks the scope for the conditional. 
 
@@ -366,17 +366,95 @@ The rudimentary game presented here is not really a game is the truest sense. To
 
 There are some basic features left out of this example that should be incorporated. What happens if you want to hire a worker but don't actually have enough money for hire one. The worker is still hired and you have negative money. This action probably shouldn't be allowed. As a general rule all user input should be validated. This way the rules that you set in your game have to be followed. 
 
-You could also have the player specify the number of iterations they want to skip in the command. So instead of issueing the command \emph{s} they could issue \emph{s 100} or \emph{s 10000} that way the player would have a finer control of the money being accumulated. 
+You could also have the player specify the number of iterations they want to skip in the command. So instead of issuing the command \emph{s} they could issue \emph{s 100} or \emph{s 10000} that way the player would have a finer control of the money being accumulated. 
 
-Some improvements on the game can be to introduce more complex workers. This could mean that for a more expensive worker the produce more money per iteration. Or maybe you can add a number of open positions and you can't hire more than the number of open positions. In this case how would you determine whether a positio should be opened up. Maybe the workers make widgets that are sold. As more widgets sell the need for more workers with a higher production rate are needed. If sales go down we will need to lay people off. 
+Some improvements on the game can be to introduce more complex workers. This could mean that for a more expensive worker the produce more money per iteration. Or maybe you can add a number of open positions and you can't hire more than the number of open positions. In this case how would you determine whether a position should be opened up. Maybe the workers make widgets that are sold. As more widgets sell the need for more workers with a higher production rate are needed. If sales go down we will need to lay people off. 
 
 As we get a more and more complex game we could probably use the ability to save the game off to resume later. Here we could write all the needed status to a file, then when the game is resumed we read the file back out and update our status with what's in the file. This way we can pick up where we left off. 
 
 There are many ways to improve this shell of a game. The game can be taken in may directions. The best way to learn Python or any programming language is to get started. Adding a couple features to this game is a great way to get started. Once you add a few features play the game and see if you can think of ways to make the game more realistic, or even less realistic but fun.
 
 \subsubsection{Julia}
-	<TODO Subsubsection  Julia : NOT DONE>
+	<TODO Subsubsection  Julia : PROOF READ>
 
+For the introduction of \emph{Julia} we will once again start with the hello world program. The one line program prints hello world with a simple call to the \emph{println} function. 
+	
+\lstinputlisting[language=Python]{../code/julia/helloworld.jl}	
+
+To run the Julia script we execute:
+
+\begin{lstlisting}[language=bash]
+    $ julia helloworld.jl.
+\end{lstlisting}
+
+If \emph{Julia} is not install you can install it by 
+
+\begin{lstlisting}[language=bash]
+    $ sudo apt-get install julia.
+\end{lstlisting}
+
+Once installed and we can run the hello world example we can move on to a more interesting example. 
+
+In our first example we will generate two random matrices. The first matrix generated in \emph{randmat.jl}, \emph{A}, is a $10\times3$ matrix. Each of the elements in the matrix is randomly generated from the range of $[1, 10]$. The \emph{rand} function generates random whole numbers. 
+
+We can also generate random floats with the function \emph{rand!}. For example, \emph{B} is a random float vector of size $(5\times1)$. Each element has a randomly generated range of $[0,1]$ with a precision of $32$ or $64$ bits depending on the \ac{OS} that the code is being ran in. 
+
+\lstinputlisting[language=Python]{../code/julia/randmat/randmat.jl}	
+
+The promising advantage of \emph{Julia} is that \emph{Julia} is faster than \emph{Python}. So in the next example we will look at how to do a matrix multiplication and time to calculation.
+
+In \emph{randmat.jl} we first define a function called \emph{printsum} which prints a summary of the object that is passed in. The function also prints the elements of the object. We will use this function to print out the resulting matrix. 
+
+Next we define the dimensions of the matrices that we will be multiplying. Then we define \emph{A} and \emph{B} to be random matrices with elements being between $1$ and $10$. After the two matrices are generated we then multiply $\mathbf{C}=\mathbf{A}*\mathbf{B}$. 
+
+When we do the matrix calculation we also use the built in timer for the calculation. We can use the timer to benchmark our calculations and compare to other programming languages. After the timer of we call the \emph{printsum} function to finish the script.
+
+\lstinputlisting[language=Python]{../code/julia/matmul/matmult.jl}	
+	
+As of the date of this writing the \emph{Julia} language is at Version 0.5.1. The \emph{Julia} language is a promising language for data science. The developers of \emph{Julia} have worked with the popular \ac{SBC} \emph{Raspberry PI} to support the \ac{ARM} architecture of the \emph{Raspberry PI}. The implementation of \emph{Julia} on the \ac{SBC} enables applications in which fast implementations of \ac{ML} algorithms with a small form factor are possible. 
+
+	
 \section{Controlling GPIO}
-	<TODO Section Controlling GPIO : NOT DONE>
+	<TODO Section Controlling GPIO : PROOF READ>
 
+An \ac{SBC} program interacts with the world by controller \ac{GPIO}. With \ac{GPIO} we can control anything from \ac{LED}s to electric motors. To interact with \ac{GPIO} there are libraries that can be imported into Python for example. 
+
+We can import the \ac{RPi} \ac{GPIO} library with:
+
+\begin{lstlisting}[language=python]
+    import RPi.GPIO as GPIO
+\end{lstlisting}
+
+Once we have imported the \ac{GPIO} library we can start using it. First we need to set how the \ac{GPIO} pins are indexed. We can choose either \emph{BOARD} or \emph{BCM}. For different models of the \ac{RPi} the \emph{BCM} pin numbers can change so if you are interested in having your code be portable you should choose \emph{BOARD}. You set the pin layout by using the command:
+
+\begin{lstlisting}[language=python]
+    GPIO.setmode(GPIO.BOARD).
+\end{lstlisting}
+
+Next we need to specify whether the pin will be an input or an output. We can do this with the \emph{setup} command. The \emph{setup} method takes two parameters, the first is the \ac{GPIO} pin number we are going to setup. The second parameter is describes whether it will be an input or an output. The command to do the setup looks like this:
+
+\begin{lstlisting}[language=python]
+    GPIO.setup(GPIO_PIN1,GPIO.OUT)
+    GPIO.setup(GPIO_PIN2,GPIO.IN),
+\end{lstlisting}
+
+where $GPIO\_PIN1=1$ is setup to be an output and $GPIO\_PIN2=2$ is setup to be an input. We can assign the output by setting the output \emph{HIGH} and \emph{LOW} by using the \emph{output} method. 
+
+\begin{lstlisting}[language=python]
+    GPIO.output(GPIO_PIN1,GPIO.LOW)
+    GPIO.output(GPIO_PIN1,GPIO.HIGH)
+    GPIO.output(GPIO_PIN1,GPIO.LOW),
+\end{lstlisting}
+
+In this code snippet $GPIO\_PIN1$ will be high for a clock cycle of the operating frequency of the processor we are working on. Since the operating frequency is in the $100$s of \ac{MHz} or even in the \ac{GHz} it is unlikely that the peripheral will be able to detect a pulse that fast. We need to use \emph{pause} statements to slow down the processor to set the timing to correspond to the peripheral requirements. 
+
+Moving on to using the input pin we can check the state of the input pin by using the \emph{input} method. We can read the input pin in an if statement:
+
+\begin{lstlisting}[language=python]
+    if GPIO.input(GPIO_PIN2) == 1:
+        # Input is one
+    else:
+        # Input is zero
+\end{lstlisting}
+
+In this if statement we can determine if the input is one or a zero. We can take the appropriate action in either case. 
