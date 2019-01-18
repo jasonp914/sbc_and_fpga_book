@@ -81,11 +81,11 @@ To mix $\mathbf{x}$ to the carrier we simply multiply by a sinusoid with a frequ
 x_{rf}[n] = \sin\left(2\pi\frac{f_c}{f_s}n\right)x[n].
 \end{equation}	
 
-This holds if we do not violate Nyquist sampling theory which states that to maintain all the information in the analog signal our sampling frequency needs to be $f_s \geq 2BW$ where $BW$ is the bandwidth of the signal. In our case in \eq{eq:mix} the bandwidth of the signal is $f_c$ so $f_s = 2f_c$. We can design a better system than this with the help of an \ac{RF} front-end. An analog mixer will take our signal to the \ac{RF} range but we will need to work with an \ac{IF} since the \ac{RF} front-end doesn't handle \ac{DC} or negative frequencies.
+This holds if we do not violate Nyquist sampling theory which states that to maintain all the information in the analog signal our sampling frequency needs to be $f_s \geq 2BW$ where $BW$ is the bandwidth of the signal. In our case in \eq{mix} the bandwidth of the signal is $f_c$ so $f_s = 2f_c$. We can design a better system than this with the help of an \ac{RF} front-end. An analog mixer will take our signal to the \ac{RF} range but we will need to work with an \ac{IF} since the \ac{RF} front-end doesn't handle \ac{DC} or negative frequencies.
 
 You can think of the use of the \ac{IF} to be a mapping of frequencies. The \ac{RF} front-end's job is to take the signal and move the frequency content at the \ac{IF} to the carrier frequency. The \ac{RF} front-end is designed with a bandwidth in mind. The input is a bandwidth with frequency content around the \ac{IF} and the output is the same bandwidth with the frequency content around the carrier frequency.
 
-This is great we now do not need a sampling frequency of two times our carrier. As a matter of fact we now only need to worry about a frequency mix we want an offset from the carrier. So if we had a situation where we wanted to use a carrier that we did not want in our signal bandwidth, some modulation schemes' performance are degraded with a \ac{DC} bias. So we can modify \eq{eq:mix} to handle this situation. If our offset from \ac{DC} is $f_{offset}$ then the signal that we send to the \ac{RF} front-end is
+This is great we now do not need a sampling frequency of two times our carrier. As a matter of fact we now only need to worry about a frequency mix we want an offset from the carrier. So if we had a situation where we wanted to use a carrier that we did not want in our signal bandwidth, some modulation schemes' performance are degraded with a \ac{DC} bias. So we can modify \eq{mix} to handle this situation. If our offset from \ac{DC} is $f_{offset}$ then the signal that we send to the \ac{RF} front-end is
 
 \begin{equation}
 \label{eq:ifmix}
@@ -108,7 +108,7 @@ to get a the signal $\mathbf{x}_{2bb}$. The subscript \emph{2bb} is short for th
 \sin^2(\alpha) = \frac{1}{2} - \frac{1}{2}\cos(2\alpha).
 \end{equation}
 
-Applying \eq{eq:trigid} to \eq{eq:2xbb} we get,
+Applying \eq{trigid} to \eq{2xbb} we get,
 
 \begin{eqnarray}
 \label{eq:2bbtrig}
@@ -429,7 +429,7 @@ Lets take a \emph{5:1} ratio example, for every bit that comes our \ac{FEC} algo
 \subsubsection{Reed-Solomon}
 	<TODO Subsubsection  Reed-Solomon : PROOF READ>
 
-\emph{Reed-Solomon} coding is a block code that is used in many commerical products like \ac{CD}s and \ac{DVD}s, even the Voyager space probe \cite{voyager}. The block codes have $k$ message bits and $n$ block output bits. The ratio $R=k/n$. The ratio is important since it directly impacts the throughput of the system. If we have a large $R$ then we need to transmit more bits to get the message at the receiver. If $R$ is closer to one then the strength of the error correction is reduced.
+\emph{Reed-Solomon} coding is a block code that is used in many commercial products like \ac{CD}s and \ac{DVD}s, even the Voyager space probe \cite{voyager}. The block codes have $k$ message bits and $n$ block output bits. The ratio $R=k/n$. The ratio is important since it directly impacts the throughput of the system. If we have a large $R$ then we need to transmit more bits to get the message at the receiver. If $R$ is closer to one then the strength of the error correction is reduced.
 
 The \emph{Reed-Solomon} algorithm takes $k$ bits and mapps them into a \emph{finite field} of size $q$, where $q$ is a \emph{prime power} \cite{Sklar}. The machanism used there is the same in which we employed when we looked a gray coding our constellations. We take this smaller $k$ space and map it intelligently to a larger $n$ space then if there are a few errors in the $n$ space we can find the closest $n$ space symbol which then can be mapped back to the original message in $k$ space.
 

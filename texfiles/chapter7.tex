@@ -1272,7 +1272,7 @@ signal ff_v_t1 : signed(g_bitwidth-1 downto 0);
 signal ff_v_t2 : signed(g_bitwidth-1 downto 0);
 \end{VHDLlisting} 
 
-In stage two we declare signals that are used in the addition or subtraction calculations in \eq{eq:capp}-\eq{eq:capv}. In the signal names we use the notation $t1$ or $t2$ to indicate the two operands of the multiplication in each equation. 
+In stage two we declare signals that are used in the addition or subtraction calculations in \eq{capp}-\eq{capv}. In the signal names we use the notation $t1$ or $t2$ to indicate the two operands of the multiplication in each equation. 
 
 \begin{VHDLlisting}[tabsize=2]
 p_s2 : process(i_clk)
@@ -1298,7 +1298,7 @@ p_s2 : process(i_clk)
 	end process;
 \end{VHDLlisting}
 
-For each term we follow \eq{eq:capp}-\eq{eq:capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline next clock cycle overwriting our data. So we need to register it in this process.
+For each term we follow \eq{capp}-\eq{capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline next clock cycle overwriting our data. So we need to register it in this process.
 
 \begin{VHDLlisting}[tabsize=2]
 -- Stage 3 : P,Q,R,S,T,U,V Calculations
@@ -1367,7 +1367,7 @@ begin
 end process;
 \end{VHDLlisting}
 
-In the calculation of stage four we calculate the terms in \eq{eq:couts}. The additions are calculated under the data valid line for stage four and once complete they are ready for the final stage of calculation. 
+In the calculation of stage four we calculate the terms in \eq{couts}. The additions are calculated under the data valid line for stage four and once complete they are ready for the final stage of calculation. 
 
 \begin{VHDLlisting}[tabsize=2]
 p_s5 : process(i_clk)
@@ -1383,7 +1383,7 @@ begin
 end process;
 \end{VHDLlisting} 
 
-The final stage, stage five, is calculated once again from \eq{eq:couts} where for terms $c_{1,1}$ and $c_{2,2}$ a subtraction is needed but the other two elements are already final but we need to register them again to ensure data is aligned. 
+The final stage, stage five, is calculated once again from \eq{couts} where for terms $c_{1,1}$ and $c_{2,2}$ a subtraction is needed but the other two elements are already final but we need to register them again to ensure data is aligned. 
 
 \begin{VHDLlisting}[tabsize=2]
 -- Assign Outputs

@@ -6,6 +6,7 @@
 \usepackage{fancyvrb}
 \usepackage{listings,color}
 \usepackage{amsmath}
+\usepackage{makeidx}
 
 % for colored solution
 \lstnewenvironment{VHDLlisting}[1][]
@@ -19,6 +20,7 @@
     commentstyle=\color{green}
   }}{}
 
+\makeindex
 
 \newcommand{\expec}[1]{{\mathcal{E}}\left\{#1\right\}}
 \newcommand{\expecsub}[2]{{\mathcal{E}_{#2}}\left\{#1\right\}}
@@ -66,4 +68,7 @@
 
 
 \input{acronym.tex}  % put this at end of paper
+
+\printindex
+
 \end{document}
