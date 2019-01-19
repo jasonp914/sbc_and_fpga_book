@@ -150,12 +150,151 @@ Next we compare $\mathbf{W}$ to the respective $\mathbf{F}$ we subtract and find
 The smallest distance represents the most similar image. Some testing is needed depending on the camera resolution and other factors like lighting and the ability to get the person to be looking directly at the camera. In practical systems some experimentation is used to determine ranges for which the distance metric can fall into. If the minimum distance is low enough then the face is recognized. If the minimum distance is low but not low enough to be a match then the face isn't in the library of trained images. Or if the lowest distance is very high the image isn't a face at all. Depending on the system some of the information may not be useful. 
 	
 \section{Neural Networks}
-	<TODO Section Neural Networks : NOT DONE>
+	<TODO Section Neural Networks : PROOF READ>
 
+Neural Networks are networks of configured \emph{artificial neurons}. An artificial neuron is modeled after the neurons in the human brain. The hope is that if the model is realistic then the cognitive ability of a human could manifest in an artificial being. 
+
+Understanding how Neural Networks work can be rather abstract, since there is not line-by-line code that we can follow like the other algorithms outlined. Instead we will first need to grasp the concept of what the basic building block is, the \emph{Perceptron}. 
+
+The Perceptron is modeled in two stages. The first stage is the linear stage. Where the $N$ inputs, $\mathbf{x}\in \mathbb{R}^N$ are mapped to the output of the first stage by a weight vector $\mathbf{w}\in \mathbb{R}^{N}$. The output can also be biased by a term $b\in \mathbb{R}$. The output of the linear stage is,
+
+\begin{equation}
+y = \mathbf{w}^T\mathbf{x} + b.
+\end{equation} 
+
+In the first stage the configurable part of the equation is the weights vector, $\mathbf{w}$. To calculate the elements we will need to have truth or training data to determine what the coefficients need to be.
+
+The second stage is the non-linear aspect of the Perceptron. For this stage we will choose the simplest \emph{activation function} where the sign of $y$ is the output of the Perceptron. For this activation function we simply have a threshold detection where the threshold is $b$. 
+
+The initial state of the Perceptron is seeded with random weights. Next we need to go into the training phase of Perceptron or as we add more the network needs to be trained together. For now we can look at training just one Perceptron. To do this we need to have an application in mind. The smallest interesting example is a $N=2$ where $\mathbf{x}$ consists of two coordinates in an XY-Plane. 
+
+We will use a Perceptron to determine if the point $\mathbf{x}=[x_1,~y_1]$ is on one side or the other of a line. To do this we first need to pick a particular line. Next we generate some randomized points, we will denote the training points $\mathbf{P}_T\in \mathbb{R}^{N_T\times 2}$ where $N_T$ is the number of training points generated and the two columns correspond to the two dimensions of the XY-Plane. 
+
+Next we need the truth data for $\mathbf{P}_T$. We can generate truth data by visualization if $N_T$ is small or algebraically for large $N_T$. The activation function of our Perceptron is $\pm1$ so our truth data also needs to be $N_T$ elements of $\pm1$. We denote our truth data by, $\mathbf{\tau}\in \{\pm1\}^{N_T}$. 
+
+Now we can start our training of the Perceptron. First we launch $P_T[1]$ into the Perceptron and we get a result, $R[1]$. We compare $R[1]$ to $\tau[1]$ and calculate an error $\mathbf{e}[1] = \mathbf{\tau}[1]-\mathbf{R}[1]$. Next we need to update the weights, where the new weights are calculated by,
+
+\begin{equation}
+\mathbf{w}[2] = \mathbf{w}[1] + \mathbf{e}[1]*P_T[1].
+\end{equation}
+
+We continue to update the weights through all the points in $\mathbf{P}_T$. If $N_T$ was large enough the Perceptron was trained well. However if $N_T$ is not large enough then the weights will not have time to reach the optimal value. One mechanism we can add to the weight update equation is a constant that slows down or speeds up the weight updating. 
+
+Speeding up the weight calculations will aid us in using less training data. Which is helpful if the application we are targeting doesn't allow us to generate a lot of data points. However, the reason for slowing down the weight updates is that if we are updating in large jumps we may be over-shooting in each training data point.
+
+Another word of caution is that if we use a training set that wasn't representative of the test data then we will clearly perform sub-optimally. For our example here we could generate random data points for $\mathbf{P}_T$ in a small range of the XY-Plane. But then after training we see data in a different range the weights won't be trained in domain of the line, resulting in an inaccurate classification.
+
+	
 \section{Support Vector Machines}
-	<TODO Section Support Vector Machines : NOT DONE>
+	<TODO Section Support Vector Machines : PROOF READ>
+	
+\ac{SVM}s look to classify training data into two groups. The \ac{SVM} in two dimensions calculates a line that splits the training data into the two groups with the maximum \emph{margin} between the closet training points. 
+
+We will continue with the same notation as in the previous section. We denote our $N_T$ training points as $\mathbf{P}_T$. Next we will characterize the \emph{hyperplane} that separates our classes. Since our example is two dimensions then our hyperplane is a line. If we were classifying in three dimensions then our hyperplane is a plane. 
+
+To fully characterize our line we have the vector $\mathbf{w}$ which are the weights that are applied to the training points to calculate our line. We also have a $y$-intercept point $b$ that is also varied to maximize our margin. 
+
+<TODO Section Support Vector Machines : ADD PLOT>
+
+The line that separates our classes is then given by,
+
+\begin{equation}
+\mathbf{w}\mathbf{P}_T - b = 0.
+\end{equation}
+
+Our training data $\mathbf{P}_T$ also has class labels associated with each training point. We use the class labels, $\mathbf{\tau}$ to ensure we have maximized the margin. So we will split the training data into the two classes, 
+
+\begin{equation}
+\mathbf{P}[i]_T \in \mathbf{P}^{(1)}_T ~~~ \text{when} \mathbf{\tau}[i] = 1,
+\end{equation}
+	
+and
+
+\begin{equation}
+\mathbf{P}[i]_T \in \mathbf{P}^{(-1)}_T ~~~ \text{when} \mathbf{\tau}[i] = -1.
+\end{equation}
+
+From these definitions we can further constraint our optimization problem with,
+
+\begin{equation}
+\mathbf{w}\mathbf{P}^{(1)}_T - b \geq 1,
+\end{equation}
+
+and
+
+\begin{equation}
+\mathbf{w}\mathbf{P}^{(-1)}_T - b \geq -1.
+\end{equation}
+
+Once we have calculated $\mathbf{w}$ we then have to find $b$. Where $b$ is the distance between $\mathbf{w}\mathbf{P}^{(-1)}_T$ and the $y=x$ line. Finally, to calculate our margin we or the separation of the two classes is just, $2\norm{\mathbf{w}}^{-1}$.
 
 \section{K-Means Clustering}
-	<TODO Section K-Means Clustering : NOT DONE>
+	<TODO Section K-Means Clustering : PROOF READ>
+
+The K-Means Clustering algorithm introduction will use an example in image processing. We will not only look at the K-Means clustering algorithm but we will also need to look at how to preprocess the image in order to get the best results from the output of the K-Means algorithm. 
+
+There are challenges with a practical image, for instance if we have a soccer ball that is black and white. The \ac{RBG} values are used to segment the image but we want the soccer ball pixels grouped together. The output of the K-Means Clustering algorithm will not do this for us. We need to use some logic in determining where the object is in the picture.
+
+The first issue with practical images is that to gain high resolution crisp image lines are large jumps in color. As an aside, all phrases relating to distances (i.e. "Large Jumps" used in the last sentence) is literally in terms of \ac{RGB} distances. So, for crisp images the large jumps add noise to the image segmentation algorithm. So the first step here is to smooth the image. This can be done by updating a pixel's color by the average of its surrounding pixels.
+
+For a smoothing-window ('sm\_win' in the code) of one. Each pixel is the average of itself and the eight neighboring pixels. If the smoothing-window is two then the eight neighboring pixels and the 16 pixels that neighbor those eight are averaged. The code below that loops over every pixel in the image (less the sm\_win edge pixels). For each pixel, the neighboring pixels are averaged and assigned into a new image to avoid previous pixel averages corrupting current pixel averages.
+
+\begin{lstlisting}[language=Python]
+sm_win = 1
+[Nx, Ny, Nrgb] = image.shape
+
+for nx in range(0,Nx):
+  for ny in range(0,Ny):
+    for nrgb in range(0,Nrgb):
+      p_smo(nx,ny,nrgb) = mean(mean(image(nx-sm_win:nx+sm_win,ny-sm_win:ny+sm_win,nrgb))
+\end{lstlisting}
+
+The smoothed image just looks like a blurry replication of the original, but the K-Means Clustering algorithm will have an easier time segmenting the image.
+
+Python provides a K-Means Clustering Algorithm and Documentation. The output of Python's \emph{KMeans} function calculates the group labels. Which is what is plotted here:
+
+<TODO Section KMeans Clustering : ADD PLOT>
 
 
+where the blue is one group (background in this case) and the yellow is the white in the soccer ball. Since the segmented this image into two categories the white of the ball, the black of the ball and the green of the grass had to be put in two categories. And as it turns out the black of the soccer ball and the green of the grass are closer than either are to the white of the ball.
+
+We also notice there are some stray yellow pixels out there in the grass. We will need to clean them up.
+
+The next step is cleaning up these pixels by looping over all the pixels again. This time we will make sure that if a given pixel is in category zero (or one) it has a neighboring pixel also in category zero (or one). If a pixel is in the opposite category than all its neighbors then that pixel flips the category that it's in. We can see the resulting image here.
+
+
+<TODO Section KMeans Clustering : ADD PLOT>
+
+
+Now that we have a cleaned up image free of random mis-categorized pixels we can begin finding the soccer ball in the image.
+
+A quick note about the K-Means Clustering algorithm, the label of category zero or one, or one or two are not numerical they are just labels and can be interchanged. Because of this we assume a pixel in the upper left corner is background and make sure its label is one. Then the white pixels in the ball are categorized as a two.
+
+To determine the location and size of the ball we loop through the pixels again. We take note of all the unique indices for which the ball (or category two) occupies. The Python code here shows this:
+
+\begin{lstlisting}[language=Python]
+lx = []
+ly = []
+for nx in range(0,Nx):
+  for ny in range(0,Ny):
+    if cat_imag[nx,ny] == 2:
+      lx.append(nx)
+      ly.append(ny)
+\end{lstlisting}
+
+where 'cat\_imag' is the matrix of ones and two representing the pixel categories. We loop over each row and column with index $nx$, and if there are any category two pixels in that row we save off $nx$ and we also add the column indices to $ly$.
+
+After making a list of the indices that contain the ball in the $x$ direction (rows) and $y$ direction (columns) then we make sure the list is unique with each pixel counted once. Then we determine the mean of the $x$ coordinates and the mean of the $y$ coordinates. Now we have the center of the ball we can use the equations for a circle to make an outline of the ball with the correct radius.
+
+\begin{lstlisting}[language=Python]
+r = abs(fix_mean - fix_min);
+x = fix_min:fix_max;
+yp = sqrt(r^2 - (x-fix_mean).^2) + fiy_mean;
+yn = -sqrt(r^2 - (x-fix_mean).^2) + fiy_mean;
+\end{lstlisting}
+
+Asterisk in the center of the ball shows calculated center and red dashed line shows calculated ball radius
+
+<TODO Section KMeans Clustering : ADD PLOT>
+
+Now we have the location and containing circle we can categorize all the pixels inside the circle as part of the soccer ball.
