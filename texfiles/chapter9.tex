@@ -1,25 +1,201 @@
 \chapter{Moving Object Tracking in Real-Time Video}
-	<TODO Chapter Moving Object Tracking in Real-Time Video : NOT DONE>
+	<TODO Chapter Moving Object Tracking in Real-Time Video : PROOF READ>
 
+In this Chapter we discuss the basic image processing algorithms used in real-time video processing applications. The algorithms covered here focus on altering the captured video to highlight or enhance important aspects of the video to alert a user. An example application could include security cameras where motion detection alerts the security guard, or tracking suspicious vehicles outside a guarded area. A more fun application is tracking motion on a person while video chatting so the subject is always in frame. 
+
+	
 \section{Image Processing Algorithms}
-	<TODO Section Image Processing Algorithms : NOT DONE>
+	<TODO Section Image Processing Algorithms : PROOF READ>
 
+Basic image processing algorithms are used regularly in all image processing applications. After a general knowledge of the basic algorithms is understood they can be pieced together to get a working system that is tailored to the application in mind. We start with matrix multiplication, which provides linear image affects like rotation and skew. We then move on to the \ac{FFT} which can be used for image registration. We then add to the functionality to the \ac{FFT} with wavelets. We finish up with convolution.
+
+	
 \subsection{Matrix Multiplication}
-	<TODO Subsection Matrix Multiplication : NOT DONE>
+	<TODO Subsection Matrix Multiplication : PROOF READ>
 
+Matrix multiplication is very useful in image processing since scaling, skew, and highlighting can be accomplished efficiently with spatial transformations. When applying a spatial transformation to an image we first break down the image into many smaller images. 
+
+When we consider a point in the image we narrow our focus to the surrounding pixels. For example if we consider pixel $(x\times y)$ we limit our calculations to the range in $x$ to be $x-1$ to $x+1$ and the $y$ range is $y-1$ to $y+1$. In this method we are able to reduce our calculations to a $3 \times 3$ matrix multiply. 
+
+The processes of applying a spatial transformation to an image would then consist of calculating a $3 \times 3$ matrix multiply at each pixel. Clearly if the image is large there are a lot of calculations required. However, we can perform the calculations in parallel since all the matrix multiplies are independent.
+
+To calculate the transformation for the entire image consider the following Python code,
+
+\begin{lstlisting}[language=Python]
+for x in range(1,N-1):
+  for y in range(1,N-1):
+	timage = T*image(x-1:x+1,y-1:y+1)
+	trans_image(x-1:x+1,y-1:y+1) += timage.
+\end{lstlisting}
+
+Where $T$ is the $3\times 3$ matrix that represents the transformation, \emph{image} is the input image to be transformed, and \emph{trans\_image} is the resulting transformed image. In this code there are a couple of things to notice. As defined we consider the pixel of interest and the eight surrounding pixels. All the edges are special cases. Depending on the transform we will zero-pad a row and column on the left and right and top and bottom of the image. Or we may duplicate that rows and columns to ensure the transformed image is the same dimensions. 
+ 
+The second thing to notice about this is that in the transformed image a pixel will be the summation of nine matrix multiply results. So depending on the transformation we could have up to nine pixels contributing to a single transformed pixel. 
+
+Next we need to define $T$. We discussed $T$ represents the transformation but what does it look like. First we will consider the identity transform. If we apply this transform we get the exact same image back. The identity transform looks like this,
+
+\begin{equation}
+\begin{bmatrix}
+0 & 0 & 0\\
+0 & 1 & 0\\
+0 & 0 & 0\\
+\end{bmatrix}.
+\end{equation}
+	
+In the case of the identity transformation each pixel is multiplied by one and the surrounding pixels are multiplied by zero.
+
+Next we consider a spatial lowpass filter. For the lowpass filter $T$ is,
+
+\begin{equation}
+\frac{1}{9}\begin{bmatrix}
+1 & 1 & 1\\
+1 & 1 & 1\\
+1 & 1 & 1\\
+\end{bmatrix}.
+\end{equation}
+
+For the lowpass filter we weight each pixel by $\frac{1}{9}$ then we sum the nine weighted pixels. This results in each pixel being the average of the surrounding pixels. The lowpass filter is also known as a smoothing filter. If we have sharp edges on our image we can smooth them out with a lowpass filter. 
+
+The last spatial transform we will present is the highpass filter. The highpass filter can be used to detect edges since edges will have larger differences in color intensity. The larger differences are not attenuated by the highpass filter however the rest of the slowly varying color changes will be filtered to be the same.
+
+The highpass filter transform matrix is,
+
+\begin{equation}
+\frac{1}{9}\begin{bmatrix}
+0 & -1 & 0\\
+-1 & 4 & -1\\
+0 & -1 & 0\\
+\end{bmatrix}.
+\end{equation}
+
+\cite{image processing book}	
+	
 \subsection{Fast Fourier Transform}
-	<TODO Subsection Fast Fourier Transform : NOT DONE>
+	<TODO Subsection Fast Fourier Transform : PROOF READ>
+	
+In the previous section we saw two spatial filter examples. In this section we transition to the frequency domain of an image. For image processing the two dimensional \ac{FFT} is needed. To transform the image into the two dimensional frequency domain we use,
+
+\begin{equation}
+F\left(k,l\right)=\sum_{i=0}^{N-1}\sum_{j=0}^{N-1}f\left(i,j\right)e^{-i2\pi\left(\frac{ki}{N}+\frac{lj}{N}\right)}
+\end{equation}
+
+Once in the frequency domain we can also perform a lowpass filter. Usually the advantage of performing a lowpass filter in the frequency domain is complexity since the \ac{FFT} is more efficient that matrix multiplication. But also we may need to do other processing in the frequency domain anyway. 
+
+To implement an ideal lowpass filter in the frequency domain we first need the transfer function of the filter. The transfer function $H(k,l)$ is,
+
+\begin{equation}
+H(k,l) = 
+\begin{cases}
+1 & \text{if $D(k,l) \leq D_0$}\\
+0 & \text{if $D(k,l) > D_0$}
+\end{cases}
+\end{equation}
+\noindent
+where $D(k,l)$ is the distance pixel $k,l$ is from the origin or center of the image. In the two dimensional \ac{FFT} result the low frequency region is the center and expanding out increases frequency. If we define a circle with radius $D_0$ and centered at the origin then every frequency inside the circle is not attenuated in the ideal filter and every frequency outside the circle is removed. 
+
+We have now seen two ways to implement a lowpass filter. The first method was in the spatial domain and the other the in frequency domain. The advantage to the frequency domain implementation is that once the \ac{FFT} is complete a simple element-wise multiplication is needed. Then an \ac{IFFT} back to the spatial domain is needed. 
+
+If our only goal is to smooth the image then the spatial domain implementation is preferred. However, rarely do we just want to smooth an image with no further calculation. In typical applications the smoothing filter is applied as an image conditioning step then further analysis is ran. The further analysis is often easier in the frequency domain.
+
+An example of this is the correlation and convolution operations. There are slight differences between these two operations one of the differences being that convolution includes a complex conjugate but since we are operating on real images that difference is removed. The other difference is that convolution mirrors one of the images about the origin. So correlation determines how similar two images are and convolution determine how similar a mirrored image is with another image. 
+
+If we have two images $f(x,y)$ and $h(x,y)$ we can use correlation to determine how similar $f$ and $h$ are. In the spatial domain we would need to perform the following calculation,
+
+\begin{equation}
+C_{f,h}(x,y) = \frac{1}{MN}\sum_{m=0}^{M}\sum_{n=0}^{N}f^*(m,n)h(x+m,y+n).
+\end{equation}
+\noindent
+
+However since we are in the frequency domain we are able to calculate $C_{f,h}(x,y)$ with less computational complexity. To do this we first need to remember that convolution in the spatial domain is multiplication in the frequency domain. Next, since the correlation that we are interested in is very similar to convolution it can be shown that correlation in the frequency domain is equivalent to $F^*(k,l)H(k,l)$. In the frequency domain we multiply the images and take the \ac{IFFT} to get back to the spatial domain. 
 
 \subsection{Wavelets}
-	<TODO Subsection Wavelets : NOT DONE>
+	<TODO Subsection Wavelets : PROOF READ>
 
-\subsection{Convolution}
-	<TODO Subsection Convolution : NOT DONE>
+Wavelets build on the Fourier analysis by introducing a \emph{mother function}. The mother function is denoted by $\Psi$. The mother function can be selected based on the application but here we will look at the simplest mother function the \emph{haar} function.
 
-\section{Facial Recognition}
-	<TODO Section Facial Recognition : NOT DONE>
+The continuous time general form of the wavelet is,
+\begin{equation}
+X(a,b) = \frac{1}{\sqrt{a}}\int_{-\infty}^{\infty}\Psi\left(\frac{t-b}{a}\right) x(t)dt.
+\end{equation}
+\noindent
+For our image processing application we are interested in the discrete wavelet transform, which is defined as,
 
-\subsection{Pattern Recognition}
-	<TODO Subsection Pattern Recognition : NOT DONE>
+\begin{equation}
+Y[n,m] = \frac{1}{\sqrt{c_0^n}}\sum_{k=0}^{K-1}y[k]\Psi\left[\left(\frac{k}{c_0^n}-m\right)T\right].
+\end{equation}
+\noindent
+where $c_0^n$ is the discretized scaling factor and $\Phi$ is sampled in the frequency domain. The definition in the frequency domain allow the ability to benefit from the wavelet analysis with minimal complexity. 
+
+
+
+For signal and image processing the wavelet is a great tool for de-noising signals and de-blurring images. The wavelet transform is used for to calculation a deconvolution. Wavelet based deconvolution algorithms can be iterative which leads to data rate considerations. For more information on wavelet deconvolution see \cite{Emerging applications of wavelets: A review}.
+
+\section{Kalman Filters}
+	<TODO Section Kalman Filters: NOT DONE>
+
+Kalman filter is estimates and tracks a \emph{true state}. The true state is corrupted by process and observation noise. The noise in the system corrupts an observation that we will use a Kalman filter to reduce the noise corruption. 
+
+The perfect image that we hope to estimate is denoted $\mathbf{x}_k$. As we iterate through images, say in a video, we update our estimate, $\hat{\mathbf{x}}_k$.
+	
+\begin{equation}
+\mathbf{x}_k = \mathbf{F}_k\mathbf{x}_{k-1} + \mathbf{B}_k\mathbf{u}_{k} + \mathbf{w}_k
+\end{equation}
+
+k is the time index
+F is the state transition model
+H is the observation model
+Q is the covariance of the process noise
+R is the covariance of the observation noise
+B is the control-input model
+u control vector
+w process noise ~ N(0,Qk)
+observation zk is
+
+\begin{equation}
+\mathbf{z}_k = \mathbf{H}_k\mathbf{x}_{k} + \mathbf{v}_k
+\end{equation}
+
+zk true state
+H observation model which maps the true state space in to the observed space
+vk observation noise
+
+predict phase:
+
+\begin{equation}
+\tilde{\mathbf{x}}_k = \mathbf{F}_k\tilde{\mathbf{x}}_{k-1} + \mathbf{B}_k\mathbf{u}_k
+\end{equation}
+\begin{equation}
+\mathbf{P}_k = \mathbf{F}_k\mathbf{P}_{k-1}\mathbf{F}_k^T + \mathbf{Q}_k
+\end{equation}
+Update phase
+\begin{equation}
+\tilde{\mathbf{y}}_k = \mathbf{z}_k - \mathbf{H}_{k}\tilde{\mathbf{x}}_k
+\end{equation}
+\begin{equation}
+\mathbf{S}_k = \mathbf{R}_k + \mathbf{H}_{k}\mathbf{P}_k\mathbf{H}_{k}^T
+\end{equation}
+
+\begin{equation}
+\mathbf{K}_k = \mathbf{P}_k\mathbf{H}_{k}^T\mathbf{S}_k^{-1}
+\end{equation}
+\begin{equation}
+\tilde{\mathbf{x}}_k = \tilde{\mathbf{x}}_{k-1} +  \mathbf{K}_k\tilde{\mathbf{y}}_{k}
+\end{equation}
+
+\begin{equation}
+\mathbf{P}_k = \left(\mathbf{I} - \mathbf{K}_k\mathbf{H}_{k}\right) \mathbf{P}_{k-1}\left(\mathbf{I} - \mathbf{K}_k\mathbf{H}_{k}\right)^T + \mathbf{K}_k\mathbf{R}_k\mathbf{K}_k^T 
+\end{equation}
+\begin{equation}
+\tilde{\mathbf{y}}_k = \tilde{\mathbf{z}}_{k} -  \mathbf{H}_k\tilde{\mathbf{x}}_{k}
+\end{equation}
+
+
+
+
+
+
+
+
+
 
 
