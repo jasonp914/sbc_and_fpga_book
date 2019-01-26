@@ -126,70 +126,91 @@ Y[n,m] = \frac{1}{\sqrt{c_0^n}}\sum_{k=0}^{K-1}y[k]\Psi\left[\left(\frac{k}{c_0^
 \noindent
 where $c_0^n$ is the discretized scaling factor and $\Phi$ is sampled in the frequency domain. The definition in the frequency domain allow the ability to benefit from the wavelet analysis with minimal complexity. 
 
-
-
 For signal and image processing the wavelet is a great tool for de-noising signals and de-blurring images. The wavelet transform is used for to calculation a deconvolution. Wavelet based deconvolution algorithms can be iterative which leads to data rate considerations. For more information on wavelet deconvolution see \cite{Emerging applications of wavelets: A review}.
 
 \section{Kalman Filters}
-	<TODO Section Kalman Filters: NOT DONE>
+	<TODO Section Kalman Filters: PROOF READ>
 
 Kalman filter is estimates and tracks a \emph{true state}. The true state is corrupted by process and observation noise. The noise in the system corrupts an observation that we will use a Kalman filter to reduce the noise corruption. 
 
-The perfect image that we hope to estimate is denoted $\mathbf{x}_k$. As we iterate through images, say in a video, we update our estimate, $\hat{\mathbf{x}}_k$.
-	
-\begin{equation}
-\mathbf{x}_k = \mathbf{F}_k\mathbf{x}_{k-1} + \mathbf{B}_k\mathbf{u}_{k} + \mathbf{w}_k
-\end{equation}
+The perfect image that we hope to estimate is denoted $\mathbf{x}_k$, with $k$ denoting the frame number that we wish to estimate. As we iterate through images, say in a video, we update our estimate of the true state, denoted $\hat{\mathbf{x}}_k$.
 
-k is the time index
-F is the state transition model
-H is the observation model
-Q is the covariance of the process noise
-R is the covariance of the observation noise
-B is the control-input model
-u control vector
-w process noise ~ N(0,Qk)
-observation zk is
-
+The relation between the true state and the observation is modeled as,
 \begin{equation}
-\mathbf{z}_k = \mathbf{H}_k\mathbf{x}_{k} + \mathbf{v}_k
+\mathbf{z}_k = \mathbf{H}_k\mathbf{x}_{k} + \mathbf{v}_k.
 \end{equation}
+\noindent 
+Where $\mathbf{z}_k$ is the observation, $\mathbf{x}_k$ is the true state and $\mathbf{H}_k$ transforms $\mathbf{x}_k$ into the observation state and $\mathbf{v}_k$ is observation noise. 
 
-zk true state
-H observation model which maps the true state space in to the observed space
-vk observation noise
+Next we need to understand how the underlying model for the the true state is dependent on the previous frames. The true state at $k$ depends on the state at $k-1$ and a transition model. The true state is updated as,	
+\begin{equation}
+\mathbf{x}_k = \mathbf{F}_k\mathbf{x}_{k-1} + \mathbf{B}_k\mathbf{u}_{k} + \mathbf{w}_k.
+\end{equation}
+\noindent
+Where $\mathbf{F}_k$ is the state transition model. This models how previous images in the video are transformed to the new image. For example if the background is not changing the transition model is the identity for those regions. If there are rotations or skew introduced from the previous image then $\mathbf{F}_k$ also models these changes.
 
-predict phase:
+% k is the time index
+% F is the state transition model
+% H is the observation model
+% Q is the covariance of the process noise
+% R is the covariance of the observation noise
+% B is the control-input model
+% u control vector
+% w process noise ~ N(0,Qk)
+% observation zk is
 
+Next $\mathbf{B}_k$ and $\mathbf{u}_{k}$ are the control model and control vector respectively. These terms model the input to the system that is not dependent on the previous frame. $\mathbf{B}_k\mathbf{u}_{k}$ would model how and where in the frame a new object is placed for example. Finally $\mathbf{w}_k$ is the process noise in the system.
+
+The Kalman filter consists of two phases. The first phase is the \emph{predict} phase and the second is the \emph{update} phase. We will start with the predict phase. In the predict step we have not fully considered all the information at time $k$ these estimates are for $k-1$ time increments. To denote this explicitly we will use the notation that denotes $\hat{\mathbf{x}}_{n|m}$ as the estimate of $x$ at time $n$ with observations at time $m\leq n$.
+
+Our prediction phase with our new notation is then,
 \begin{equation}
-\tilde{\mathbf{x}}_k = \mathbf{F}_k\tilde{\mathbf{x}}_{k-1} + \mathbf{B}_k\mathbf{u}_k
-\end{equation}
-\begin{equation}
-\mathbf{P}_k = \mathbf{F}_k\mathbf{P}_{k-1}\mathbf{F}_k^T + \mathbf{Q}_k
-\end{equation}
-Update phase
-\begin{equation}
-\tilde{\mathbf{y}}_k = \mathbf{z}_k - \mathbf{H}_{k}\tilde{\mathbf{x}}_k
-\end{equation}
-\begin{equation}
-\mathbf{S}_k = \mathbf{R}_k + \mathbf{H}_{k}\mathbf{P}_k\mathbf{H}_{k}^T
+\hat{\mathbf{x}}_{k|k-1} = \mathbf{F}_k\hat{\mathbf{x}}_{k-1|k-1} + \mathbf{B}_k\mathbf{u}_k,
 \end{equation}
 
 \begin{equation}
-\mathbf{K}_k = \mathbf{P}_k\mathbf{H}_{k}^T\mathbf{S}_k^{-1}
+\mathbf{P}_{k|k-1} = \mathbf{F}_k\mathbf{P}_{k-1|k-1}\mathbf{F}_k^T + \mathbf{Q}_k.
 \end{equation}
-\begin{equation}
-\tilde{\mathbf{x}}_k = \tilde{\mathbf{x}}_{k-1} +  \mathbf{K}_k\tilde{\mathbf{y}}_{k}
-\end{equation}
+\noindent
+Where $\mathbf{P}_{k|k-1}$ is the error in the covariance matrix for the true state. 
+
+The update phase is starts off with a measure of the residual error,
 
 \begin{equation}
-\mathbf{P}_k = \left(\mathbf{I} - \mathbf{K}_k\mathbf{H}_{k}\right) \mathbf{P}_{k-1}\left(\mathbf{I} - \mathbf{K}_k\mathbf{H}_{k}\right)^T + \mathbf{K}_k\mathbf{R}_k\mathbf{K}_k^T 
+\tilde{\mathbf{y}}_k = \mathbf{z}_k - \mathbf{H}_{k}\tilde{\mathbf{x}}_{k|k-1}.
 \end{equation}
+\noindent
+The residual error is the difference in our observation and the true state transformed to the observation state. 
+
+Next we can calculate the residual covariance,
 \begin{equation}
-\tilde{\mathbf{y}}_k = \tilde{\mathbf{z}}_{k} -  \mathbf{H}_k\tilde{\mathbf{x}}_{k}
+\mathbf{S}_k = \mathbf{R}_k + \mathbf{H}_{k}\mathbf{P}_{k|k-1}\mathbf{H}_{k}^T,
 \end{equation}
+\noindent
+where $\mathbf{R}_k$ is the covariance of the observation noise. Which we use in the calculation of the optimal Kalman filter gain,
+\begin{equation}
+\mathbf{K}_k = \mathbf{P}_{k|k-1}\mathbf{H}_{k}^T\mathbf{S}_k^{-1}.
+\end{equation}
+\noindent
 
+We then can update the state estimate as,
+\begin{equation}
+\tilde{\mathbf{x}}_{k|k} = \tilde{\mathbf{x}}_{k|k-1} +  \mathbf{K}_k\tilde{\mathbf{y}}_{k}.
+\end{equation}
+\noindent
+We now have enough information to update our estimate of the covariance to the state,
+\begin{equation}
+\mathbf{P}_{k|k} = \left(\mathbf{I} - \mathbf{K}_k\mathbf{H}_{k}\right) \mathbf{P}_{k|k-1}\left(\mathbf{I} - \mathbf{K}_k\mathbf{H}_{k}\right)^T + \mathbf{K}_k\mathbf{R}_k\mathbf{K}_k^T.
+\end{equation}
+\noindent
+And finally we have the post-fit residual error,
+\begin{equation}
+\tilde{\mathbf{y}}_{k|k} = \tilde{\mathbf{z}}_{k} -  \mathbf{H}_k\tilde{\mathbf{x}}_{k|k},
+\end{equation}
+\noindent
+which is used in the next iteration when $k$ is incremented to $k+1$. 
 
+Clearly if the state $\mathbf{x}$ is large the calculations in the Kalman filter can be computationally intractable. Some dimensionality reduction techniques can be applied to reduce the problem down to a manageable size. 
 
 
 

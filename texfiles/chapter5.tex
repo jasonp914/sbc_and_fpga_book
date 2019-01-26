@@ -1320,7 +1320,7 @@ Finally we discuss clock domain crossings. Multiple clocks exist in a design usu
 	
 This section is on asynchronous resets, but first we will discuss synchronous resets so that we can compare what changes when we move to an asynchronous reset. First the goal of a reset is to clear data from vital registers in an effort to set the state of the core to an initial state. In this initial state there won't be any data from previous calculations to corrupt the upcoming calculations. 
 
-When a reset flag is enabled we clear registers. As we found out in the section \section{sec:regs} when registers are set we use a clock to write a value. We also saw that setup and hold times apply to writing data into a register. These rules apply when clearing registers as well. When we synchronously reset a register the vendor tools have all the relavant information to run timing-analysis for us to ensure setup and hold times are met for this clearing. 
+When a reset flag is enabled we clear registers. As we found out in \sect{sec:regs} when registers are set we use a clock to write a value. We also saw that setup and hold times apply to writing data into a register. These rules apply when clearing registers as well. When we synchronously reset a register the vendor tools have all the relavant information to run timing-analysis for us to ensure setup and hold times are met for this clearing. 
 
 We can see an example of a synchronous reset here:
 

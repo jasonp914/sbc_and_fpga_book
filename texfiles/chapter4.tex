@@ -84,12 +84,32 @@ One more note on compiling a design in the vendor tools is that depending how yo
 	<TODO Subsection Synthesis and verify resource usage : INSERT CODE synthesis report or resource usage>
 	
 \section{Code Coverage}
-	<TODO Section Code Coverage : NOT DONE>
+	<TODO Section Code Coverage : PROOF READ>
+	
+The concept of \emph{code coverage} in a testing environment means that of all the possible input permutations how many do we \emph{cover} or try in our test. If computing resources and time were not an issue we could test all the possibilities, even the erroneous inputs and check to make sure our code behaved properly, or as expected. 
+
+Covering all the possibilities is not possible in some or most cases. Even if we consider a simple adder. Where we perform the calculation $a+b=c$ if $a$ and $b$ are four bits then we can simulate all possible permutations. What happens if we increase the number of bits in $a$ and $b$ to be $64$ bits. We could not simulate all possible values in a reasonable amount of time.
+
+Also, what if the \ac{VHDL} under test is combinatorial. In that case we would need all the possible values for $a$ and $b$ and also all the possible timing skews between the data being valid for the calculation. In this case we can find a minimal time step we care about; maybe the propagation delay for a transistor. At this point we may not be able to get through all the possibilities. But do we really need to?
+
+Under the concept of code coverage we have \emph{constrained random inputs}. If we consider each input into our \ac{DUT} and determine a smart way to randomize it. We can iterate though many randomly generated inputs, each of which are independent making these simulations easily ran on large compute clusters. Which provide us large code coverage and the random nature of the selected inputs provide maximum diversity of the test vectors.  
+
+The \ac{UVM} framework was designed for such automated tasks. Along with the help of system-verilog for \ac{HDL} the generation of the constrained random inputs is quickly adaptable for each \ac{DUT} in your design or the top level of your design.
 
 \subsection{Universal Verification Methodology (UVM)}
-	<TODO Subsection Universal Verification Methodology (UVM) : NOT DONE>
+	<TODO Subsection Universal Verification Methodology (UVM) : PROOF READ>
 
+The \ac{UVM} framework is an object oriented solution to automated constrained random simulations. This framework is used in \ac{ASIC} design where simulation and testing is required before making an \ac{ASIC}.
+
+Under \ac{UVM} there are several parts to testing, first we need to generate the input. This is where we generate a random vector that will warrant some behavior from our \ac{DUT}. Next we need to have a working interface between our \ac{UVM} model and the \ac{DUT} itself. If the \ac{DUT} reads in a configuration over a protocol like \ac{SPI} then the \ac{UVM} model will need to send in a configuration over the same channel. 
+
+After the input is lauched into the \ac{DUT} we will need to have an interface to the output of the \ac{DUT} to accurately read the response into the \ac{UVM} model. Just like we needed an interface into the \ac{DUT} we need an interface from the \ac{DUT}. Finally we can check that the result from the \ac{DUT} was what we expected. If the behavior of the \ac{DUT} was unexpected we need to flag the test as a failure and log the input test vector that failed so we can go back and determine what went wrong. 
+
+To determine if the \ac{DUT} behaved appropriately we need to generate the expected behavior outside of the \ac{DUT}. In this way we can confirm the \ac{DUT} output and the generated test output are the same ensuring proper operation.  
+	
 \subsection{System Verilog}
-	<TODO Subsection System Verilog : NOT DONE>
+	<TODO Subsection System Verilog : PROOF READ>
 
+Similar to writing a testbench for a \ac{DUT} we can use \ac{VHDL} to write the test code for a \ac{DUT}. If we are writing a testbench we also don't have to limit ourselves to writing synthesizable code since the code won't be running on the \ac{FPGA} itself. But as our \ac{DUT} gets more complicated our testbench can be too low level to get really complicated testing. 
 
+There is a better tool for large and complex testbenches. System Verilog is a more powerful tool to generate a large number of randomized test input vectors. This is due to the object oriented nature of System Verilog. We also can more easily reuse code with System Verilog. 
