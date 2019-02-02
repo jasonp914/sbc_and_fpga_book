@@ -1,90 +1,232 @@
 \chapter{Design Flow Methodology}
-	<TODO Chapter Design Flow Methodology : PROOF READ>
-This chapter outlines the design flow process. This process takes in as an input an idea to be implemented in an embedded system. The idea can be a large and complicated system; the design flow process will help break down the complexity into manageable pieces. These smaller more manageable pieces can then be tested then optimized for the embedded platform. 
+	<TODO Chapter Design Flow Methodology : DONE>
+	
+This chapter outlines the design flow process. This process takes in, as an input, an idea to be implemented in an embedded system. The idea can be a large and complicated system; the design flow process will help break down the complexity into manageable pieces. These smaller more manageable pieces can then be tested then optimized for the embedded platform. 
 
 The output of the design flow process is code that tests not only the smaller more manageable pieces but also the larger design. If the design is too large and complex to test in it's entirety a few pieces can be put together to ensure those operate properly together. 
 
 \section{Complex Designs Need Simple Steps}
-	<TODO Section Complex Designs Need Simple Steps : PROOF READ>
+	<TODO Section Complex Designs Need Simple Steps : DONE>
 
-The term complex is relative. To a beginning student learning VHDL a sequential adder statement can be complex. The reason it is complex is because the student does not yet know the syntax for performing such a calculation. As the student learns the projects get harder, maybe that addition operation is combined with a multiplication operation and repeated many times to get a Finite Impulse Response \ac{FIR} Filter.  The FIR filter is more complex than the addition but the FIR filter can be one of the first of many blocks in a communications design. 
+The term complex is relative. To a beginning student learning \ac{VHDL} a sequential adder statement can be complex. The reason it is complex is because the student does not yet know the syntax for performing such a calculation. As the student learns the projects get harder, maybe that addition operation is combined with a multiplication operation and repeated many times to get a \ac{FIR} Filter.  The \ac{FIR} filter is more complex than the addition but the \ac{FIR} filter can be one of the first of many blocks in a communications transceiver design. 
 
 In any design the system needs to be broken down into subcomponents. When students first start breaking down problems they can get into trouble. The way in which they decide to break the problem down leads them into design issues when they stitch the blocks back together. In this sense a top down approach is needed to ensure compatibility in the blocks. Once this common interface is decided upon then each subcomponent is built up.
 	
 \section{Functional Verification}
-	<TODO Section Functional Verification : PROOF READ>
+	<TODO Section Functional Verification : DONE>
 
-Functional verification of a design assumes gates have zero propagation delay, which is of course not true on an FPGA. Some programmers have a bad practice of not functionally verifying the design before attempting to program an FPGA. They feel that functional verification is a waste of time, since even if it does work in simulation it still may not work on an FPGA. But if a design does not work in simulation it can not work on hardware and RTL is easier to debug in simulation.
+Functional verification of a design assumes gates have zero propagation delay, which is of course not true on an \ac{FPGA}. Some programmers have a bad practice of not functionally verifying the design before attempting to program an \ac{FPGA}. They feel that functional verification is a waste of time, since even if it does work in simulation it still may not work on an \ac{FPGA}. But if a design does not work in simulation it can not work on hardware and \ac{RTL} is easier to debug in simulation.
 
-To functionally verify a system, where a system is anything from a simple adder to an 802.11 compliant wireless communication receiver to an Artificially Intelligent robot we first need a model of the behavior in a high level language. It is best to debug the higher level language for performance metrics of the system. Then we take the high level language model and make some changes that reflect FPGA limitations for example floating point precision in a \ac{CPU} to fixed point reduced precision on an FPGA. Once this model is working we can start writing \ac{RTL} to do the same calculations. We can use testbenches in \ac{HDL} to stimulate the \ac{HDL} in the same way the hardware model works so that we can directly compare results to the high level language results. Once the model and the \ac{HDL} match perfectly the design is said to be functionally verified.
+To functionally verify a system, where a system is anything from a simple adder to an 802.11 compliant wireless communication receiver to an Artificially Intelligent robot we first need a model of the behavior in a high level language. It is best to debug the higher level language for performance metrics of the system. Then we take the high level language model and make some changes that reflect \ac{FPGA} limitations, for example floating point precision in a \ac{CPU} to fixed point reduced precision on an \ac{FPGA}. Once this model is working we can start writing \ac{RTL} to do the same calculations. We can use testbenches in \ac{HDL} to stimulate the \ac{HDL} in the same way the hardware model works so that we can directly compare results to the high level language results. Once the model and the \ac{HDL} match perfectly the design is said to be functionally verified.
 
-Here I'd like to add another step though. This involves compiling the design in a vendor's tools. This ensures that the \ac{RTL} that functionally works can be realized in hardware. It is possible that the FPGA does not have the resources needed to perform the calculations. It is also possible that the data rates for the algorithm are too high and some redesigning is needed. We can also check to ensure the design meetings timing.
+Here I would like to add another step though. This involves compiling the design in a vendor's tools. This ensures that the \ac{RTL} that functionally works can be realized in hardware. It is possible that the \ac{FPGA} does not have the resources needed to perform the calculations. It is also possible that the data rates for the algorithm are too high and some redesigning is needed. We can also check to ensure the design meetings timing.
 
 		
 
 \subsection{Overview of Design Flow}
-	<TODO Subsection Overview of Design Flow : PROOF READ>
+	<TODO Subsection Overview of Design Flow : DONE>
 
-This design flow is used with one goal in mind; minimize debugging of \ac{RTL}. Of course with writing any code you want to minimize bugs in the code. But debugging \ac{RTL} consists of delaying signals by a clock cycle to make sure the data lines up with the data valid flag. The debugging is much more lower level, its actually "bare-metal" programming. When we are so far down in the details of delaying a signal by nanoseconds we should not be concerned with the theoretical or practical performance on the algorithms we are implementing. Those questions are answered by the high level model.  
+This design flow is used with one goal in mind; minimize debugging of \ac{RTL}. Of course with writing any code you want to minimize bugs in the code. But debugging \ac{RTL} consists of delaying signals by a clock cycle to make sure the data lines up with the data valid flag. The debugging is much more lower level, its actually \index{\emph{bare-metal} programming}. When we are so far down in the details of delaying a signal by nanoseconds we should not be concerned with the theoretical or practical performance on the algorithms we are implementing. Those questions are answered by the high level model.  
 	
 \subsection{System Level Model}
-	<TODO Subsection System Level Model : PROOF READ>
+	<TODO Subsection System Level Model : DONE>
 
 The first step in writing \ac{HDL} is not to write \ac{HDL}. First we write a higher level model of what we would like to write in \ac{RTL}. MATLAB is common but also Python or Julia is used to write a working program that generates the desired results. This practice may seem trivial when we are going to make an addition block work but this first step of modeling the system in a high level language is needed when we are designing more complex designs. It is good practice to start following this design flow so that more complex designs are handled easily.
 
-As an example we are going to design a \ac{FIR} filter. We assume we have the filter coefficients and we are going to write our high level model in MATLAB. We can see in the code snippet that the majority of the calculation is done in one line of MATLAB code with the rest of the code setting up the parameters of the filter. We will now convert this model to something that we can write \ac{RTL} to do.
+As an example we are going to design a \ac{FIR} filter. We assume we have the filter coefficients and we are going to write our high level model in Python. We can see in the code snippet that the majority of the calculation is done in one line of Python code with the rest of the code setting up the parameters of the filter \cite{scipyref}. We will now convert this model to something that we can write \ac{RTL} to do.
 
-	<TODO Subsection System Level Model : INSERT CODE fir filter sys model>
+\begin{lstlisting}[language=Python]
+from scipy.signal import lfilter, firwin
+from math import *
+ntaps = 4
+f = 10e6
+fs = 40e6
+N = 4096
+sig = math.sin(2*math.pi*f*0:N-1/fs)
+taps = firwin(ntaps,.05)
+filter_result = lfilter(taps,[1.0],sig)
+\end{lstlisting}
 	
 \subsection{System Level Model with Hardware}
-	<TODO Subsection System Level Model with Hardware : PROOF READ>
+	<TODO Subsection System Level Model with Hardware : DONE>
 
-There are three aspects of the above system model that we will need to address when we write \ac{RTL} for this filter. First, in MATLAB the coefficients and signal to be filtered are floating point 64-bit numbers. In \ac{RTL} we do not want or need this precision. We do not want this precision because we will use up significant \ac{FPGA} resources and we do not need the precision because we can sacrifice some performance of our filter and still get the desired result. The balance of signal quality and precision can be determined in this system level hardware model to ensure when we start writing \ac{RTL} we get the desired performance.
+There are three aspects of the above system model that we will need to address when we write \ac{RTL} for this filter. First, in Python the coefficients and signal to be filtered are floating point $64$-bit numbers. In \ac{RTL} we do not want or need this precision. We do not want this precision because we will use up significant \ac{FPGA} resources and we do not need the precision because we can sacrifice some performance of our filter and still get the desired result. The balance of signal quality and precision can be determined in this system level hardware model to ensure when we start writing \ac{RTL} we get the desired performance.
 
-The second difference to consider is that on an \ac{FPGA} the data is not likely to be generated and stored in a vector. Although it is possible to store the signal on the \ac{FPGA} in this fashion we would not be using the \ac{FPGA} in its highest performance mode which is when we are streaming data through the system. We always want to have data moving. So for this example we will assume that the coefficients for the \ac{FIR} filter are constant but the signal that we are going to filter are streaming in a sample at a time.
+The second difference to consider is that on an \ac{FPGA} the data is not likely to be generated and stored in a vector. Although it is possible to store the signal on the \ac{FPGA} in this fashion we would not be using the \ac{FPGA} in its highest performance mode which is when we are streaming data through the system. We always want to have data moving when possible. So for this example we will assume that the coefficients for the \ac{FIR} filter are constant but the signal that we are going to filter are streaming in a sample at a time at a rate of $fs$.
 
-Third, we are writing the \ac{FIR} filter ourselves. So having a MATLAB function that handles the calculation for us does not help us understand how the \ac{FIR} filter works. So we need to do the calculations our selves in MATLAB so that we can compare our intermediate steps in MATLAB to our intermediate steps in \ac{RTL}. Since we know MATLAB's function works we can compare our calculation result to the MATLAB function's result to make sure our math is correct.
+Third, we are writing the \ac{FIR} filter ourselves. So having a Python function that handles the calculation for us does not help us understand how the \ac{FIR} filter works. So we need to do the calculations our selves in Python so that we can compare our intermediate steps in Python to our intermediate steps in \ac{RTL}. Since we know Python's function works we can compare our calculation result to Python's result to make sure our math is correct.
 
-One last change seen in this new MATLAB script is to notice that some key signals are written to text files. The purpose of writing the signal to be filtered and the filter result to a file is so that we can test the \ac{RTL} with the exact same data. If we test the \ac{RTL} \ac{FIR} filter with the same data we can make debugging a little easier because we know what the results should be and if there is a difference we can find it immediately. We write the result to a text file because we can have the testbench check the result for us using assert statements. Automating the checking allows use to run a lot of data through the filter so make sure we do not have data overflow. Data overflow or wrapping occurs with multiplication or addition were the result can not be represented by the number of bits used. If there is a bug in our code that does not protect against overflow the only way we will find it is by launching a lot of data.  With the hardware system model in MATLAB complete we can start writing the testbench and \ac{RTL} for the \ac{FIR} filter.
+One last change seen in this new Python script is to notice that some key signals are written to text files. The purpose of writing the signal to be filtered and the filter result to a file is so that we can test the \ac{RTL} with the exact same data. If we test the \ac{RTL} \ac{FIR} filter with the same data we can make debugging a little easier because we know what the results should be and if there is a difference we can find it immediately. We write the result to a text file because we can have the testbench check the result for us using assert statements. 
 
-	<TODO Subsection System Level Model with Hardware : INSERT CODE fir filter hw model>
+Automating the checking allows use to run a lot of data through the filter so make sure we do not have data overflow. Data overflow or wrapping occurs with multiplication or addition were the result can not be represented by the number of bits used. If there is a bug in our code that does not protect against overflow the only way we will find it is by launching a lot of data.  With the hardware system model in Python complete we can start writing the testbench and \ac{RTL} for the \ac{FIR} filter.
+
+\begin{lstlisting}[language=Python]
+nbits = 16
+taps_fi = math.round(taps*(2**nbits))
+sig_fi = math.round(sig*(2**nbits))
+
+fi = open('input.txt','w')
+fo = open('output.txt','w')
+
+for n in range(0,N):
+  fi.write(str(sig_fi[n]))
+	
+  y[n] = taps_fi[0]*sig_fi[n] + 
+         taps_fi[1]*sig_fi[n-1] + 
+         taps_fi[2]*sig_fi[n-2] + 
+         taps_fi[3]*sig_fi[n-3] 
+	
+  fo.write(str(sig_fi[n]))
+\end{lstlisting}
+
 	
 \subsection{HDL with testbenches}
-	<TODO Subsection HDL with testbenches : PROOF READ>
+	<TODO Subsection HDL with testbenches : DONE>
 
-To write the testbench for the \ac{FIR} filter we need three \ac{RTL} files. First we need the testbench. Think of this testbench as a workbench with a breadboard, power supply, and signal generators. This is where we are going to test the \ac{FIR} filter. The second \ac{RTL} file we are going to need is a block that reads the text files that we generated in MATLAB. Since you will be testbenching every block in your design I recommend making a generic test file read block that you can drop in whenever you need it. It may come in handy to have a block that writes a file as well but we won't be using that here. The final file we need is the \ac{FIR} filter itself. Up until now I've used the generic \ac{RTL} term for \ac{FPGA} code since this can be done in Verilog or \ac{VHDL}. Now that we are ready for examples the code snippets are in \ac{VHDL} the same calculations can be done in Verilog.
+To write the testbench for the \ac{FIR} filter we need three \ac{RTL} files. First we need the testbench. Think of this testbench as a workbench with a breadboard, power supply, and signal generators. This is where we are going to test the \ac{FIR} filter. The second \ac{RTL} file we are going to need is a block that reads the text files that we generated in Python. Since you will be testbenching every block in your design I recommend making a generic test file read block that you can drop in whenever you need it. It may come in handy to have a block that writes a file as well but we do not need it here. The final file we need is the \ac{FIR} filter itself. The generic \ac{RTL} term has been used for \ac{FPGA} code since this can be done in Verilog or \ac{VHDL}. Now that we are ready for examples the code snippets are in \ac{VHDL} the same calculations can be done in Verilog.
 
 <TODO Subsection HDL with testbenches : INSERT CODE tbfirfilter>
 
-In the testbench, the first thing to note is the name. I recommend that the name of the entity and filename include the \ac{DUT} name with the prefix tb, i.e. "tbfirfilter.vhd". If you stick to this naming convention you'll have your files organized nicely when you have larger designs. Next at the top of the file you should have a comments header where you can keep a log of what you have changed recently. Larger designs require a lot of changes and you will be glad to have some comments to remind you what this block does and how to use it. If there are assumptions on how the block is used, like the reset has to be held for multiple clock cycles or the block can not handle fully-pipelined data these are help when you use the block again in another design that may not have the same data-rate requirements.
+\begin{VHDLlisting}[tabsize=4]
+-- tb_fir.vhd
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	
+entity tb_fir is
+end entity tb_fir;
+
+architecture tb of tb_fir is
+	constant k_fni : string := "input.txt";
+	constant k_fno : string := "output.txt";
+	constant k_bw  : integer := 16;
+
+    signal w_clk   : std_logic := '0';
+    signal w_en    : std_logic := '0';
+    signal w_dv    : std_logic := '0';
+    signal w_data  : std_logic_vector(k_bw-1 downto 0);	
+    
+	signal w_rst   : std_logic := '0';
+	signal w_odv   : std_logic := '0';
+	signal w_odata : std_logic_vector(k_bw-1 downto 0);	
+	
+	signal w_tdv   : std_logic := '0';
+    signal w_tdata : std_logic_vector(k_bw-1 downto 0);	
+    
+begin
+
+    u_textfileread : entity work.textfileread
+	generic map(g_fn => k_fni
+	            g_bw => k_bw)
+	port map(i_clk => w_clk,
+	         i_en  => w_en,
+			 o_dv  => w_dv,
+			 o_data=> w_data	
+	);
+	
+	u_fir : entity work.fir
+	generic map(g_bw => k_bw)
+	port map(i_clk => w_clk,
+			 i_rst => w_rst,
+			 i_dv  => w_dv,
+			 i_data=> w_data,
+			 o_dv  => w_odv,
+			 o_data=> w_odata	
+	);
+
+	u_textfileread : entity work.textfileread
+	generic map(g_fn => k_fno
+	            g_bw => k_bw)
+	port map(i_clk => w_clk,
+	         i_en  => w_en,
+			 o_dv  => w_tdv,
+			 o_data=> w_tdata	
+	);
+	
+	p_check : process
+	begin
+		wait for rising_edge(w_clk);
+		if w_tdv = '1' and w_odv '1' then
+			assert w_odata = w_tdata
+			report "Signals not equal"
+			severity failure;
+		end if;
+	end process;
+	
+	p_clk : process
+	begin	
+		w_clk <= not w_clk;
+		wait for 5 ns;
+	end process;
+end tb;
+\end{VHDLlisting}
+
+In the testbench, the first thing to note is the name. I recommend that the name of the entity and filename include the \ac{DUT} name with the prefix tb, i.e. \emph{tb\_fir.vhd}. If you stick to this naming convention you will have your files organized nicely when you have larger designs. Next at the top of the file you should have a comments header where you can keep a log of what you have changed recently. Larger designs require a lot of changes and you will be glad to have some comments to remind you what this block does and how to use it. If there are assumptions on how the block is used, like the reset has to be held for multiple clock cycles or the block can not handle fully-pipelined data these are helpful when you use the block again in another design that may not have the same data-rate requirements.
 
 The next section of code includes some standard libraries we need. After the library usage declarations we have the entity declaration which is empty. An empty entity declaration means we do not have any inputs, outputs, or generics used in the testbench. Usually testbenches do not need any inputs or outputs since its the highest level. It is possible to use generics to make automating testing easy but we will not be using them here.
 
 The main and last section is divided into two parts. Starting with the keyword architecture and ending with begin, we have a list of all the signals we are going to use for this testbench. If we go back to the analogy of the testbench is a workbench this section has all the wires and components needed for putting the test together. Component declarations are not always necessary when they are instantiated they can be specified by listing the library they can be found in.
 
-After the begin statement we can start to write our testbench logic. After the begin statement the code is organized by data flow. The first instantiation is the block that reads data. An output to this block is the source of the data. The signal that we wrote to the text file in MATLAB will by supplied here. Out of the textfileread block the data goes into the fir\_filter block. Here we see the input going into the component or \ac{DUT}. We have hooked up wires to the \ac{DUT} just like you would if you put a chip on a breadboard and connected physical wires to the chip. We now have the input going into the fir filter. Next we will hook up wires to the output and we can see the data coming out of the \ac{FIR} filter.
+After the begin statement we can start to write our testbench logic. After the begin statement the code is organized by data flow. The first instantiation is the block that reads data. An output to this block is the source of the data. The signal that we wrote to the text file in Python will by supplied here. Out of the \emph{textfileread} block the data goes into the fir block. Here we see the input going into the component or \ac{DUT}. We have hooked up wires to the \ac{DUT} just like you would if you put a chip on a breadboard and connected physical wires to the chip. We now have the input going into the fir filter. Next we will hook up wires to the output and we can see the data coming out of the \ac{FIR} filter.
 
-We have the output of the \ac{FIR} filter but we want to compare it to the known truth data from MATLAB so we have another instantiation of textfileread to read out the results from the MATLAB text file. After that we have a process that gets the next value from the text file when data is valid out of the \ac{FIR} filter. Once both are fetched we compare the two values and assert they are the same. If they are not the assert statement reports there was a simulation mismatch.
+We have the output of the \ac{FIR} filter but we want to compare it to the known truth data from Python so we have another instantiation of textfileread to read out the results from the Python text file. After that we have a process that gets the next value from the text file when data is valid out of the \ac{FIR} filter. Once both are fetched we compare the two values and assert they are the same. If they are not the assert statement reports there was a simulation mismatch.
 
 Near the end of the testbench we keep our processes that are simple. Like the clock process that generates a clock at the frequency we are going to use in the \ac{FPGA}. Also we have a process that releases the \ac{FIR} filter from reset. This process can be more complicated if you intend on resetting the \ac{FIR} filter regularly and want to ensure the filter transient is handled in a certain way. As an illustration of a testbench those details were left out for brevity.
 
-<TODO Subsection HDL with testbenches : INSERT CODE textfileread>
+\begin{VHDLlisting}[tabsize=4]
+-- textfileread.vhd
 
-We now are going to look into how the textfileread entity works. The first feature to notice is that the filename to read from is a generic. The generic allows us to reuse the block to read from different files. We saw this in the testbench were we read both the input and results from MATLAB with this same block. Another needed feature that is needed is the enable input to the block, which allows us to hold off the data until we are ready to start comparing with the result of the \ac{FIR} filter. The rest of the file consists of calling functions in the TextIO package.
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	use std.textio.all;
+	
+entity textfileread is
+generic(g_fn : string;
+        g_bw : integer);
+port(i_clk  : in    std_logic;
+     i_en   : in    std_logic;
+     o_dv   : in    std_logic;
+     o_data : in    std_logic_vector(g_bw-1 downto 0)	
+	);
+end entity textfileread;
+
+architecture tb of textfileread is
+begin
+    p_read : process
+        file f : TEXT open READ_MODE is g_fn;
+        variable l : LINE;
+    begin
+        loop
+            exit when endfile(f);
+            wait for rising_edge(i_clk);
+            if i_en = '1' then
+                readline(f,l);
+                o_data <= to_signed(l,g_bw);
+                o_dv <= '1';
+            else
+                o_dv <= '0';
+            end if;
+        end loop;
+        wait;
+    end process;
+end tb;
+\end{VHDLlisting}
+
+We now are going to look into how the textfileread entity works. The first feature to notice is that the filename to read from is a generic. The generic allows us to reuse the block to read from different files. We saw this in the testbench were we read both the input and results from Python with this same block. Another needed feature that is needed is the enable input to the block, which allows us to hold off the data until we are ready to start comparing with the result of the \ac{FIR} filter. The rest of the file consists of calling functions in the \emph{TextIO} package.
 	
 \subsection{Synthesis and verify resource usage}
-	<TODO Subsection Synthesis and verify resource usage : PROOF READ>
+	<TODO Subsection Synthesis and verify resource usage : DONE>
 
-At this point we have a \ac{RTL} block that functionally works. The last step is making sure that the design is realizable in an \ac{FPGA}. There are a few reasons why a design could simulate but not be a good solution on an \ac{FPGA}. First a very common issue is accessing more than two addressing in an intended block \ac{RAM}. Most block \ac{RAM}s are dual port. Since its dual port there are two sets of access busses which can be used on a clock cycle. If your code uses more than that the block \ac{RAM} has to be instantiated as distributed \ac{RAM} this uses up a lot of logic.
+At this point we have a \ac{RTL} block that functionally works. The last step is making sure that the design is realizable in an \ac{FPGA}. There are a few reasons why a design could simulate but not be a good solution on an \ac{FPGA}. First a very common issue is accessing more than two addresses in an intended \ac{BRAM}. Most \ac{BRAM}s are dual-port. Since its dual-port there are two sets of access buses which can be used on a clock cycle. If your code uses more than that the \ac{BRAM} has to be instantiated as distributed \ac{RAM} this uses up a lot of logic.
 
 Another common issue is that there is too much logic trying to be calculated under one clock cycle. There are two potential solutions to the problem. One you could do less in a clock cycle or two make the clock period longer. Slowing down the clock may be detrimental to the over all performance of the system. These are the two options to meet timing, once the changes are made the block should be functionally verified again.  
 
-One more note on compiling a design in the vendor tools is that depending how you set the top level in the tools it may remove all the logic. To make sure this doesn't happen you should set the inputs to the \ac{DUT} to be inputs to the FPGA (using pin planner). Also check that the outputs are used in some way like using an or-reduce to make sure the tools can't optimize away ports that are actually needed in a bigger system. Make sure to check the synthesis and place and route reports to make sure resources are being used as expected. 
-	
-	<TODO Subsection Synthesis and verify resource usage : INSERT CODE synthesis report or resource usage>
-	
+One more note on compiling a design in the vendor tools, depending how you set the top level in the tools it may remove all the logic. To make sure this does not happen you should set the inputs to the \ac{DUT} to be inputs to the FPGA (using \emph{pin planner}). Also check that the outputs are used in some way like using an \emph{or-reduce} to make sure the tools can not optimize away ports that are actually needed in a bigger system. Make sure to check the synthesis and place and route reports to make sure resources are being used as expected. 
+		
 \section{Code Coverage}
-	<TODO Section Code Coverage : PROOF READ>
+	<TODO Section Code Coverage : DONE>
 	
 The concept of \emph{code coverage} in a testing environment means that of all the possible input permutations how many do we \emph{cover} or try in our test. If computing resources and time were not an issue we could test all the possibilities, even the erroneous inputs and check to make sure our code behaved properly, or as expected. 
 
@@ -97,19 +239,19 @@ Under the concept of code coverage we have \emph{constrained random inputs}. If 
 The \ac{UVM} framework was designed for such automated tasks. Along with the help of system-verilog for \ac{HDL} the generation of the constrained random inputs is quickly adaptable for each \ac{DUT} in your design or the top level of your design.
 
 \subsection{Universal Verification Methodology (UVM)}
-	<TODO Subsection Universal Verification Methodology (UVM) : PROOF READ>
+	<TODO Subsection Universal Verification Methodology (UVM) : DONE>
 
-The \ac{UVM} framework is an object oriented solution to automated constrained random simulations. This framework is used in \ac{ASIC} design where simulation and testing is required before making an \ac{ASIC}.
+The \ac{UVM} framework is an object oriented solution to automated constrained random simulations \cite{uvmref}. This framework is used in \ac{ASIC} design where simulation and testing is required before making an \ac{ASIC}.
 
 Under \ac{UVM} there are several parts to testing, first we need to generate the input. This is where we generate a random vector that will warrant some behavior from our \ac{DUT}. Next we need to have a working interface between our \ac{UVM} model and the \ac{DUT} itself. If the \ac{DUT} reads in a configuration over a protocol like \ac{SPI} then the \ac{UVM} model will need to send in a configuration over the same channel. 
 
-After the input is lauched into the \ac{DUT} we will need to have an interface to the output of the \ac{DUT} to accurately read the response into the \ac{UVM} model. Just like we needed an interface into the \ac{DUT} we need an interface from the \ac{DUT}. Finally we can check that the result from the \ac{DUT} was what we expected. If the behavior of the \ac{DUT} was unexpected we need to flag the test as a failure and log the input test vector that failed so we can go back and determine what went wrong. 
+After the input is launched into the \ac{DUT} we will need to have an interface to the output of the \ac{DUT} to accurately read the response into the \ac{UVM} model. Just like we needed an interface into the \ac{DUT} we need an interface from the \ac{DUT}. Finally we can check that the result from the \ac{DUT} was what we expected. If the behavior of the \ac{DUT} was unexpected we need to flag the test as a failure and log the input test vector that failed so we can go back and determine what went wrong. 
 
 To determine if the \ac{DUT} behaved appropriately we need to generate the expected behavior outside of the \ac{DUT}. In this way we can confirm the \ac{DUT} output and the generated test output are the same ensuring proper operation.  
 	
 \subsection{System Verilog}
-	<TODO Subsection System Verilog : PROOF READ>
+	<TODO Subsection System Verilog : DONE>
 
-Similar to writing a testbench for a \ac{DUT} we can use \ac{VHDL} to write the test code for a \ac{DUT}. If we are writing a testbench we also don't have to limit ourselves to writing synthesizable code since the code won't be running on the \ac{FPGA} itself. But as our \ac{DUT} gets more complicated our testbench can be too low level to get really complicated testing. 
+We have seen how to write a testbench to test our \ac{DUT} using \ac{VHDL}. If we are writing a testbench we do not have to limit ourselves to writing synthesizable code since the code does not run on the \ac{FPGA} itself. But as our \ac{DUT} gets more complicated our testbench can be too low level to get really complicated testing done efficiently. 
 
-There is a better tool for large and complex testbenches. System Verilog is a more powerful tool to generate a large number of randomized test input vectors. This is due to the object oriented nature of System Verilog. We also can more easily reuse code with System Verilog. 
+There is a better tool for large and complex testbenches. System Verilog is a more powerful tool to generate a large number of randomized test input vectors. This is due to the object oriented nature of System Verilog. We also can more easily reuse code with System Verilog \cite{sysvref}. 

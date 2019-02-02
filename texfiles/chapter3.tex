@@ -1,89 +1,89 @@
 \chapter{What is a Single Board Computer}
-	<TODO Chapter What is a Single Board Computer : PROOF READ>
+	<TODO Chapter What is a Single Board Computer : DONE>
 
 The \ac{SBC} has all of its components that make up the entire computer on one \ac{PCB}. This is opposed to a traditional computer like a desktop or laptop computer where the graphics card can easily be upgraded by purchasing another graphics card and installing it in the \ac{PCIe} slot. The storage can be upgraded or added on to by installing a new \ac{HDD} or \ac{SSD} into the connectors. The tradition computer is modular, where parts can be interchanged.
 
-The parts for the \ac{SBC} are soldered down. The removal, replacement, or expansion of the functionality of an \ac{SBC} is significantly more difficult. However, this drawback does come with some advantages. The design of the \ac{SBC} doesn't have to consider all the combinations of the modules, making the \ac{SBC} cheaper. The larger slots, connectors, and sockets that allow for expansion can be taking off the board making the form-factor significantly smaller. The lower performance metrics are a drawback but for a small cheap computer it is still rather capable.
+The parts for the \index{\ac{SBC}} are soldered down. The removal, replacement, or expansion of the functionality of an \ac{SBC} is significantly more difficult. However, this drawback does come with some advantages. The design of the \ac{SBC} doesn't have to consider all the combinations of the modules, making the \ac{SBC} cheaper. The larger slots, connectors, and sockets that allow for expansion can be taking off the board making the form-factor significantly smaller. The lower performance metrics are a drawback but for a small cheap computer it is still rather capable.
 
 \section{Parts of a Single Board Computer (SBC)}
-	<TODO Section Parts of a Single Board Computer (SBC) : PROOF READ>
+	<TODO Section Parts of a Single Board Computer (SBC) : DONE>
 
 Just like a traditional computer an \ac{SBC} has a processor, memory, and \ac{IO}. In this section we will outline the differences between the traditional computer and the capability of these components on an \ac{SBC}.
 	
 \subsection{Microprocessor(s)}
-	<TODO Subsection Microprocessor(s) : PROOF READ>
+	<TODO Subsection Microprocessor(s) : DONE>
 
-The performance of a microprocessor that is selected for an \ac{SBC} can vary greatly. There are a few families of processors that are popular and some becoming more popular. The smallest and cheapest processor is the \emph{Atmel ATmega} family of processors are used in some \ac{SBC}s. The most popular is the Arduino.
+The performance of a \index{microprocessor} that is selected for an \ac{SBC} can vary greatly. There are a few families of processors that are popular and some becoming more popular. The smallest and cheapest processor is the \emph{Atmel ATmega} family of processors are used in some \ac{SBC}s. The most popular is the \index{Arduino}.
 
-The most popular and most capable is the \ac{ARM} family of processors. The most popular \ac{SBC} is the \ac{RPi}. There are a few versions of the \ac{RPi} with slightly different \ac{ARM} processors on board.
+The most popular and most capable is the \index{\ac{ARM}} family of processors. The most popular \ac{SBC} is the \ac{RPi}. There are a few versions of the \index{\ac{RPi}} with slightly different \index{\ac{ARM}} processors on board.
 
-As of this writing the \ac{RISCV} and \ac{MIPS} processors are looking to expand their market share into the \ac{SBC} space. The \ac{RISCV} architecture is starting to make headway with some prototypes being implemented on an \ac{FPGA} \cite{}. They are going to be fabricating \ac{IC}s in the near future. The \ac{MIPS} line of processor recently opened their architecture to the public \cite{}. Now collaborators are able to get the source for their architecture and help design the processor itself \cite{}.
+As of this writing the \ac{RISCV} and \ac{MIPS} processors are looking to expand their market share into the \ac{SBC} space. The \ac{RISCV} architecture is starting to make headway with some prototypes being implemented on an \ac{FPGA} \cite{risvref}. They are going to be fabricating \ac{IC}s in the near future. The \ac{MIPS} line of processor recently opened their architecture to the public \cite{mipsopensrc}. Now collaborators are able to get the source for their architecture and help design the processor itself \cite{mipsref}.
 	
 \subsection{Memory}
-	<TODO Subsection Memory : PROOF READ>
+	<TODO Subsection Memory : DONE>
 
-The memory options for a \ac{SBC} are constrained by space. Most \ac{SBC}s are smaller than an \ac{SSD}. So there isn't an \emph{internal} \ac{HDD} or \ac{SSD}. The \ac{SBC}s rely on mirco \ac{SD} cards for non-volatile storage.
+The memory options for a \ac{SBC} are constrained by space. Most \ac{SBC}s are smaller than an \ac{SSD}. So there is not an \emph{internal} \ac{HDD} or \ac{SSD}. The \ac{SBC}s rely on mirco-\ac{SD} cards for non-volatile storage.
 
-The Arduino uses a small flash memory $32$ \ac{KB}, \ac{SRAM} $2$ \ac{KB}, and \ac{EEPROM} $1$ \ac{KB} available. Which is opposed to the \ac{RPi} which has a micro \ac{SD} card slot which handles a $32$ \ac{GB} card, there is an \ac{LP}-\ac{DDR}2 \ac{IC} with $1$ \ac{GB} capacity interfaced the \ac{ARM} processor.
+The Arduino uses a small flash memory $32$ \ac{KB}, \ac{SRAM} $2$ \ac{KB}, and \ac{EEPROM} $1$ \ac{KB} available \cite{arduspec}. Which is opposed to the \ac{RPi} which has a micro \ac{SD} card slot which handles a $32$ \ac{GB} card, there is an \ac{LP}-\ac{DDR}2 \ac{IC} with $1$ \ac{GB} capacity interfaced the \ac{ARM} processor \cite{rpispec}.
 	
 \subsection{Input and Output}
-	<TODO Subsection Input and Output : PROOF READ>
+	<TODO Subsection Input and Output : DONE>
 
-The number of \ac{IO} pins are important is you plan to interface to other electronics. When looking at how many devices you can interface to keep in mind when the Arduino says it has $16$ \ac{GPIO} pins and when the \ac{RPi} says it has $40$ \ac{GPIO} pins not all of them can be controlled by a user program. Some of the pins are ground, $3.3$ \ac{V}, and $5$ \ac{V}.
+The number of \ac{IO} pins are important as you plan to interface to other electronics. When looking at how many devices you can interface to, keep in mind when the Arduino says it has $16$ \ac{GPIO} pins and when the \ac{RPi} says it has $40$ \ac{GPIO} pins not all of them can be controlled by a user program. Some of the pins are ground, $3.3$ \ac{V}, and $5$ \ac{V}.
 
-Another important tip is to ensure the \ac{GPIO} pin can supply enough electricity. Look at both the Volt rating as well as the Amperage rating to ensure the device that you are interfacing to has enough power. If the \ac{SBC} can not supply enough power to turn on the peripheral it is still possible to damage the \ac{SBC} if connected.
+Another important tip is to ensure the \ac{GPIO} pin can supply enough electricity. Look at both the Voltage rating as well as the Amperage rating to ensure the device that you are interfacing to has enough power. If the \ac{SBC} can not supply enough power to turn on the peripheral it is still possible to damage the \ac{SBC} if connected.
 	
 \section{Applications for SBCs}
-	<TODO Section Applications for SBCs : PROOF READ>
+	<TODO Section Applications for SBCs : DONE>
 	
-The number of applications for \ac{SBC}s is enormous. The rise of the raspberry pi and many similar boards have popularized home makers tinkering with boards. New applications are being developed every day.  Below we list seven popular applications. The first being retro gaming platform. You can play Atari games or most platforms on a \ac{SBC} with an emulator installed on you \ac{SBC}. You can host a small web-server. Have you ever wanted to make a website but didn't want to pay for web hosting. An \ac{SBC} can host a site on you \ac{LAN} for free. You can also make an Amazon echo, a Christmas light show, a time clock based on facial recognition, and a stock ticker. The last application we discuss is how we can use a \ac{SBC} as a test vector generator for an \ac{FPGA}. 
+The number of applications for \ac{SBC}s is enormous. The rise of the \ac{RPi} and many similar boards have popularized home makers tinkering with boards. New applications are being developed every day. Below we list seven popular applications. The first being a retro gaming platform. You can play Atari games or most platforms on a \ac{SBC} with an emulator installed on you \ac{SBC}. You can host a small web-server. Have you ever wanted to make a website but did not want to pay for web hosting. An \ac{SBC} can host a site on your \ac{LAN} for free. You can also make an Amazon echo, a Christmas light show \cite{cliteshow}, a time clock based on facial recognition \cite{facepunch}, and a stock ticker \cite{stocktick}. The last application we discuss is how we can use a \ac{SBC} as a test vector generator for an \ac{FPGA}. 
 
 \subsection{Retro Gaming}
-	<TODO Subsection Retro Gaming : PROOF READ>
+	<TODO Subsection Retro Gaming : DONE>
 	
-It's no surprise that processors are faster now than where they were in the 1980's. Original gaming consoles were had eight bit processors and ran in the single digit megahertz range. For a lot of people that are interested in embedded processing on a \ac{SBC} and \ac{FPGA} they grew up with these types of systems. The exciting part of growing up with these systems is getting to play them again. For people who want to understand how they work they platform is there to support it.
+It is no surprise that processors are faster now than where they were in the 1980's. Original gaming consoles had eight-bit processors and ran in the single digit megahertz range. A lot of people that are interested in embedded processing on a \ac{SBC} and \ac{FPGA} grew up with these types of systems. The exciting part of growing up with these systems is getting to play them again. For people who want to understand how the emulator works the platform supports it.
 
-Clearly our \ac{SBC} platform must be of higher performance than the retro game console that we are going to emulate. On the \ac{SBC} we can limit ourselves to use less \ac{RAM}. We can burn clock cycles to emulate a lower clock speed. We are starting with an \ac{SBC} that has a \ac{CPU} that operates at hundreds of \ac{MHz} and has \ac{GB} of \ac{RAM}. To emulate the Atari 2600 which has a \ac{CPU} that runs at 1.19 \ac{MHz} and has 128 Bytes of \ac{RAM}.
+Clearly our \ac{SBC} platform must be of higher performance than the retro game console that we are going to emulate. On the \ac{SBC} we can limit ourselves to use less \ac{RAM}. We can burn clock cycles to emulate a lower clock speed. We are starting with an \ac{SBC} that has a \ac{CPU} that operates at hundreds of \ac{MHz} and has \ac{GB} of \ac{RAM}. To emulate the Atari 2600 which has a \ac{CPU} that runs at 1.19 \ac{MHz} and has 128 Bytes of \ac{RAM} \cite{atarispec}.
 
 \subsection{Small Web Server}
-	<TODO Subsection Small Web Server : PROOF READ>
+	<TODO Subsection Small Web Server : DONE>
 
-Most people think of a web server as large rack mounted blade servers that can handle thousands or millions of web-pages hits per hour. The web-server doesn't have to be that large to be useful. A website hosted on your \ac{SBC} can help you learn networking skills, how to program in website building programming languages (JavaScript, \ac{HTML}, \ac{CSS}, MySQL etc), it can even be a great way to have a \ac{UI} for your other projects were you control \ac{GPIO} over the network.
+Most people think of a web server as large rack mounted blade servers that can handle thousands or millions of web-pages requests per hour. The web-server does not have to be that large to be useful. A website hosted on your \ac{SBC} can help you learn networking skills, how to program in website building programming languages (JavaScript, \ac{HTML}, \ac{CSS}, MySQL etc), it can even be a great way to have a \ac{UI} for your other projects were you control \ac{GPIO} over the network.
 
 \subsection{Amazon Echo}
-	<TODO Subsection Amazon Echo : PROOF READ>
-The Amazon echo with the Alexa powered speech processing engine is a popular gadget. Amazon has made the engine available, if you register, to interested developers. Now you can turn a Raspberry Pi into a Amazon echo. 
+	<TODO Subsection Amazon Echo : DONE>
+The Amazon echo with the Alexa powered speech processing engine is a popular gadget. Amazon has made the engine available, if you register, to interested developers. Now you can turn a Raspberry Pi into a Amazon echo \cite{amzecho}. 
 	
 	
 \subsection{Christmas Light Show}
-	<TODO Subsection Christmas Light Show : PROOF READ>
+	<TODO Subsection Christmas Light Show : DONE>
 
-A \ac{SBC} is the perfect platform to a automate home Christmas lights display. The connectivity of the \ac{SBC} to a \ac{LAN} makes controlling the lights easily accessible. The number of \ac{GPIO} available is usually plenty. The processing doesn't have to be fast and a \ac{SBC} is plenty fast enough to create any flashes for lights your eyes can see. 
+A \ac{SBC} is the perfect platform to a automate home Christmas lights display. The connectivity of the \ac{SBC} to a \ac{WLAN} makes controlling the lights easily accessible. The number of \ac{GPIO} available is usually plenty. The processing does not have to be fast and a \ac{SBC} is plenty fast enough to create any flashes for lights your eyes can see \cite{cliteshow}. 
 	
 	
 \subsection{Facial Recognition Time Clock}
-	<TODO Subsection Facial Recognition Time Clock : PROOF READ>
+	<TODO Subsection Facial Recognition Time Clock : DONE>
 
-Usually a time clock has employees clock in with a time card or an employee number. The use of a \ac{SBC} can make clocking in and out easier. The amount of time it takes to clock in can be measured in milliseconds; so the \ac{SBC} can compare a picture, input, to the database of current employees. 
+Usually a time clock has employees clock in with a time card or an employee number. The use of a \ac{SBC} can make clocking in and out easier. The amount of time it takes to clock in can be measured in milliseconds; so the \ac{SBC} can compare a picture, input, to the database of current employees \cite{facepunch}. 
 	
 \subsection{Stock Ticker}
-	<TODO Subsection Stock Ticker : PROOF READ>
+	<TODO Subsection Stock Ticker : DONE>
 
-In general a great application for an \ac{SBC} can be used to scrape the Internet for data useful to a user. A specific example of this would be getting current stock prices regularly. Yahoo finance makes this fairly simple to where you can get stock price updates on only the stocks you are interested in. 
+In general a great application for an \ac{SBC} can be used to scrape the Internet for data useful to a user. A specific example of this would be getting current stock prices regularly. Yahoo finance makes this fairly simple to where you can get stock price updates on only the stocks you are interested in \cite{stocktick}. 
 	
 	
 \subsection{FPGA Test Vector Generator}
-	<TODO Subsection FPGA Test Vector Generator : PROOF READ>
+	<TODO Subsection FPGA Test Vector Generator : DONE>
 
 The \ac{FPGA} test vector generator is an application for the \ac{SBC} that we will look at extensively in this book. There is a lot of thought that needs to go into designing a general test vector generator. We hope to be able to use a \ac{SBC} to test our image processing and wireless communication algorithms. Also we would like to be able to use it to test machine learning algorithms all on the \ac{FPGA} with very little effort. We want to spend our time developing the applications not having a lot of time sunk into the automation of testing.
 
-Since we will be using the test vector generator on multiple projects we are going to take the time to design it well. We will focus considerably on flexibility with the goal of minimal tailoring to specific applications. In some cases. for example we would be interested in the latency or execution time of the algorithms developed on the \ac{FPGA} for this we will need the ability to finely control when the algorithm starts working on the data. 
+Since we will be using the test vector generator on multiple projects we are going to take the time to design it well. We will focus considerably on flexibility with the goal of minimal tailoring to specific applications. In some cases, for example, we would be interested in the latency or execution time of the algorithms developed on the \ac{FPGA} for this we will need the ability to finely control when the algorithm starts working on the data. 
 
-Another aspect that affects execution speed is how quickly can we supply data to the \ac{FPGA} from the \ac{SBC}. The easiest way is to use a \ac{SPI} bus. The \ac{SBC} already supports the protocol with a python library. Which we can generate our test vectors in python and send them over \ac{SPI} to the \ac{FPGA}. The \ac{SPI} bus can operate around $25$ \ac{MHz} if the \ac{FPGA} algorithms need to be tested at a higher data rate we can pre-load the data into \ac{DDR}. 
+Another aspect that affects execution speed is how quickly can we supply data to the \ac{FPGA} from the \ac{SBC}. The easiest way is to use a \ac{SPI} bus. The \ac{SBC} already supports the protocol with a Python library \cite{pispidev}. Which we can generate our test vectors in Python and send them over \ac{SPI} to the \ac{FPGA}. The \ac{SPI} bus can operate around $25$ \ac{MHz} if the \ac{FPGA} algorithms need to be tested at a higher data rate we can pre-load the data into \ac{DDR}. 
 
-If we plan to pre-load data into \ac{DDR} there are a few things to consider. First the size of the \ac{DDR} that is interfaced to the \ac{FPGA} it may be possible to preload multiple test vectors into \ac{DDR}. Doing this may save time due to the overhead of setting up data transfers. We would also need to consider how large one test vector is for a particular application. Some applications like image or video processing would require more data than wireless communications data.
+If we plan to pre-load data into \ac{DDR} there are a few things to consider. First the size of the \ac{DDR} that is interfaced to the \ac{FPGA} it may be possible to pre-load multiple test vectors into \ac{DDR}. Doing this may save time due to the overhead of setting up data transfers. We would also need to consider how large one test vector is for a particular application. Some applications like image or video processing would require more data than wireless communications data.
 
-In general pre-loading data into \ac{DDR} is going to be a quick way of getting test vectors into the \ac{FPGA}. Once loaded the speed of \ac{DDR} will be fast enough to test our \ac{FPGA} algorithms. Another goal of the test vector generator is to set up a closed-loop self-testing setup where python can setup the test vector, send the data to the \ac{FPGA} then the \ac{FPGA} generates the outputs and sends the results back to the \ac{SBC}. Once the results are received then python can generate performance metrics based on the inputs and outputs. Python would check the results from the \ac{FPGA}. Once closed-loop test is developed then hundreds of thousands or millions of test vectors can be generated and tested.
+In general pre-loading data into \ac{DDR} is going to be a quick way of getting test vectors into the \ac{FPGA}. Once loaded the speed of \ac{DDR} will be fast enough to test our \ac{FPGA} algorithms. Another goal of the test vector generator is to set up a closed-loop self-testing setup where Python can setup the test vector, send the data to the \ac{FPGA} then the \ac{FPGA} generates the outputs and sends the results back to the \ac{SBC}. Once the results are received by the \ac{SBC} Python can generate performance metrics based on the inputs and outputs. Python would check the results from the \ac{FPGA}. Once closed-loop test is developed then hundreds of thousands or millions of test vectors can be generated and tested.
 
-Testing the \ac{FPGA} algorithms with many test vectors is a fantastic way to ensure there aren't any latent issues with the design. In \ac{FPGA} development there could be minor errors or corner cases that aren't found unless a lot of testing is done. The \ac{SBC} is a great way of automating the test. The faster we can turn over the test vectors the faster we can test hundreds of thousands or millions of test vectors. 
+Testing the \ac{FPGA} algorithms with many test vectors is a fantastic way to ensure there are not any latent issues with the design. In \ac{FPGA} development there could be minor errors or corner cases that are not found unless a lot of testing is done. The \ac{SBC} is a great way of automating the test. The faster we can turn over the test vectors the faster we can test hundreds of thousands or millions of test vectors. 
 
