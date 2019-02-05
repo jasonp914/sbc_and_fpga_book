@@ -1,27 +1,27 @@
 \chapter{Single Board Computer Programming Basics}
-	<TODO Chapter Single Board Computer Programming Basics : PROOF READ>
+	<TODO Chapter Single Board Computer Programming Basics : DONE>
 
-Once you get your \ac{SBC} in the mail and you open it up what do you do? You read the getting started guide, you plug in the the \ac{SD} card, plug in a monitor, plug in a keyboard and mouse. The \ac{SBC} boots up to a Linux desktop or command line and waits for your input. 
+Once you get your \ac{SBC} in the mail and you open it up what do you do? You read the getting started guide, you plug in, the \ac{SD} card, a monitor, a keyboard and mouse. The \ac{SBC} boots up to a Linux desktop or command line and waits for your input. 
 
-This Chapter is about what you can do with the \ac{SBC} after it boots up. There are many projects you can do with the \ac{SBC} and we will discuss the most popular \ac{SBC}, the \ac{RPi}. We will show examples of how to use the \ac{RPi} but most of the examples here apply to any Linux distribution. 
+This Chapter is about what you can do with the \ac{SBC}. There are many projects you can do with the \ac{SBC} and we will discuss the most popular \ac{SBC}, the \ac{RPi}. We will show examples of how to use the \ac{RPi} but most of the examples here apply to any Linux distribution. 
 
 \section{Linux Basics}
-	<TODO Section Linux Basics : PROOF READ>
+	<TODO Section Linux Basics : DONE>
 
 The first thing that you will need to get used to in Linux is the command line. At the command line the programmer types in the commands they want to run. In this interface processing power is not wasted on rendering the \ac{GUI} or handling \ac{UI} events. The overhead of a \ac{GUI} takes away from processing the tasks you are trying to perform. 
 
 Next we will introduce aliases to make issuing common commands easier. Aliases allow you to use a shorter phase for common commands you execute, this is particularly helpful if the commands being ran have many parameters that are the same. Aliases save keystrokes per command, so long commands that are ran frequently are usually first to be aliased. 
 
-We will then turn to the concept of \emph{Cron-Jobs}. In Linux we can setup a Cron-Job that can be ran any interval with a one minute resolution. Once scheduled, a script can be ran to scan for malware, move files, or clean up some old data. A good candidate script for a Cron-Job is one that needs regularly ran and takes a while to perform. 
+We will then turn to the concept of \emph{Cron-Jobs}. In Linux we can setup a Cron-Job that can be ran at any interval with a one minute resolution. Once scheduled, a script can be ran to scan for malware, move files, or clean up some old data. A good candidate script for a Cron-Job is one that needs regularly ran and takes a while to perform. 
 
-Finally we discuss popular programming languages. We will discuss the basics of three languages. The first we look at C/C++. The strength of C/C++ is that it is a low level language with a high efficiency rating. Next is Python, which is gaining a lot of popularity, particularly in machine learning applications. Since Python is more abstract from bare metal we sacrifice efficiency but we gain a lot from Python. Finally, we discuss a newer language named \emph{Julia}, which shows many promising attributes.  
+Finally we discuss popular programming languages. We will discuss the basics of three languages. The first we look at C/C++. The strength of C/C++ is that it is a low level language with a high efficiency rating. Next is Python, which is gaining a lot of popularity, particularly in machine learning applications. Since Python is more abstract from a bare metal language we sacrifice efficiency but we gain a lot of functionality from Python. Finally, we discuss a newer language named \emph{Julia}, which shows many promising attributes.  
 	
 \subsection{The Terminal}
-	<TODO Subsection The Terminal : PROOF READ>
+	<TODO Subsection The Terminal : DONE>
 	
-The Linux \ac{CLI} is a very power full tool. We will start with the basics here and once you are comfortable with the process you productivity will increase dramatically. Most people like the comfort of using a \ac{GUI} because they feel like they don't have to remember all the commands to type in. If they search through the menus long enough they will find the menu button they are interested in. Once comfortable with the \ac{CLI} this process of searching for the command you want to run is faster. 
+The Linux \ac{CLI} is a very power full tool. We will start with the basics here and once you are comfortable with the process your productivity will increase dramatically. Most people like the comfort of using a \ac{GUI} because they feel like they do not have to remember all the commands to type in. If they search through the menus long enough they will find the menu button they are interested in. Once comfortable with the \ac{CLI} this process of searching for the command you want to run is faster. 
 
-We first just need to get past the learning curve of the \ac{CLI}.  To start with we will \emph{list} all the files that are in the current working directory. We can do this by opening a terminal and running the command:
+We just need to get past the learning curve of the \ac{CLI}. To start with we will \emph{list} all the files that are in the current working directory. We can do this by opening a terminal and running the command:
 
 \begin{lstlisting}[language=bash]
     $ ls
@@ -33,7 +33,7 @@ After the command completes you will have a printout of all the file names in th
     $ pwd
 \end{lstlisting}	
 
-The command \emph{pwd} stands for print working directory and once this command executes the absolute path of your current working directory is printed. If you are in your \emph{home} directory you will see you are in a folder named by your \emph{user name}. 	
+The command \emph{pwd} stands for \emph{print working directory} and once this command executes the absolute path of your current working directory is printed. If you are in your \emph{home} directory you will see you are in a folder named by your \emph{user name}. 	
 	
 The \ac{CLI} is used to call programs, ones we write ourselves and ones we have installed. As we write our own programs we will want to organize the files of code into directories, at the \ac{CLI} we can make a directory by running the command:
 
@@ -41,7 +41,7 @@ The \ac{CLI} is used to call programs, ones we write ourselves and ones we have 
     $ mkdir test
 \end{lstlisting}	
 
-After executing the command we will have a new directory in our current working directory call \emph{test}. The \emph{mkdir} command takes in a parameter, namely the new directory's name, and makes a directory with the name. So this command can be ran again with any string after the \emph{mkdir} command and a folder will be produced as a result. 
+After executing the command we will have a new directory in our current working directory called \emph{test}. The \emph{mkdir} command takes in a parameter, namely the new directory's name. The command makes a directory with the name of the parameter given. So this command can be ran again with any string after the \emph{mkdir} command and a folder will be produced as a result. 
 
 Once we have made the directory we will need want to change directories into the \emph{test} folder. To do this we can run the \emph{cd} command:
 
@@ -58,7 +58,7 @@ In our test folder we can make an empty file by running:
     $ vim test_file
 \end{lstlisting}
 
-Note: Depending on your Linux distribution you may not have \emph{vim} installed. If this is the case, skip to the section about install software
+Note: Depending on your Linux distribution you may not have \emph{vim} installed. If this is the case, skip to the section about installing software.
 
 The \emph{vim} command will first make an empty file in the working directory but \emph{vim} is also a text editor. For a more in-depth tutorial of \emph{vim} you can run the command:
 
@@ -80,9 +80,9 @@ Now that we have ran \emph{vim test\_file} we have a blank file being displayed 
 When \emph{vim} is launched we enter in command mode. We first enter \emph{i} which is a \emph{vim} command to go into insert mode. In this mode we can type into the document whatever we would like, in the example we typed in \emph{hello world}. After we are done editing we need to get back into command mode again and to do this we use the escape key on the keyboard. Once back in command mode we issue the \emph{vim} command \emph{:x!} which saves and closes the document, returning us back to the \ac{CLI}.	
 	
 \subsection{Aliases}
-	<TODO Subsection Aliases : PROOF READ>
+	<TODO Subsection Aliases : DONE>
 	
-Aliases are used in the bash shell to reduce the number of keystrokes needed to execute common commands. You can defined permanent aliases which are defined even after a power cycle and in different terminal sessions. Alternatively you can define aliases temporarily. We will focus on permanent aliases placed in your \emph{~/.bashrc} file or \emph{~/.bash\_aliases} file, which is called from your \emph{~/.bashrc} file. 
+Aliases are used in the bash shell to reduce the number of keystrokes needed to execute common commands. You can define permanent aliases which are defined even after a power cycle and in different terminal sessions. Alternatively you can define aliases temporarily. We will focus on permanent aliases placed in your \emph{~/.bashrc} file or \emph{~/.bash\_aliases} file, which is called from your \emph{~/.bashrc} file. 
 
 To define an alias we use the syntax \emph{alias name=command}. So for example we can define an alias that adds color to the result of the \emph{ls} command. We define the alias by first opening our \emph{.bash\_aliases} file:
 
@@ -110,7 +110,7 @@ if [ -f ~/.bash_aliases]; then
 fi
 \end{lstlisting}
 
-Now that this code is in our \emph{.bashrc} file we can save and close the file. Once closed the alias that we just defined in the \emph{.bash\_aliases} file hasn't be ran yet. To run the files to get the alias declared we have two options. First is to source the files by running:
+Now that this code is in our \emph{.bashrc} file we can save and close the file. Once closed the alias that we just defined in the \emph{.bash\_aliases} file has not be ran yet. To run the files to get the alias declared we have two options. First is to source the files by running:
 
 \begin{lstlisting}[language=bash]
 	$ source ~/.bashrc.
@@ -129,20 +129,20 @@ alias ping='ping -c 5'
 alias fastping='ping -c 100 -i .2'
 \end{lstlisting}
 	
-The first two aliases allow you to avoid having to type \emph{sudo} for the common command of \emph{reboot} and \emph{apt-get upgrade}. The next command makes changing to the parent directory easier. The \emph{mkdir} command is aliased to passing in two switches which make directories for all the parent directories that don't exist. With this command we now don't have to make a directory then \emph{cd} to the directory then make another directory. If we know the directory structure we need we can just call \emph{mkdir} once with the full path. 
+The first two aliases allow you to avoid having to type \emph{sudo} for the common command of \emph{reboot} and \emph{apt-get upgrade}. The next command makes changing to the parent directory easier. The \emph{mkdir} command is aliased to passing in two switches which make directories for all the parent directories that do not exist. With this command we now do not have to make a directory then \emph{cd} to the directory then make another directory. If we know the directory structure we need we can just call \emph{mkdir} once with the full path. 
 
 The last two aliases setup some default parameters for the \emph{ping} command. The first alias for the \emph{ping} command itself sets the number of pings to be five. The second alias is \emph{fastping} which sends $100$ packets but reduces the amount of time in between the transmissions to test the response speed to the destination. 
 
 Presented here are a few aliases that first demonstrate the syntax of defining aliases. Next they offer some ideas on what you could define for aliases. If you find that you are typing a command very often with the same parameters maybe an alias will help making your keystrokes a little more efficient. 
 	
 \subsection{Cron-Jobs}
-	<TODO Subsection Cron-Jobs : PROOF READ>
+	<TODO Subsection Cron-Jobs : DONE>
 
-A Cron-job is a scheduling a script or command, just like you would type into the \ac{CLI}, to run at a specified time. Usually the tasks that are scheduled as a Cron-Job are tedious tasks that may require a lot of time to run and do not need you to supervise them. Tasks that can be started while you are away from your computer and can be finished by the time you come back are perfect candidates for  a Cron-Job scheduling. 
+A Cron-job is a scheduling a script or command, just like you would type into the \ac{CLI}, to run at a specified time. Usually the tasks that are scheduled as a Cron-Job are tedious tasks that may require a lot of time to run and do not need you to supervise them. Tasks that can be started while you are away from your computer and can be finished by the time you come back are perfect candidates for a Cron-Job scheduling. 
 	
-One example would be if your work space with subdirectories and data were to be backed up on a server. A Cron-job could be scheduled to copy the files to the server at regular intervals this way you would have backups of your work space based on a date and time stamp. Along the same lines code revision software such as \emph{git} or \emph{subversion} can be automated to ensure proper backups are made and newest code from other team members is integrated.  
+One example would be if your work space with subdirectories and data were to be backed up on a server. A Cron-job could be scheduled to copy the files to the server at regular intervals, this way you would have backups of your work space based on a date and time stamp. Along the same lines, code revision software such as \emph{git} or \emph{subversion} can be automated to ensure proper backups are made and newest code from other team members is integrated.  
 
-Some other examples include monitoring system performance like disk usage scans could be ran regularly. If your computer needs to be rebooted weekly or monthly this could be scheduled so that you don't have to wait for the start up process to take place. Some system administration tasks can be scheduled and maintenance for user groups can be ran when appropriate. Finally, security scans can be performed and patches can be applied without a user's oversight. If you are finding that you are running a utility often and could look at the outputs at a later time a Cron-job can be scheduled. 
+Some other examples include monitoring system performance like disk usage scans could be ran regularly. If your computer needs to be rebooted weekly or monthly this could be scheduled so that you do not have to wait for the start up process to take place. Some system administration tasks can be scheduled and maintenance for user groups can be ran when appropriate. Finally, security scans can be performed and patches can be applied without a user's oversight. If you are finding that you are running a utility often and could look at the outputs at a later time a Cron-job can be scheduled. 
 
 To schedule a Cron-job we run the command:
 
@@ -166,28 +166,28 @@ cp -r /home/user/workspace /home/user/backup/
 The python script \emph{copy\_files.py} copies all the files and sub-folders of the user workspace to user backup. 
 	
 \section{Programming Languages}
-	<TODO Section Programming Languages : PROOF READ>
+	<TODO Section Programming Languages : DONE>
 
-Choosing a programming language first depends on the algorithm or task you are trying to accomplish. Just like using a shovel to dig the foundation for a skyscraper you also wouldn't use a bulldozer to make a sandcastle. It is important to choose the correct tool for the job. 	
+Choosing a programming language first depends on the algorithm or task you are trying to accomplish. Just like using a shovel to dig the foundation for a skyscraper you also would not use a bulldozer to make a sandcastle. It is important to choose the correct tool for the job. 	
 	
 We are not choosing the best language, we are determining which language, or tool, to use for a specific job. In this section we talk about why you would choose C/C++ (a shovel), or Python (a bulldozer), or a new tool Julia (a shiny new bulldozer with extra features that may get in the way). 	
 	
 	
 \subsection{C/C++ vs. Python vs. Julia}
-	<TODO Subsection C/C++ vs. Python vs. Julia : PROOF READ>
+	<TODO Subsection C/C++ vs. Python vs. Julia : DONE>
 
-In this overview of three languages we start with the \emph{lowest level} language. The term \emph{low level} refers to how close to bare-metal a language is, for example memory access and how memory data is organized in memory. A bare-metal language allows the programmer the ability to store data is physical memory locations. If you are trying to develop a game though you are not concerned where the data is stored in memory so you want a higher level language that abstracts those details from you. 
+In this overview of three languages we start with the \emph{lowest level} language. The term \emph{low level} refers to how close to \emph{\index{bare-metal}} a language is, for example memory access and how memory data is organized in memory. A bare-metal language allows the programmer the ability to store data in physical memory locations. If you are trying to develop a game, you are not concerned where the data is stored in memory, you want a higher level language that abstracts those details from you. 
 
-Memory allocation is just one example of what can be abstracted from the programmer. Some programmers want to have the ability to control where all the data is going and how it is organized. There may be an efficiency to particular organization that may be lost when managed by an \ac{OS}. This overview provides some examples of each language and helpfully allows you to choose the best language for your application.
+Memory allocation is just one example of what can be abstracted from the programmer. Some programmers want to have the ability to control where all the data is going and how it is organized. There may be an efficiency to a particular organization that may be lost when managed by an \ac{OS}. This overview provides some examples of each languages and hopefully allows you to choose the best language for your application.
 
 \subsubsection{C/C++}
-	<TODO Subsubsection  C/C++ : PROOF READ>
+	<TODO Subsubsection  C/C++ : DONE>
 
-The C programming language is considered a \emph{high level} language in some embedded processing circles in that the C programming language is compiled down into machine code. The process of compiling the C code into machine language takes a few interpretive steps in which some functionality are abstracted from you as the programmer. These abstractions are beneficial in terms of getting pass the minor details of a program and getting to the functionality of the program itself. 
+The C programming language is considered a \emph{high level} language in some embedded processing circles. In that, the C programming language is compiled down into machine code. The process of compiling the C code into machine language takes a few interpretive steps in which some functionality is abstracted from you as the programmer. These abstractions are beneficial in terms of getting past the minor details of a program and getting to the functionality of the program itself. 
 
 Just like in physics the terms \emph{high} and \emph{low} are relative; just as they are here. In the section we will consider the C language to be a \emph{low} level language. We justify the \emph{low} level distinction by considering the fact that C is the preferred language for small embedded processors with varying architectures. Due to the varying architectures of the \ac{ARM}, \ac{RISCV}, \ac{ATMEGA}, \ac{MIPS}, and \ac{TI-DSP} the C compiler, \ac{GCC}, is altered to consider the changes in architecture. Since the architecture does have an effect, we consider the C compiler to handle low level or hardware level changes. 
 
-To get started with writing a C program we first look at the \emph{hello world} example program. First we include the C library stdio. The standard input and output library allows us to read from the keyboard and also write to the screen. In the \emph{hello world} example we will print to the screen with the function \emph{printf}. Next we define the \emph{main} function. When the program is launched main is where the program starts.
+To get started with writing a C program we first look at the \emph{hello world} example program. First we include the C library \eph{stdio}. The standard input and output library allows us to read from the keyboard and also write to the screen. In the \emph{hello world} example we will print to the screen with the function \emph{printf}. Next we define the \emph{main} function. When the program is launched main is where the program starts.
 
 Finally we call the \emph{printf} function with passing in the string we want to print to the console. Once we have a file named \emph{hello\_world.c} with the lines of code:
 
@@ -201,11 +201,11 @@ We can compile and execute the program next. First we need to compile the file b
 	
 Which will print out the version of \ac{GCC} that is currently installed. If the command errors out and says that the command is unknown we need to install \ac{GCC}	
 	
-\begin{lstlisting}[language=bash]$ 
+\begin{lstlisting}[language=bash]$
 	sudo apt-get install gcc -y.
 \end{lstlisting}
 
-This command installs the necessary dependencies and answers yes to all questions like if it is ok to download the install files while citing the size for you.
+This command installs the necessary dependencies and answers yes to all questions like, for example, is ok to download the install files while citing the size for you.
 
 Once we have a working installation of \ac{GCC} we can compile the \emph{hello\_world.c} file by issuing:
 
@@ -219,7 +219,7 @@ If there are any syntax errors the compiler will print them out. If there are no
     $ ./a.out 
 \end{lstlisting}
 
-which prints the string "Hello World" to the console. If you don't like the default name of \emph{a.out} you can compile the source code with:
+which prints the string \emph{Hello World} to the console. If you do not like the default name of \emph{a.out} you can compile the source code with:
 
 \begin{lstlisting}[language=bash]
     $ gcc -o helloworld hello_world.c 
@@ -231,19 +231,19 @@ In this case if there are no errors \ac{GCC} will make a file called \emph{hello
     $ ./helloworld
 \end{lstlisting}
 
-Moving on to an example that is a little more complicated. We can convert binary to decimal and vice-versa. We will first include \emph{stdio} again along with the \emph{math} library. Next we use a \emph{\#define} declaration to improve code read ability and to increase code reuse. We will define the number of bits we use for our conversions with \emph{\#define NBITS} so that if we want to change the bit width we can change it in one place. All the code that depends on the number of bits references the \emph{\#define}.
+Moving on to an example that is a little more complicated. We can convert a binary value to decimal value and vice-versa. We will first include \emph{stdio} again along with the \emph{math} library. Next we use a \emph{\#define} declaration to improve code read ability and to increase code reuse. We will define the number of bits we use for our conversions with \emph{\#define NBITS} so that if we want to change the bit width we can change it in one place. All the code that depends on the number of bits references the \emph{\#define}.
 
 After the \emph{\#define} we define our first function, \emph{print\_vec}. The \emph{print\_vec} function prints the integers that are in the integer array pointer that is passed in. In this case the number of integers to be printed out is $NBITS$ that we defined earlier. At the end of the function we print a \emph{line-feed} character to move to a new line. 
 
-Next we will look at a function that takes in an integer pointer. The integer pointer points to $NBITS$ integers that represent a binary string. Even though the type is integer we assume that each element is either a one or zero. To calculate the decimal value of the binary vector we assume the \ac{LSB} is bit $0$. We initialize two integers $i$ and $sum$ to $0$. Then we loop over $i$ up to $NBITS$ and use the $sum$ variable as a running sum. The running sum will be the decimal value which at the end of the function is returned to the caller of the function. 
+Next we will look at a function that takes in an integer pointer. The integer pointer points to $NBITS$ integers that represent a binary string. Even though the type is integer we assume that each element is either a one or zero. To calculate the decimal value of the binary vector we assume the \ac{LSB} is $0$. We initialize two integers $i$ and $sum$ to $0$. Then we loop over $i$ up to $NBITS$ and use the $sum$ variable as a running sum. The running sum will be the decimal value which at the end of the function is returned to the caller of the function. 
 
 To calculate the decimal value we loop over the binary array. Each element of the array is either a $0$ or $1$. Each position of the binary array has a weight of $2^i$ where $i$ is the bit position. For example, position $0$ has a weight of $2^0 = 1$, if bit zero, denoted in the C code as $b[0]$ is one then we add a one to the running sum, otherwise zero is added. We continue this process up to $NBITS$, in which at the end $sum$ is the decimal value of the binary array.
 
-The next function in the file is converts a decimal value to a binary array. In this function we have two parameters. The first the the decimal value that we are converted, denoted $d$. The second parameter is the binary array result. Since the point is being passed to this function we will update the section of memory that the point points to then after returning from the function call the caller will know that the pointer is updated with the correct result. 
+The next function in the file converts a decimal value to a binary array. In this function we have two parameters. The first is the decimal value that we are converting, denoted $d$. The second parameter is the binary array result. Since the point is being passed to this function we will update the section of memory that the point points to then after returning from the function call the caller will know that the pointer is updated with the correct result. 
 
-Since we assumed that the \ac{LSB} is bit zero, and for converted a decimal value to binary we need to start with the \ac{MSB} we set up another for loop but we initialize the loop variable $i$ to $NBITS$ and decrement  each time through the loop. To determine if bit $i$ is a zero or one we check to see if the bit position's weight is less than the current value of $d$, if so then the bit is a one, otherwise a zero. If the position weight does subtract to leave a positive number, making the bit a one, we also need to reduce $d$ by that bit position's weight before moving on to the next iteration. Once complete the function returns. 
+Since we assumed that the \ac{LSB} is zero, and for converted a decimal value to binary we need to start with the \ac{MSB}, we set up another for loop but we initialize the loop variable $i$ to $NBITS$ and decrement each time through the loop. To determine if bit $i$ is a zero or one we check to see if the bit position's weight is less than the current value of $d$, if so then the bit is a one, otherwise a zero. If the position weight does subtract to leave a positive number, making the bit a one, we also need to reduce $d$ by that bit position's weight before moving on to the next iteration. Once complete the function returns. 
 
-Finally we get to the \emph{main} function. The \emph{main} function is the first one called when a program is executed. When first learning it is hard to understand why the \emph{main} function isn't placed at the top of the file. We place the \emph{main} function at the bottom of the file because the compiler has to have the functions defined before they can be used. Since all the functions will be used in our main we keep our \emph{main} at the end of the file. In larger programs you can include a header file that declares all the functions that will be defined so that they can be called in any other function. 
+Finally we get to the \emph{main} function. The \emph{main} function is the first one called when a program is executed. When first learning it is hard to understand why the \emph{main} function is not placed at the top of the file. We place the \emph{main} function at the bottom of the file because the compiler has to have the functions defined before they can be used. Since all the functions will be used in our main we keep our \emph{main} at the end of the file. In larger programs you can include a header file that declares all the functions that will be defined so that they can be called in any other function. 
 
 The first three lines of code in our \emph{main} file declare an integer array named $b$ and two integers $i$ and $sum$. We use $i$ as our for loop variable again and we loop from $0$ to $2^{NBITS}-1$, the minus one is accomplished by the strictly less than conditional, which tests the full range of integers with $NBITS$. 
 
@@ -265,17 +265,17 @@ The last example for the C programming language looks at how we can save data. W
 
 For our file \ac{IO} example we will be reading in a text file. If you want to run the example you will need to create a text file. We named ours \emph{test.txt} and we added some sentences to the file, anything will do. 
 
-The first two lines of code in our file \ac{IO} example our header files that we will be using just like in the previous examples. We define our $LINESIZE$ which is used for reading the text file. The $LINESIZE$ is the maximum number of characters in a single line in the file. This is so that we can preallocate an array to hold all the characters. 
+The first two lines of code in our file \ac{IO} example are our header files that we used in our previous examples. We define our $LINESIZE$ which is used for reading the text file. The $LINESIZE$ is the maximum number of characters in a single line in the file. This is so that we can preallocate an array to hold all the characters. 
 
 The first helper function we have is an \emph{alpha\_init} function that has a return type of \emph{void}. The one parameter is a character array of $26$ in length. All this function does is initialize the array to the $26$ lower case letters in the alphabet. 
 
-Next we have a helper function that prints out all the characters in a character array. There are two ways for the printing to end. We can reach the $LINESIZE$ length which is the maximum line size. We could also reach the new line character. The new line character denotes when a string is terminated. The termination character is used so that as we have varying length strings we are ended when we need to instead of printing out uninitialized memory as \ac{ASCII} characters. 
+Next we have a helper function that prints out all the characters in a character array. There are two ways for the printing to end. We can reach the $LINESIZE$ length which is the maximum line size. We could also reach the new line character. The new line character denotes when a string is terminated. The termination character is used to denote the end of a string. The termination is useful so that as we have varying length strings we have ended when we need to. Other wise we could be printing out uninitialized memory as \ac{ASCII} characters. 
 
 Moving on we have a function that counts the number of vowels in a character buffer. Here we loop over the buffer; up to $LINESIZE$. If the current character, denoted \emph{buff[i]}, is a vowel we increment a counter. Once complete we return the counter. 
 
-Before we get to the main function we will look at one last helper function. The \emph{caesar\_cipher} is a cipher that was used a long time ago. If offers no security level but is a good example problem for string manipulations. 
+Before we get to the main function we will look at one last helper function. The \emph{caesar\_cipher} is a cipher that was used a long time ago. It offers no security level but is a good example problem for string manipulations. 
 
-The Caesar Cipher takes in plain text and a key. The key is an integer from $1$ to $25$. A key of $1$ means that for ever letter you replace it by the next one in the alphabet. So an \emph{a} becomes a \emph{b} and so forth. If the key is $3$ then an \emph{a} is mapped to \emph{d}. Spaces are kept as is which is one of the reasons why the cipher has no security. Lets look at a function that calculates the cipher result for a given character array. 
+The Caesar Cipher takes in plain text and a key. The key is an integer from $1$ to $25$. A key of $1$ means that for ever letter in the plain text, you replace it by the next one in the alphabet. So an \emph{a} becomes a \emph{b} and so forth. If the key is $3$ then an \emph{a} is mapped to \emph{d}. Spaces are kept as is which is one of the reasons why the cipher has no security. Lets look at a function that calculates the cipher result for a given character array. 
 
 The caesar\_cipher function takes in three parameters, two character arrays one for input (\emph{buff}) and one for output (\emph{cc}), and the integer key. In the function we first define some integers and a character array for storing a copy of the alphabet. 
 
@@ -285,9 +285,9 @@ If the line has ended that means we have reached the new line character. So if w
 
 If the current character is a space we detect that and put a space in our \emph{cc} result. And finally we need some logic to determine what character will replace the letter that is currently being considered, \emph{buff[i]}. 
 
-To start will will loop over the \emph{alpha} array to determine which letter \emph{buff[i]} is. If \emph{buff[i]} is \emph{alpha[a]} then we know which letter we are at. Next we can add the $key$ variable to $a$ to get the new index into \emph{alpha}. If the new index overflows the $26$ letters in \emph{alpha} we can use the \emph{modulus} operator to wrap around at $26$ to ensure the correct indexing behavior.
+To start we will loop over the \emph{alpha} array to determine which letter \emph{buff[i]} is. If \emph{buff[i]} is \emph{alpha[a]} then we know which letter we are at. Next we can add the $key$ variable to $a$ to get the new index into \emph{alpha}. If the new index overflows the $26$ letters in \emph{alpha} we can use the \emph{modulus} operator to wrap around at $26$ to ensure the correct indexing behavior.
 
-Now that we are done with all the helper functions we can look at the \emph{main} function. The \emph{main} function takes in two parameters the integer $argc$, which is the number of command line parameters. The second is parameter is a character double pointer. These parameters are how the command line parameters will get to our application. We can use these parameters for specifying the file name that we will read from. 
+Now that we are done with all the helper functions we can look at the \emph{main} function. The \emph{main} function takes in two parameters the integer $argc$, which is the number of command line parameters. The second parameter is a character double pointer. These parameters are how the command line parameters will get to our application. We can use these parameters for specifying the file name that we will read from. 
 
 We next initialize from variables including the file pointer. Then we use the \emph{fopen} function to open the file that was specified in the command line parameters. The string \emph{argv[0]} is the name of the file and \emph{argv[1]} is the first parameter issued by the user. Now we loop over the lines in the file. We can continue looping until the end of the file is reached. Once \ac{EOF} is reached the \emph{fgets} function return \emph{NULL} and we are done with the file. 
 
@@ -297,11 +297,11 @@ Each loop though the file we count the number of vowels can calculate the Caesar
 
 \lstinputlisting[language=C]{../code/c/fileio/fileio_example.c}
 
-Once again we went through the file from the top down. We understand that as we go though the file we first look at all the functions that will be helpful to us when we write our \emph{main} function. This methodology presents the example easily but do keep in mind this isn't how this example was written. 
+Once again we went through the file from the top down. We understand that as we go though the file we first look at all the functions that will be helpful to us when we write our \emph{main} function. This methodology presents the example easily but do keep in mind this is not how this example was written. 
 
 From scratch we would start with a declaring a \emph{main}. We also increase the complexity of the program by starting off with the hello world program. Make sure you have your environment setup correctly so you can compile and run your program. Then break down the problem into small steps. As you develop working code in your \emph{main} function you can move the code to a function. Its especially useful to do this if you find that your are copying code that you already wrote. If you make a function out of it you can just call that function many times. 
 
-As you develop more code and more complex programs you will see you code base grow so that you don't have to rewrite code all the time you can start called your other functions so you can spend your time write new more complex functions. 
+As you develop more code and more complex programs you will see you code base grow so that you do not have to rewrite code all the time you can start calling your other functions so you can spend your time write new more complex functions. 
 
 \subsubsection{Python}
 	<TODO Subsubsection  Python : PROOF READ>

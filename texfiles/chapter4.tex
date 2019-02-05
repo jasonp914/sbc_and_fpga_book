@@ -82,7 +82,7 @@ for n in range(0,N):
 	
 \subsection{HDL with testbenches}
 	<TODO Subsection HDL with testbenches : DONE>
-
+\label{sec:hdlwtbs}
 To write the testbench for the \ac{FIR} filter we need three \ac{RTL} files. First we need the testbench. Think of this testbench as a workbench with a breadboard, power supply, and signal generators. This is where we are going to test the \ac{FIR} filter. The second \ac{RTL} file we are going to need is a block that reads the text files that we generated in Python. Since you will be testbenching every block in your design I recommend making a generic test file read block that you can drop in whenever you need it. It may come in handy to have a block that writes a file as well but we do not need it here. The final file we need is the \ac{FIR} filter itself. The generic \ac{RTL} term has been used for \ac{FPGA} code since this can be done in Verilog or \ac{VHDL}. Now that we are ready for examples the code snippets are in \ac{VHDL} the same calculations can be done in Verilog.
 
 <TODO Subsection HDL with testbenches : INSERT CODE tbfirfilter>
@@ -174,47 +174,7 @@ We have the output of the \ac{FIR} filter but we want to compare it to the known
 
 Near the end of the testbench we keep our processes that are simple. Like the clock process that generates a clock at the frequency we are going to use in the \ac{FPGA}. Also we have a process that releases the \ac{FIR} filter from reset. This process can be more complicated if you intend on resetting the \ac{FIR} filter regularly and want to ensure the filter transient is handled in a certain way. As an illustration of a testbench those details were left out for brevity.
 
-\begin{VHDLlisting}[tabsize=4]
--- textfileread.vhd
-
-library ieee;
-	use ieee.std_logic_1164.all;
-	use ieee.numeric_std.all;
-	use std.textio.all;
-	
-entity textfileread is
-generic(g_fn : string;
-        g_bw : integer);
-port(i_clk  : in    std_logic;
-     i_en   : in    std_logic;
-     o_dv   : in    std_logic;
-     o_data : in    std_logic_vector(g_bw-1 downto 0)	
-	);
-end entity textfileread;
-
-architecture tb of textfileread is
-begin
-    p_read : process
-        file f : TEXT open READ_MODE is g_fn;
-        variable l : LINE;
-    begin
-        loop
-            exit when endfile(f);
-            wait for rising_edge(i_clk);
-            if i_en = '1' then
-                readline(f,l);
-                o_data <= to_signed(l,g_bw);
-                o_dv <= '1';
-            else
-                o_dv <= '0';
-            end if;
-        end loop;
-        wait;
-    end process;
-end tb;
-\end{VHDLlisting}
-
-We now are going to look into how the textfileread entity works. The first feature to notice is that the filename to read from is a generic. The generic allows us to reuse the block to read from different files. We saw this in the testbench were we read both the input and results from Python with this same block. Another needed feature that is needed is the enable input to the block, which allows us to hold off the data until we are ready to start comparing with the result of the \ac{FIR} filter. The rest of the file consists of calling functions in the \emph{TextIO} package.
+We now are going to look into how the textfileread entity works, which the code is included in \sect{fileio}. The first feature to notice is that the filename to read from is a generic. The generic allows us to reuse the block to read from different files. We saw this in the testbench were we read both the input and results from Python with this same block. Another needed feature that is needed is the enable input to the block, which allows us to hold off the data until we are ready to start comparing with the result of the \ac{FIR} filter. The rest of the file consists of calling functions in the \emph{TextIO} package.
 	
 \subsection{Synthesis and verify resource usage}
 	<TODO Subsection Synthesis and verify resource usage : DONE>
