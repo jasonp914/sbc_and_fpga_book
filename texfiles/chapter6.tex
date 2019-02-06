@@ -12,14 +12,14 @@ The first thing that you will need to get used to in Linux is the command line. 
 
 Next we will introduce aliases to make issuing common commands easier. Aliases allow you to use a shorter phase for common commands you execute, this is particularly helpful if the commands being ran have many parameters that are the same. Aliases save keystrokes per command, so long commands that are ran frequently are usually first to be aliased. 
 
-We will then turn to the concept of \emph{Cron-Jobs}. In Linux we can setup a Cron-Job that can be ran at any interval with a one minute resolution. Once scheduled, a script can be ran to scan for malware, move files, or clean up some old data. A good candidate script for a Cron-Job is one that needs regularly ran and takes a while to perform. 
+We will then turn to the concept of \emph{Cron-Jobs}. In Linux we can setup a Cron-Job that can be ran at any interval with a one minute resolution. Once scheduled, a script can be ran to scan for malware, move files, or clean up some old data. A good candidate script for a \index{Cron-Job} is one that needs regularly ran and takes a while to perform. 
 
-Finally we discuss popular programming languages. We will discuss the basics of three languages. The first we look at C/C++. The strength of C/C++ is that it is a low level language with a high efficiency rating. Next is Python, which is gaining a lot of popularity, particularly in machine learning applications. Since Python is more abstract from a bare metal language we sacrifice efficiency but we gain a lot of functionality from Python. Finally, we discuss a newer language named \emph{Julia}, which shows many promising attributes.  
+Finally we discuss popular programming languages. We will discuss the basics of three languages. The first we look at \index{C/C++}. The strength of \index{C/C++} is that it is a low level language with a high efficiency rating. Next is \index{Python}, which is gaining a lot of popularity, particularly in machine learning applications. Since \index{Python} is more abstract from a bare metal language we sacrifice efficiency but we gain a lot of functionality from \index{Python}. Finally, we discuss a newer language named \emph{\index{Julia}}, which shows many promising attributes.  
 	
 \subsection{The Terminal}
 	<TODO Subsection The Terminal : DONE>
 	
-The Linux \ac{CLI} is a very power full tool. We will start with the basics here and once you are comfortable with the process your productivity will increase dramatically. Most people like the comfort of using a \ac{GUI} because they feel like they do not have to remember all the commands to type in. If they search through the menus long enough they will find the menu button they are interested in. Once comfortable with the \ac{CLI} this process of searching for the command you want to run is faster. 
+The Linux \index{\ac{CLI}} is a very power full tool. We will start with the basics here and once you are comfortable with the process your productivity will increase dramatically. Most people like the comfort of using a \index{\ac{GUI}} because they feel like they do not have to remember all the commands to type in. If they search through the menus long enough they will find the menu button they are interested in. Once comfortable with the \ac{CLI} this process of searching for the command you want to run is faster. 
 
 We just need to get past the learning curve of the \ac{CLI}. To start with we will \emph{list} all the files that are in the current working directory. We can do this by opening a terminal and running the command:
 
@@ -33,7 +33,7 @@ After the command completes you will have a printout of all the file names in th
     $ pwd
 \end{lstlisting}	
 
-The command \emph{pwd} stands for \emph{print working directory} and once this command executes the absolute path of your current working directory is printed. If you are in your \emph{home} directory you will see you are in a folder named by your \emph{user name}. 	
+The command \emph{pwd} stands for \emph{\index{print working directory}} and once this command executes the absolute path of your current working directory is printed. If you are in your \emph{home} directory you will see you are in a folder named by your \emph{user name}. 	
 	
 The \ac{CLI} is used to call programs, ones we write ourselves and ones we have installed. As we write our own programs we will want to organize the files of code into directories, at the \ac{CLI} we can make a directory by running the command:
 
@@ -41,16 +41,16 @@ The \ac{CLI} is used to call programs, ones we write ourselves and ones we have 
     $ mkdir test
 \end{lstlisting}	
 
-After executing the command we will have a new directory in our current working directory called \emph{test}. The \emph{mkdir} command takes in a parameter, namely the new directory's name. The command makes a directory with the name of the parameter given. So this command can be ran again with any string after the \emph{mkdir} command and a folder will be produced as a result. 
+After executing the command we will have a new directory in our current working directory called \emph{test}. The \emph{\index{mkdir}} command takes in a parameter, namely the new directory's name. The command makes a directory with the name of the parameter given. So this command can be ran again with any string after the \emph{mkdir} command and a folder will be produced as a result. 
 
-Once we have made the directory we will need want to change directories into the \emph{test} folder. To do this we can run the \emph{cd} command:
+Once we have made the directory we will need want to change directories into the \emph{test} folder. To do this we can run the \emph{\index{cd}} command:
 
 \begin{lstlisting}[language=bash]  
     $ cd test/
 	$ ls
 \end{lstlisting}
 
-Once we run the \emph{cd} command with the folder name as a parameter we change our working directory. To see what is in this folder we can issue \emph{ls} again. Since we just made this directory the folder is empty. 
+Once we run the \emph{cd} command with the folder name as a parameter we change our working directory. To see what is in this folder we can issue \emph{\index{ls}} again. Since we just made this directory the folder is empty. 
 
 In our test folder we can make an empty file by running:
 
@@ -58,7 +58,7 @@ In our test folder we can make an empty file by running:
     $ vim test_file
 \end{lstlisting}
 
-Note: Depending on your Linux distribution you may not have \emph{vim} installed. If this is the case, skip to the section about installing software.
+Note: Depending on your Linux distribution you may not have \emph{\index{vim}} installed. If this is the case, skip to the section about installing software.
 
 The \emph{vim} command will first make an empty file in the working directory but \emph{vim} is also a text editor. For a more in-depth tutorial of \emph{vim} you can run the command:
 
@@ -66,7 +66,7 @@ The \emph{vim} command will first make an empty file in the working directory bu
     $ vimtutor
 \end{lstlisting}
 
-The \emph{vimtutor} command opens up a document, in \emph{vim}, that walks through the basic features of \emph{vim}. Since you are reading the document in \emph{vim} you can practice the keyboard strokes that allow you to interact with the tutorial document. \emph{vim} is a fully configurable and powerful text editor and is preferred by most for programming applications. 
+The \emph{\index{vimtutor}} command opens up a document, in \emph{vim}, that walks through the basic features of \emph{vim}. Since you are reading the document in \emph{vim} you can practice the keyboard strokes that allow you to interact with the tutorial document. \emph{vim} is a fully configurable and powerful text editor and is preferred by most for programming applications. 
 
 Now that we have ran \emph{vim test\_file} we have a blank file being displayed by \emph{vim}. From here we can type the following commands:
 
@@ -84,7 +84,7 @@ When \emph{vim} is launched we enter in command mode. We first enter \emph{i} wh
 	
 Aliases are used in the bash shell to reduce the number of keystrokes needed to execute common commands. You can define permanent aliases which are defined even after a power cycle and in different terminal sessions. Alternatively you can define aliases temporarily. We will focus on permanent aliases placed in your \emph{~/.bashrc} file or \emph{~/.bash\_aliases} file, which is called from your \emph{~/.bashrc} file. 
 
-To define an alias we use the syntax \emph{alias name=command}. So for example we can define an alias that adds color to the result of the \emph{ls} command. We define the alias by first opening our \emph{.bash\_aliases} file:
+To define an \index{alias} we use the syntax \emph{alias name=command}. So for example we can define an alias that adds color to the result of the \emph{ls} command. We define the alias by first opening our \emph{.bash\_aliases} file:
 
 \begin{lstlisting}[language=bash]
 	$ vim ~/.bash_aliases
@@ -129,20 +129,20 @@ alias ping='ping -c 5'
 alias fastping='ping -c 100 -i .2'
 \end{lstlisting}
 	
-The first two aliases allow you to avoid having to type \emph{sudo} for the common command of \emph{reboot} and \emph{apt-get upgrade}. The next command makes changing to the parent directory easier. The \emph{mkdir} command is aliased to passing in two switches which make directories for all the parent directories that do not exist. With this command we now do not have to make a directory then \emph{cd} to the directory then make another directory. If we know the directory structure we need we can just call \emph{mkdir} once with the full path. 
+The first two aliases allow you to avoid having to type \emph{sudo} for the common command of \emph{\index{reboot}} and \emph{\index{apt-get upgrade}}. The next command makes changing to the parent directory easier. The \emph{mkdir} command is aliased to passing in two switches which make directories for all the parent directories that do not exist. With this command we now do not have to make a directory then \emph{cd} to the directory then make another directory. If we know the directory structure we need we can just call \emph{mkdir} once with the full path. 
 
-The last two aliases setup some default parameters for the \emph{ping} command. The first alias for the \emph{ping} command itself sets the number of pings to be five. The second alias is \emph{fastping} which sends $100$ packets but reduces the amount of time in between the transmissions to test the response speed to the destination. 
+The last two aliases setup some default parameters for the \emph{\index{ping}} command. The first alias for the \emph{ping} command itself sets the number of pings to be five. The second alias is \emph{\index{fastping}} which sends $100$ packets but reduces the amount of time in between the transmissions to test the response speed to the destination. 
 
 Presented here are a few aliases that first demonstrate the syntax of defining aliases. Next they offer some ideas on what you could define for aliases. If you find that you are typing a command very often with the same parameters maybe an alias will help making your keystrokes a little more efficient. 
 	
 \subsection{Cron-Jobs}
 	<TODO Subsection Cron-Jobs : DONE>
 
-A Cron-job is a scheduling a script or command, just like you would type into the \ac{CLI}, to run at a specified time. Usually the tasks that are scheduled as a Cron-Job are tedious tasks that may require a lot of time to run and do not need you to supervise them. Tasks that can be started while you are away from your computer and can be finished by the time you come back are perfect candidates for a Cron-Job scheduling. 
+A \index{Cron-job} is a scheduling a script or command, just like you would type into the \ac{CLI}, to run at a specified time. Usually the tasks that are scheduled as a Cron-Job are tedious tasks that may require a lot of time to run and do not need you to supervise them. Tasks that can be started while you are away from your computer and can be finished by the time you come back are perfect candidates for a Cron-Job scheduling. 
 	
-One example would be if your work space with subdirectories and data were to be backed up on a server. A Cron-job could be scheduled to copy the files to the server at regular intervals, this way you would have backups of your work space based on a date and time stamp. Along the same lines, code revision software such as \emph{git} or \emph{subversion} can be automated to ensure proper backups are made and newest code from other team members is integrated.  
+One example would be if your work space with subdirectories and data were to be backed up on a server. A Cron-job could be scheduled to copy the files to the server at regular intervals, this way you would have backups of your work space based on a date and time stamp. Along the same lines, code revision software such as \emph{\index{git}} or \emph{\index{subversion}} can be automated to ensure proper backups are made and newest code from other team members is integrated.  
 
-Some other examples include monitoring system performance like disk usage scans could be ran regularly. If your computer needs to be rebooted weekly or monthly this could be scheduled so that you do not have to wait for the start up process to take place. Some system administration tasks can be scheduled and maintenance for user groups can be ran when appropriate. Finally, security scans can be performed and patches can be applied without a user's oversight. If you are finding that you are running a utility often and could look at the outputs at a later time a Cron-job can be scheduled. 
+Some other examples include monitoring system performance like disk usage scans could be ran regularly. If your computer needs to be rebooted weekly or monthly this could be scheduled so that you do not have to wait for the start up process to take place. Some system administration tasks can be scheduled and maintenance for user groups can be ran when appropriate. Finally, security scans can be performed and patches can be applied without a user's oversight. If you are finding that you are running a utility often and could look at the outputs at a later time a \index{Cron-job} can be scheduled. 
 
 To schedule a Cron-job we run the command:
 
@@ -156,21 +156,21 @@ If this is your first time running the \emph{crontab} command you will be prompt
     0 1 * * * python /home/user/copy_files.py
 \end{lstlisting}
 
-which runs the python script \emph{copy\_files.py} at 1:00 AM. Next we can look at the contents of \emph{copy\_files.py}. 
+which runs the \index{Python} script \emph{copy\_files.py} at 1:00 AM. Next we can look at the contents of \emph{copy\_files.py}. 
 
 \begin{lstlisting}[language=python]
 #!/usr/bin/env python
 cp -r /home/user/workspace /home/user/backup/
 \end{lstlisting}
 
-The python script \emph{copy\_files.py} copies all the files and sub-folders of the user workspace to user backup. 
+The \index{Python} script \emph{copy\_files.py} copies all the files and sub-folders of the user workspace to user backup. 
 	
 \section{Programming Languages}
 	<TODO Section Programming Languages : DONE>
 
 Choosing a programming language first depends on the algorithm or task you are trying to accomplish. Just like using a shovel to dig the foundation for a skyscraper you also would not use a bulldozer to make a sandcastle. It is important to choose the correct tool for the job. 	
 	
-We are not choosing the best language, we are determining which language, or tool, to use for a specific job. In this section we talk about why you would choose C/C++ (a shovel), or Python (a bulldozer), or a new tool Julia (a shiny new bulldozer with extra features that may get in the way). 	
+We are not choosing the best language, we are determining which language, or tool, to use for a specific job. In this section we talk about why you would choose \index{C/C++} (a shovel), or \index{Python} (a bulldozer), or a new tool Julia (a shiny new bulldozer with extra features that may get in the way). 	
 	
 	
 \subsection{C/C++ vs. Python vs. Julia}
@@ -185,9 +185,9 @@ Memory allocation is just one example of what can be abstracted from the program
 
 The C programming language is considered a \emph{high level} language in some embedded processing circles. In that, the C programming language is compiled down into machine code. The process of compiling the C code into machine language takes a few interpretive steps in which some functionality is abstracted from you as the programmer. These abstractions are beneficial in terms of getting past the minor details of a program and getting to the functionality of the program itself. 
 
-Just like in physics the terms \emph{high} and \emph{low} are relative; just as they are here. In the section we will consider the C language to be a \emph{low} level language. We justify the \emph{low} level distinction by considering the fact that C is the preferred language for small embedded processors with varying architectures. Due to the varying architectures of the \ac{ARM}, \ac{RISCV}, \ac{ATMEGA}, \ac{MIPS}, and \ac{TI-DSP} the C compiler, \ac{GCC}, is altered to consider the changes in architecture. Since the architecture does have an effect, we consider the C compiler to handle low level or hardware level changes. 
+Just like in physics the terms \emph{high} and \emph{low} are relative; just as they are here. In the section we will consider the C language to be a \emph{low} level language. We justify the \emph{low} level distinction by considering the fact that C is the preferred language for small embedded processors with varying architectures. Due to the varying architectures of the \ac{ARM}, \ac{RISCV}, \ac{ATMEGA}, \ac{MIPS}, and \ac{TI-DSP} the C compiler, \ac{GCC}, is altered to consider the changes in architecture. Since the architecture does have an effect, we consider the C compiler to handle low level or hardware level changes \cite{cstd}. 
 
-To get started with writing a C program we first look at the \emph{hello world} example program. First we include the C library \eph{stdio}. The standard input and output library allows us to read from the keyboard and also write to the screen. In the \emph{hello world} example we will print to the screen with the function \emph{printf}. Next we define the \emph{main} function. When the program is launched main is where the program starts.
+To get started with writing a C program we first look at the \emph{hello world} example program. First we include the C library \emph{stdio}. The standard input and output library allows us to read from the keyboard and also write to the screen. In the \emph{hello world} example we will print to the screen with the function \emph{printf}. Next we define the \emph{main} function. When the program is launched main is where the program starts.
 
 Finally we call the \emph{printf} function with passing in the string we want to print to the console. Once we have a file named \emph{hello\_world.c} with the lines of code:
 
@@ -269,7 +269,7 @@ The first two lines of code in our file \ac{IO} example are our header files tha
 
 The first helper function we have is an \emph{alpha\_init} function that has a return type of \emph{void}. The one parameter is a character array of $26$ in length. All this function does is initialize the array to the $26$ lower case letters in the alphabet. 
 
-Next we have a helper function that prints out all the characters in a character array. There are two ways for the printing to end. We can reach the $LINESIZE$ length which is the maximum line size. We could also reach the new line character. The new line character denotes when a string is terminated. The termination character is used to denote the end of a string. The termination is useful so that as we have varying length strings we have ended when we need to. Other wise we could be printing out uninitialized memory as \ac{ASCII} characters. 
+Next we have a helper function that prints out all the characters in a character array. There are two ways for the printing to end. We can reach the $LINESIZE$ length which is the maximum line size. We could also reach the new line character. The new line character denotes when a string is terminated. The termination character is used to denote the end of a string. The termination is useful so that as we have varying length strings we have ended when we need to. Other wise we could be printing out uninitialized memory as \index{\ac{ASCII}} characters. 
 
 Moving on we have a function that counts the number of vowels in a character buffer. Here we loop over the buffer; up to $LINESIZE$. If the current character, denoted \emph{buff[i]}, is a vowel we increment a counter. Once complete we return the counter. 
 
@@ -299,16 +299,16 @@ Each loop though the file we count the number of vowels can calculate the Caesar
 
 Once again we went through the file from the top down. We understand that as we go though the file we first look at all the functions that will be helpful to us when we write our \emph{main} function. This methodology presents the example easily but do keep in mind this is not how this example was written. 
 
-From scratch we would start with a declaring a \emph{main}. We also increase the complexity of the program by starting off with the hello world program. Make sure you have your environment setup correctly so you can compile and run your program. Then break down the problem into small steps. As you develop working code in your \emph{main} function you can move the code to a function. Its especially useful to do this if you find that your are copying code that you already wrote. If you make a function out of it you can just call that function many times. 
+From scratch we would start with a declaring a \emph{main}. We also increase the complexity of the program by starting off with the hello world program. Make sure you have your environment setup correctly so you can compile and run your program. Then break down the problem into small steps. As you develop working code in your \emph{main} function you can move the code to a function. It is especially useful to do this if you find that your are copying code that you already wrote. If you make a function out of it you can just call that function many times. 
 
 As you develop more code and more complex programs you will see you code base grow so that you do not have to rewrite code all the time you can start calling your other functions so you can spend your time write new more complex functions. 
 
 \subsubsection{Python}
-	<TODO Subsubsection  Python : PROOF READ>
+	<TODO Subsubsection  Python : DONE>
 
-Now we will transition from C to Python. The biggest difference between the two languages is the use of indentation for code scope. In C curly-brackets are used for scope differentiation. For example, after an if statement the code that is executed distinguished by using $\{\}$. In Python we end the if statement conditional with a colon, then the indentation marks the scope for the conditional. 
+Now we will transition from C to \index{Python}. The biggest difference between the two languages is the use of indentation for code scope. In C curly-brackets are used for scope differentiation. For example, after an if statement the code that is executed distinguished by using $\{\}$. In \index{Python} we end the if statement conditional with a colon, then the indentation marks the scope for the conditional \cite{pyref}. 
 
-Getting started with our first example in Python we will look at the hello world program. The first line in \emph{helloworld.py} is the directive. Which tells the \ac{OS} what type of interpretor to use for the file. The next line prints are message to the console. 
+Getting started with our first example in \index{Python} we will look at the hello world program. The first line in \emph{helloworld.py} is the directive. Which tells the \ac{OS} what type of interpretor to use for the file. The next line prints are message to the console. 
 
 \lstinputlisting[language=Python]{../code/python/helloworld.py}
 
@@ -318,76 +318,76 @@ To run the python script we can go to the command line and execute
     $ ./helloworld.py
 \end{lstlisting}
 
-or if you'd like to exclude the environment directive you can exclude the first line and run the script as
+or if you would like to exclude the environment directive you can exclude the first line and run the script as
 
 \begin{lstlisting}[language=bash]
     $ python3 helloworld.py.
 \end{lstlisting}
 
-We may need to install Python 3 if the above commands error out. We can do this by using the package installer with the following command:
+We may need to install Python $3$ if the above commands error out. We can do this by using the package installer with the following command:
 
 \begin{lstlisting}[language=bash]
     $ sudo apt-get install python.
 \end{lstlisting}
 
-Once we have python installed and we can run the hello world application. We can move on to our next example. In this example we use the random package to generate a dice roll. The dice roll is uniformly distributed over the range $[1,6]$. 
+Once we have \index{Python} installed and we can run the hello world application. We can move on to our next example. In this example we use the random package to generate a dice roll. The dice roll is uniformly distributed over the range $[1,6]$. 
 
 We can generate a random dice roll by first importing the random package. We do this with the first statement in \emph{diceroll.py} after the environment directive. The statement \emph{from random import *} means that from the random package we will import everything. 
 
 The next statement in the code generates a random number. We use the \emph{randint} function in the random package. The \emph{randint} function takes in two parameters. The first parameter is the lower limit of the random number to be generated. The lower limit is included and can be generated in the result, so we provide a $1$. The second parameter is the excluded upper limit. Since we are using a random integer and we provide the upper limit of $7$ the highest number generated will be a $6$. 
 
-Once the \emph{randint} function is ran the variable $r$ is assign our generated dice roll. We then will print the result to the screen just like with did in the \emph{hello world} example. To print the random number, $r$, we need to cast the numeric value to a string that can be printed to the screen. We do this with the \emph{str} function. We then concatenate the result with a string of our own to display the result to the screen.
+Once the \emph{randint} function is ran the variable $r$ is assigned our generated dice roll. We then will print the result to the screen just like with did in the \emph{hello world} example. To print the random number, $r$, we need to cast the numeric value to a string that can be printed to the screen. We do this with the \emph{str} function. We then concatenate the result with a string of our own to display the result to the screen.
 	
 \lstinputlisting[language=Python]{../code/python/diceroll/diceroll.py}
 
-We have seen how to print strings to the console and how to import Python packages. With our third and final Python example we will look at how to make a text based game. We kept the game trivially simple for illustrative purposes. 
+We have seen how to print strings to the console and how to import \index{Python} packages. With our third and final \index{Python} example we will look at how to make a text based game. We kept the game trivially simple for illustrative purposes. 
 
-The text based game is played at the \ac{CLI}. When we start the game we get a game status then are prompted on how to playa the game. The game blocks on keyboard input from the user then depending on what the user inputs the game takes appropriate action and then displays the new status of the game and prompts the user again. These actions are repeated until the game is over or the user quits. 
+The text based game is played at the \ac{CLI}. When we start the game we get a game status then are prompted on how to play the game. The game blocks on waiting for keyboard input from the user, then depending on what the user inputs the game takes appropriate action and then displays the new status of the game and prompts the user again. These actions are repeated until the game is over or the user quits. 
 
-The example code imports the math package after the environment directive. Then we move on to displaying status to the user. Three print statements provide the user with updates on how the game the being loaded. If we supported loading a game from a file we could put the file reading under the \emph{Initializing Game} section so the user is not wondering what's wrong as we load data from a file. 
+The example code imports the math package after the environment directive. Then we move on to displaying status to the user. Three print statements provide the user with updates on how the game the being loaded. If we supported loading a game from a file we could put the file reading under the \emph{Initializing Game} section so the user is not wondering what is wrong as we load data from a file. 
 
 The next section of code initializes two numbers, \emph{total\_money} and \emph{num\_workers}. The premise of this game is to hire more workers to get more money to hire more workers. Each worker gets you a surplus of $2\%$ positive cash. The game starts with $\$50$ and zero workers. 
 
 We also initialize a \emph{skip\_iters} variable along with a \emph{playing} variable. The \emph{skip\_iters} variable is used to keep track of a number cycles through the game. \emph{skip\_iters} is used so that we can avoid typing in commands every time we can just let the workers accumulate money without having to manually do it with the keyboard. The \emph{playing} variable is used to keep track of whether the user is still playing the game. If the user quits the game the \emph{playing} variable is set to zero to quit the game. 
 
-Next we start the \emph{while} loop for continuous game play. Once this loop end the game is over. Next we check to see if we are going to skip this iteration. Since we haven't seen how this variable gets set yet we will just note that the variable is checked here. If we are not skipping this iteration we first print out all the status of the game, which includes the current amount of money and the number of workers employed. 
+Next we start the \emph{while} loop for continuous game play. Once this loop ends the game is over. Next we check to see if we are going to skip this iteration. Since we have not seen how this variable gets set yet we will just note that the variable is checked here. If we are not skipping this iteration we first print out all the status of the game, which includes the current amount of money and the number of workers employed. 
 
 After the status is printed we then use Python's \emph{input} function to get keyboard input from the player. The \emph{input} function takes in one argument which is the string prompting the player for input. Once the user does input a command and presses enter the command is stored in the \emph{cmd} variable. 
 
-The \emph{cmd} variable is used next in the \emph{if-else} statement to take the action corresponding to the command. So for each command supported we have a conditional checking to see if the command is a particular command. The first command we check for is \emph{a}. If the command received from the player is an \emph{a} then we hire another worker. We print out to the player that we are adding a worker and we subtract $\$25$ as the cost for hiring a worker. 
+The \emph{cmd} variable is used next in the \emph{if-else} statement to take the action corresponding to the command. So for each command supported we have a conditional checking to see if the command entered is a particular command. The first command we check for is \emph{a}. If the command received from the player is an \emph{a} then we hire another worker. We print out to the player that we are adding a worker and we subtract $\$25$ as the cost for hiring a worker. 
 
-The next command we check for is the \emph{A} command. This hires as many workers as we can afford. This is handy when we have played the game a long time and we have a lot of money and we don't want to issue the \emph{a} command over and over again. For the \emph{A} command we first determine how many workers we can afford, calculated as \emph{new\_workers}. Then we add the number of new workers to our total number of workers. Finally we deduct the $\$25$ for each worker hired. 
+The next command we check for is the \emph{A} command. This hires as many workers as we can afford. This is handy when we have played the game a long time and we have a lot of money and we do not want to issue the \emph{a} command over and over again. For the \emph{A} command we first determine how many workers we can afford, calculated as \emph{new\_workers}. Then we add the number of new workers to our total number of workers. Finally we deduct the $\$25$ for each worker hired. 
 
-The \emph{s} command is detected next. The \emph{s} command sets the number of iterations to skip to be $1000$. When \emph{skip\_iters} does not equal zero when we do not print the status of the game and we don't ask the user for an input command. When we are skipping the iteration the only two things we do is decrement the \emph{skip\_iters} variable and update the amount of money the workers provide. 
+The \emph{s} command is detected next. The \emph{s} command sets the number of iterations to skip to be $1000$. When \emph{skip\_iters} does not equal zero when we do not print the status of the game and we do not ask the user for an input command. When we are skipping the iteration the only two things we do is decrement the \emph{skip\_iters} variable and update the amount of money the workers provide. 
 
 \lstinputlisting[language=Python]{../code/python/textgame/textgame.py}
 
 The rudimentary game presented here is not really a game is the truest sense. To be a game there needs to be a way to lose the game. Here you have no way of losing money or workers. You are guaranteed to eventually make enough money every iteration to hire another worker the next iteration. The easiest way to make this a true game is to keep track of the number of iterations it takes you to get to a certain dollar amount, some number of workers, or a combination. 
 
-There are some basic features left out of this example that should be incorporated. What happens if you want to hire a worker but don't actually have enough money for hire one. The worker is still hired and you have negative money. This action probably shouldn't be allowed. As a general rule all user input should be validated. This way the rules that you set in your game have to be followed. 
+There are some basic features left out of this example that should be incorporated. What happens if you want to hire a worker but do not actually have enough money to hire one. The worker is still hired and you have negative money. This action probably should not be allowed. As a general rule all user input should be validated. This way the rules that you set in your game have to be followed. 
 
 You could also have the player specify the number of iterations they want to skip in the command. So instead of issuing the command \emph{s} they could issue \emph{s 100} or \emph{s 10000} that way the player would have a finer control of the money being accumulated. 
 
-Some improvements on the game can be to introduce more complex workers. This could mean that for a more expensive worker the produce more money per iteration. Or maybe you can add a number of open positions and you can't hire more than the number of open positions. In this case how would you determine whether a position should be opened up. Maybe the workers make widgets that are sold. As more widgets sell the need for more workers with a higher production rate are needed. If sales go down we will need to lay people off. 
+Some improvements on the game can be to introduce more complex workers. This could mean that for a more expensive worker the more money the worker produces per iteration. Or maybe you can add a number of open positions and you can not hire more than the number of open positions. In this case how would you determine whether a position should be opened up. Maybe the workers make widgets that are sold. As more widgets sell the need for more workers with a higher production rate are needed. If sales go down we will need to lay people off. 
 
-As we get a more and more complex game we could probably use the ability to save the game off to resume later. Here we could write all the needed status to a file, then when the game is resumed we read the file back out and update our status with what's in the file. This way we can pick up where we left off. 
+As we get a more and more complex game we could probably use the ability to save the game off to resume later. Here we could write all the needed status to a file, then when the game is resumed we read the file back out and update our status with what is in the file. This way we can pick up where we left off. 
 
-There are many ways to improve this shell of a game. The game can be taken in may directions. The best way to learn Python or any programming language is to get started. Adding a couple features to this game is a great way to get started. Once you add a few features play the game and see if you can think of ways to make the game more realistic, or even less realistic but fun.
+There are many ways to improve this shell of a game. The game can be taken in may directions. The best way to learn \index{Python} or any programming language is to get started. Adding a couple features to this game is a great way to get started. Once you add a few features play the game and see if you can think of ways to make the game more realistic, or even less realistic but fun.
 
 \subsubsection{Julia}
-	<TODO Subsubsection  Julia : PROOF READ>
+	<TODO Subsubsection  Julia : DONE>
 
-For the introduction of \emph{Julia} we will once again start with the hello world program. The one line program prints hello world with a simple call to the \emph{println} function. 
+For the introduction of \emph{\index{Julia}} we will once again start with the hello world program. The one line program prints hello world with a simple call to the \emph{println} function. 
 	
 \lstinputlisting[language=Python]{../code/julia/helloworld.jl}	
 
-To run the Julia script we execute:
+To run the \index{Julia} script we execute:
 
 \begin{lstlisting}[language=bash]
     $ julia helloworld.jl.
 \end{lstlisting}
 
-If \emph{Julia} is not install you can install it by 
+If \emph{\index{Julia}} is not installed you can install it by \cite{juliaref}
 
 \begin{lstlisting}[language=bash]
     $ sudo apt-get install julia.
@@ -401,25 +401,24 @@ We can also generate random floats with the function \emph{rand!}. For example, 
 
 \lstinputlisting[language=Python]{../code/julia/randmat/randmat.jl}	
 
-The promising advantage of \emph{Julia} is that \emph{Julia} is faster than \emph{Python}. So in the next example we will look at how to do a matrix multiplication and time to calculation.
+The promising advantage of \emph{\index{Julia}} is that \emph{\index{Julia}} is faster than \emph{Python}. So in the next example we will look at how to do a matrix multiplication and time to calculation.
 
 In \emph{randmat.jl} we first define a function called \emph{printsum} which prints a summary of the object that is passed in. The function also prints the elements of the object. We will use this function to print out the resulting matrix. 
 
 Next we define the dimensions of the matrices that we will be multiplying. Then we define \emph{A} and \emph{B} to be random matrices with elements being between $1$ and $10$. After the two matrices are generated we then multiply $\mathbf{C}=\mathbf{A}*\mathbf{B}$. 
 
-When we do the matrix calculation we also use the built in timer for the calculation. We can use the timer to benchmark our calculations and compare to other programming languages. After the timer of we call the \emph{printsum} function to finish the script.
+When we do the matrix calculation we also use the built in timer for the calculation. We can use the timer to benchmark our calculations and compare to other programming languages. After the timer we call the \emph{printsum} function to finish the script.
 
 \lstinputlisting[language=Python]{../code/julia/matmul/matmult.jl}	
 	
-As of the date of this writing the \emph{Julia} language is at Version 0.5.1. The \emph{Julia} language is a promising language for data science. The developers of \emph{Julia} have worked with the popular \ac{SBC} \emph{Raspberry PI} to support the \ac{ARM} architecture of the \emph{Raspberry PI}. The implementation of \emph{Julia} on the \ac{SBC} enables applications in which fast implementations of \ac{ML} algorithms with a small form factor are possible. 
+As of the date of this writing the \emph{\index{Julia}} language is at Version $1.1$. The \emph{\index{Julia}} language is a promising language for data science. The developers of \emph{\index{Julia}} have worked with the popular \ac{SBC} \emph{Raspberry PI} to support the \ac{ARM} architecture of the \emph{Raspberry PI}. The implementation of \emph{\index{Julia}} on the \ac{SBC} enables applications in which fast implementations of \ac{ML} algorithms with a small form factor are possible. 
 
-	
 \section{Controlling GPIO}
-	<TODO Section Controlling GPIO : PROOF READ>
+	<TODO Section Controlling GPIO : DONE>
 
-An \ac{SBC} program interacts with the world by controller \ac{GPIO}. With \ac{GPIO} we can control anything from \ac{LED}s to electric motors. To interact with \ac{GPIO} there are libraries that can be imported into Python for example. 
+An \ac{SBC} program interacts with the world by controlling \ac{GPIO}. With \ac{GPIO} we can control anything from \ac{LED}s to electric motors. To interact with \ac{GPIO} there are libraries that can be imported into Python for example. 
 
-We can import the \ac{RPi} \ac{GPIO} library with:
+We can import the \index{\ac{RPi}} \index{\ac{GPIO}} library with:
 
 \begin{lstlisting}[language=python]
     import RPi.GPIO as GPIO
@@ -438,12 +437,12 @@ Next we need to specify whether the pin will be an input or an output. We can do
     GPIO.setup(GPIO_PIN2,GPIO.IN),
 \end{lstlisting}
 
-where $GPIO\_PIN1=1$ is setup to be an output and $GPIO\_PIN2=2$ is setup to be an input. We can assign the output by setting the output \emph{HIGH} and \emph{LOW} by using the \emph{output} method. 
+where $GPIO\_PIN1=1$ is setup to be an output and $GPIO\_PIN2=2$ is setup to be an input. We can assign the output by setting the output \emph{HIGH} and \emph{LOW} by using the \emph{output} method,
 
 \begin{lstlisting}[language=python]
     GPIO.output(GPIO_PIN1,GPIO.LOW)
     GPIO.output(GPIO_PIN1,GPIO.HIGH)
-    GPIO.output(GPIO_PIN1,GPIO.LOW),
+    GPIO.output(GPIO_PIN1,GPIO.LOW).
 \end{lstlisting}
 
 In this code snippet $GPIO\_PIN1$ will be high for a clock cycle of the operating frequency of the processor we are working on. Since the operating frequency is in the $100$s of \ac{MHz} or even in the \ac{GHz} it is unlikely that the peripheral will be able to detect a pulse that fast. We need to use \emph{pause} statements to slow down the processor to set the timing to correspond to the peripheral requirements. 
