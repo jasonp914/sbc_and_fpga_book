@@ -1,18 +1,17 @@
 \chapter{Hello World and Other Projects}
-	<TODO Chapter Hello World and Other Projects : PROOF READ>
+	<TODO Chapter Hello World and Other Projects : DONE>
 
-There is no better way to get started than to work on a small project. This chapter outlines small projects to work on where each of them gets a little more challenging. As you progress through this chapter you will ensure your development environment is setup properly with simulating the hello world project. You will learn how to use a clock in a design and control an \ac{LED}. Then you will learn how to transfer data into and out of the \ac{FPGA} chip. 
-	
+There is no better way to get started than to work on a small project. This chapter outlines small projects to work on where each of them gets a little more challenging. As you progress through this chapter you will ensure your development environment is setup properly with simulating the \index{hello world project}. You will learn how to use a clock in a design and control an \ac{LED}. Then you will learn how to transfer data into and out of the \ac{FPGA} chip. 
 	
 \section{Beginner Projects}
-	<TODO Section Beginner Projects : PROOF READ>
+	<TODO Section Beginner Projects : DONE>
 
-Everyone has to start somewhere. These projects are designed to start off slowly. It may not be very exciting to add one to a counter but these exercises get you used to writing \ac{VHDL} and the development environment. Work through these exercises so that when we can get to exciting projects you won't be frustrated with working with the tools. 
+Everyone has to start somewhere. These projects are designed to start off slowly. It may not be very exciting to add one to a counter but these exercises get you used to writing \ac{VHDL} and the development environment. Work through these exercises so that when we can get to exciting projects you will not be frustrated with working with the tools. 
 	
 \subsection{Hello World}
-	<TODO Subsection Hello World : PROOF READ>
+	<TODO Subsection Hello World : DONE>
 
-When learning a new language you always need to write the hello world program. There are two lessons from this project. First, setting up and interacting with the features of your simulator. Once you write the first draft of your program you go through the steps of compiling and simulating your design. You will use this process many times. Gain an understanding of keyboard short cuts and practice them. Make changes to your file and recompile and ensure the changes are reflected when you re-simulate.
+When learning a new language you always need to write the \index{hello world program}. There are two lessons from this project. First, setting up and interacting with the features of your simulator. Once you write the first draft of your program you go through the steps of compiling and simulating your design. You will use this process many times. Gain an understanding of keyboard short cuts and practice them. Make changes to your file and recompile and ensure the changes are reflected when you re-simulate.
 
 The other main take-away from this example is the use of the report function. The report function allows you to print strings out to the console. The report function can be used to print out values of signals to make sure the simulation is progressing like you want in a larger more complex simulation. Or it can be used to report progress of the simulation.      
 
@@ -35,7 +34,7 @@ end tb;
 	
 	
 \subsection{Counter Test-Bench}
-	<TODO Subsection Counter Test-Bench : PROOF READ>
+	<TODO Subsection Counter Test-Bench : DONE>
 
 In this exercise we will instantiate a \ac{DUT} in a testbench. The \ac{DUT} itself is a simple counter. We will provide a clock to the counter and a reset line that will reset the counter. We will also have an enable line that turns the counter on. A simple \ac{DUT} like this has a few inputs that will need to be driven by the testbench.      
 	
@@ -88,7 +87,7 @@ begin
 end tb;
 \end{VHDLlisting}
 
-In our testbench we have a process that generates the timing for the input signals. This testbench is only as good as the assumptions made in the timing between signals. If there is a race condition or an inter-timing bug in the \ac{DUT} that the testbench does not cover then the \ac{DUT} will pass the testbench giving you confidence in the \ac{DUT}. Then you have the worst case scenario: debugging a flaky build on hardware. So we need to make sure we make our code reliable to ensure there are no race conditions. In this exercise we look at two examples of a counter. The only difference in the two examples is how the reset is handled, synchronously or asynchronously. We will explain the considerations needed when using this counter in a higher level block.      
+In our testbench we have a process that generates the timing for the input signals. This testbench is only as good as the assumptions made in the timing between signals. If there is a \index{race condition} or an inter-timing bug in the \ac{DUT} that the testbench does not cover then the \ac{DUT} will pass the testbench giving you confidence in the \ac{DUT}. Then you have the worst case scenario: debugging a flaky build on hardware. So we need to make sure we make our code reliable to ensure there are no race conditions. In this exercise we look at two examples of a counter. The only difference in the two examples is how the reset is handled, synchronously or asynchronously. We will explain the considerations needed when using this counter in a higher level block.      
 
 \begin{VHDLlisting}[tabsize=8]
 library ieee;
@@ -163,14 +162,12 @@ end rtl;
 
 \end{VHDLlisting}
 	
-There are situations when you have to use asynchronous resets. If we assume we will use this counter in a situation where we have to use an asynchronous reset we would write this block slightly differently where the reset line is used outside the clocked region of the process. Now if the i\_reset line changes or the i\_clk line changes the process executed but there doesn't have to be a rising\_edge event for the reset to apply. There is potential issue with instantiating this block with an asynchronous reset. It is possible that the reset fails timing. If the asynchronous reset is applied right before a clock edge where the counter is enabled there could be a mismatch between the expected value in the counter and the registered value. Unfortunately, the vendor tools can't warn you about the asynchronous reset failing timing since it isn't under a clocked process. The vendor tools can't know the timing of the asynchronous reset.	
-	
-	
+There are situations when you have to use asynchronous resets. If we assume we will use this counter in a situation where we have to use an asynchronous reset we would write this block slightly differently where the reset line is used outside the clocked region of the process. Now if the i\_reset line changes or the i\_clk line changes the process executed but there does not have to be a rising\_edge event for the reset to apply. There is potential issue with instantiating this block with an asynchronous reset. It is possible that the reset fails timing. If the asynchronous reset is applied right before a clock edge where the counter is enabled there could be a mismatch between the expected value in the counter and the registered value. Unfortunately, the vendor tools can not warn you about the asynchronous reset failing timing since it is not under a clocked process. The vendor tools can not know the timing of the asynchronous reset.	
 	
 \subsection{Blink Led with a One Second Interval}
-	<TODO Subsection Blink Led with a One Second Interval : PROOF READ>
+	<TODO Subsection Blink Led with a One Second Interval : DONE>
 
-In the project you will write \ac{HDL} to blink an LED. The LED should be on for a second and off for a second. You will also need to write a testbench for the block. You will find that it will take a long time to simulate a block for multiple seconds. We will once again have a synchronous reset, enable, and a clock as inputs. The output will be wired up to an LED.
+In the project you will write \ac{HDL} to blink an LED. The LED should be on for a second and off for a second. You will also need to write a testbench for the block. You will find that it will take a long time to simulate a block for multiple seconds. We will once again have a synchronous reset, enable, and a clock as inputs. The output will be wired up to an \ac{LED}.
 
 To toggle the output we need to know when a second passes. The only way to mark time passing on an \ac{FPGA} is to count clock cycles. So we can setup a counter to increment when enabled and once we get to a certain number of clock cycles we can toggle the output. 
 
@@ -218,7 +215,7 @@ end rtl;
 
 \end{VHDLlisting}
 
-The certain number we need to count to is just the frequency of the clock you re using. Here is a fantastic opportunity to learn about generics. Generics can help you configure a block when instantiated. We could use a generic called gCLKFREQ but if we wanted the output to toggle at a rate other than a second this could be confusing. We will use the generic gTOGGLECOUNT. This way if we know how the counter is used and when instantiated we can set the value accordingly.
+The number of clock cycles we need to count to is the frequency of the clock we are using. Here is a fantastic opportunity to learn about generics. Generics can help you configure a block when instantiated. We could use a generic called \emph{gCLKFREQ} but if we wanted the output to toggle at a rate other than a second this could be confusing. We will use the generic \emph{gTOGGLECOUNT}. This way if we know how the counter is used and when instantiated we can set the value accordingly.
 	
 \begin{VHDLlisting}[tabsize=8]
 library ieee;
@@ -265,23 +262,23 @@ begin
 end tb;
 \end{VHDLlisting}
 
-The testbench is simple with the reset, enable, and clock to generate. The difficult part of this testbench though is how long it will take to simulate. At first when you get the testbench working you don't want to have to wait 30 minutes for the simulation to finish. So at first we will set gTOGGLECOUNT to 10 and make sure the logic works. After getting the simulation two work then we can increase it and make sure the output toggles at the expected rate. 
+The testbench is simple with the reset, enable, and clock to generate. The difficult part of this testbench though is how long it will take to simulate. At first when you get the testbench working you do not want to have to wait $30$ minutes for the simulation to finish. So at first we will set \emph{gTOGGLECOUNT} to $10$ and make sure the logic works. After getting the simulation to work then we can increase it and make sure the output toggles at the expected rate. 
 
 \section{IO Interfacing}
-	<TODO Section IO Interfacing : PROOF READ>
+	<TODO Section IO Interfacing : DONE>
 	
 This section of projects gets data in to and out from the \ac{FPGA}. The list of projects here are the easiest ways of setting up two way data transfer off the chip. These protocols are popular in interacting with a computer or with other chips on the same board.
 
 Although these projects are simple and great starting exercises you will reuse these blocks a lot when interfacing to different peripherals. We will discuss making these blocks generic so that they can be used with minimal changes on a variety of projects.
 
 \subsection{Universal Asynchronous Receiver-Transmitter (UART)}
-	<TODO Subsection Universal Asynchronous Receiver-Transmitter (UART) : PROOF READ>
+	<TODO Subsection Universal Asynchronous Receiver-Transmitter (UART) : DONE>
 	
-The \ac{UART} is a very common low speed protocol. It's primary use is commanding and controlling the FPGA to do a task when a user issues the command through a general purpose computer. The \ac{UART} is also great for status or debugging what is happening on the \ac{FPGA}.
+The \ac{UART} is a very common low speed protocol. It's primary use is commanding and controlling the FPGA to do a task when a user issues a command through a general purpose computer. The \ac{UART} is also great for status or debugging the logic in the \ac{FPGA}.
 
-A \ac{UART} is an asynchronous protocol so there is no clock associated with the data. Since there is no clock or an enable line to know when the data is valid we first need to know the baudrate of the data. It is assumed that the datarate is known between the computer and \ac{FPGA}. Since the datarate is known once we get a bit we will know when the next bit is valid. To know when the first bit is valid the \ac{UART} protocol starts with the receive line high. Data is starting to be transmitted when the line goes low. At the falling edge of the data line we count half the bit duration. Once half the bit duration is reached we check again to make sure the data line is low. If the data line is low then we know we are receiving data. Once we have started the transfer the predetermined number of bits are sent. After the falling edge of data line there is a start bit, a stop bit, and a configurable number of data bits. The start bit is what we used to detect the start of the transfer. Then we count a bit duration for each of the data bits. Finally the stop bit can be ignored or sometimes can be configured as a parity bit.  Now we will look at some \ac{HDL} that performs the above tasks. We will use a state machine for this since it is easier to read. 
+A \ac{UART} is an asynchronous protocol so there is no clock associated with the data. Since there is no clock or an enable line to know when the data is valid we first need to know the \emph{baudrate} of the data. It is assumed that the datarate is known between the computer and \ac{FPGA}. Since the datarate is known once we get a bit we will know when the next bit is valid. To know when the first bit is valid the \ac{UART} protocol starts with the receive line high. 
 
-	
+Data is starting to be transmitted when the line goes low. At the falling edge of the data line we count half the bit duration. Once half the bit duration is reached we check again to make sure the data line is low. If the data line is low then we know we are receiving data. Once we have started the transfer the predetermined number of bits are sent. After the falling edge of data line there is a start bit, a stop bit, and a configurable number of data bits. The start bit is what we used to detect the start of the transfer. Then we count a bit duration for each of the data bits. Finally the stop bit can be ignored or sometimes can be configured as a parity bit.  Now we will look at some \ac{HDL} that performs the above tasks. We will use a state machine for this since it is easier to read. 
 	
 \begin{VHDLlisting}[tabsize=8]
 library ieee;
@@ -397,11 +394,11 @@ begin
 end rtl;
 \end{VHDLlisting}
 
-The five states of the state machine are idle, start, check start, acquire bits, and stop. As a side note state machines can use more resources. If you really wanted to squeeze out all the resources needed then you could rewrite the below code to not use a state machine and save some resources.The first state is s\_idle. In this state we are only concerned with whether or not the data has started. To start a UART transaction the data line is deasserted. We will use a falling edge detection circuit to determine is if the transaction has started. Once the falling edge is detected we move to s\_check.
+The five states of the state machine are idle, start, check start, acquire bits, and stop. As a side note state machines can use more resources. If you really wanted to squeeze out all the resources needed then you could rewrite the below code to not use a state machine and save some resources. The first state is s\_idle. In this state we are only concerned with whether or not the data has started. To start a \ac{UART} transaction the data line is deasserted. We will use a \emph{falling edge detection} circuit to determine is if the transaction has started. Once the falling edge is detected we move to s\_check.
 
-In s\_check we count a half a bit's duration. The half a bit duration ensures we are sampling at the middle of a bit window. Since the clocks at the transmitter and receiver aren't synchronized we need to sample in the middle of the bit to gain the most reliable data. Once we have counted half a bits duration we can check that the start bit is low, if not we reset back to s\_idle, however if the start bit is low we go to s\_getbits.
+In s\_check we count a half a bit's duration. The half a bit duration ensures we are sampling at the middle of a bit window. Since the clocks at the transmitter and receiver are not synchronized we need to sample in the middle of the bit to gain the most reliable data. Once we have counted half a bit's duration we can check that the start bit is low, if not we reset back to s\_idle, however if the start bit is low we go to s\_getbits.
 
-In s\_getbits we will receive all the bits in a UART transaction. The number of bits in a transaction is variable but the most common is a byte or eight bits. So, after the start bit is confirmed to be low and we transition to this state we need to wait a full bit duration and sample the data line. We store the sampled data in a shift register. Once we have counted up the number of bits we continue on the the s\_stop state. In the s\_stop state we make sure the data line is high after the next but duration. Some configurations of the UART protocol have a parity bit. In this state is where you calculate the parity and check the integrity of the received data. 
+In s\_getbits we will receive all the bits in a \ac{UART} transaction. The number of bits in a transaction is variable but the most common is a byte or eight bits. So, after the start bit is confirmed to be low and we transition to this state we need to wait a full bit duration and sample the data line. We store the sampled data in a shift register. Once we have counted up the number of bits we continue on the the s\_stop state. In the s\_stop state we make sure the data line is high after the next but duration. Some configurations of the \ac{UART} protocol have a parity bit. In this state is where you calculate the parity and check the integrity of the received data. 
 
 \begin{VHDLlisting}[tabsize=8]
 library ieee;
@@ -477,19 +474,19 @@ begin
 end rtl;
 \end{VHDLlisting}
 	
-The \ac{UART} transmitter operates in a similar fashion. The transmitter's job is is ensure the data is put on the line with the same timing the receiver expects. The data in loaded into the core in parallel but it output with a shift register. After a bit duration has passed we shift another bit out of the shift register until all the bits are sent. Then the transaction is ended.
+The \ac{UART} transmitter operates in a similar fashion. The transmitter's job is to ensure the data is put on the line with the same timing the receiver expects. The data in loaded into the core in parallel but it outputs the data with a shift register. After a bit duration has passed we shift another bit out of the shift register until all the bits are sent. Then the transaction is ended.
 	
 
 \subsection{Serial Peripheral Interface (SPI)}
-	<TODO Subsection Serial Peripheral Interface (SPI) : PROOF READ>
+	<TODO Subsection Serial Peripheral Interface (SPI) : DONE>
 
 \ac{SPI} is commonly used for inter-chip communication where a chip is configured by a SPI master. The SPI master initiates all traffic between the SPI master and SPI slave. The slave chip only responses to commands from the master. The SPI bus consists of four wires; clock, chip select, input data, and output data. Since there is a clock we know this protocol is synchronous. The clock is driven by the master and the clock rate is the only way to change the data rate of the communications. In general the \ac{SPI} bus is capable of a higher data rate than the UART.
 
-The rest of the lines generally work as follows but some chips use a slight variation to the descriptions below. General SPI code can be altered to meet specific chip standards. The datasheet for the chip you are trying to interface to should be consulted to ensure proper operation. 
+The rest of the lines generally work as follows but some chips use a slight variation to the descriptions below. General \ac{SPI} code can be altered to meet specific chip standards. The datasheet for the chip you are trying to interface to should be consulted to ensure proper operation. 
 
-The \ac(CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the CS lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{FPGA}. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our CS line were active low it could be called CSn. 
+The \ac(CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the \ac{CS} lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{SPI} master. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our \ac{CS} line were active low it could be called \emph{CSn}. 
 
-The last lines of the SPI bus to discuss are the data lines. These lines are named \ac{MOSI} and \ac{MISO}. The names of course tell you the direction and who drives the pins. Sometimes if \ac{IO} pins are limited there is a shared data line. This is possible because it is understood that the master controls communication if the master is reading data from the slave then the master releases control of the data line in time for the slave to control the line. Care must be taken to ensure that there isn't contention on the line. If both slave and master drive the pin communication will fail. 	
+The last lines of the \ac{SPI} bus to discuss are the data lines. These lines are named \ac{MOSI} and \ac{MISO}. The names of course tell you the direction and who drives the pins. Sometimes if \ac{IO} pins are limited there is a shared data line. This is possible because it is understood that the master controls communication if the master is reading data from the slave then the master releases control of the data line in time for the slave to control the line. Care must be taken to ensure that there is not contention on the line. If both slave and master drive the pin communication will fail. 	
 
 Next we can look at an implementation of a \ac{SPI}-Master. Shown here
 
@@ -622,15 +619,15 @@ begin
 end rtl;
 \end{VHDLlisting}
 
-This \ac{VHDL} uses a state machine to control when the data is sent and received. We see in the first process the \ac{SPI} clock is generated and sent out the \emph{SCLK} port. There may be certain circumstances where you don't want to clock always running. You can gate the output of the clock with the busy signal to ensure they clock is running only when it is needed. 
+This \ac{VHDL} uses a state machine to control when the data is sent and received. We see in the first process the \ac{SPI} clock is generated and sent out the \emph{SCLK} port. There may be certain circumstances where you do not want to clock always running. You can gate the output of the clock with the busy signal to ensure they clock is running only when it is needed. 
 
-Looking closer at the \ac{VHDL} first we see we use two generics. The first generic is \emph{g\_sclkrate}, which is used to determine the \ac{SPI} clock speed. The \ac{SPI} clock speed is the clock speed of i\_clk divided by \emph{g\_sclkrate}. So if we have a $100$\ac{MHz} clock input and \emph{g\_sclkrate} is $4$ then \emph{o\_spi\_clk} will have a frequency of $25$\ac{MHz}. The generic helps us use the same spi\_master code for different chips that have different interfacing speeds. 
+Looking closer at the \ac{VHDL} first we see we use two generics. The first generic is \emph{g\_sclkrate}, which is used to determine the \ac{SPI} clock speed. The \ac{SPI} clock speed is the clock speed of i\_clk divided by \emph{g\_sclkrate}. So if we have a $100$\ac{MHz} clock input and \emph{g\_sclkrate} is $4$ then \emph{o\_spi\_clk} will have a frequency of $25$\ac{MHz}. The generic helps us use the same \emph{spi\_master} code for different chips that have different interfacing speeds. 
 
 Next we have a the generic \emph{g\_word\_size}. The generic determines the number of bits being transferred in one transaction. The ports of our entity first list our clock and reset signals. Then we have the four \ac{IO} pins for the \ac{SPI} protocol. Then we have a flag that says whether we are writing data to the slave or reading data from the slave. Next we have the write data and write data valid. Followed by the read data and read data valid. And lastly we have a busy signal that lets the instantiating core know that we are currently busy spending out data. This is important because in one clock cycle the \ac{SPI}-Master is given \emph{g\_word\_size} data bits, but many clock cycles later, depending on the \ac{SPI} clock speed, the transfer is complete. 
 
 Next we look in the architecture of the \ac{SPI}-Master and in the first process of the architecture we generate the \ac{SPI} clock, denoted \emph{f\_o\_sclk}. We use a counter that counts up to \emph{g\_sclkrate}. As the counter gets to half of \emph{g\_sclkrate} we deassert the clock then when we reach \emph{g\_sclkrate} we assert the clock. 
 
-The next process launches data on the \ac{SPI} bus. First we wait in the state \emph{s\_idle} until write data valid is asserted. Whether we are reading data from the slave or writing data to the slave we have to start the transaction by have the master enable the \ac{CS} line. The amount of data includes the amount of data that will be read back from the slave as well. Usually the \ac{SPI} master writes an address and the rest of the data is the data at the specified address.
+The next process launches data on the \ac{SPI} bus. First we wait in the state \emph{s\_idle} until write data valid is asserted. Whether we are reading data from the slave or writing data to the slave we have to start the transaction by having the master enable the \ac{CS} line. The amount of data includes the amount of data that will be read back from the slave as well. Usually the \ac{SPI} master writes an address and the rest of the data is the data at the specified address.
 
 Once data is loaded into the \ac{SPI}-Master the state machine transitions to the \emph{s\_transfer} state. In this state we first look for the falling edge of the \ac{SPI} clock, at which, we assign data to the \ac{MOSI} line starting with the \ac{MSB}. We wait for falling edges over and over again until we have launched all the data. Then we transition to the \emph{s\_end} state. But also in the \emph{s\_transfer} state we look for the rising edge of the \ac{SPI} clock. Here we register what is coming in on the \ac{MISO} line. 
 
@@ -639,13 +636,13 @@ Once we are in the \emph{s\_end} state we go back to \emph{s\_idle}, but before 
 Now we should go back and discuss the reasoning for using the rising edge and falling edge of the \ac{SPI} clock. We launch the data on the falling edge of the \ac{SPI} clock because we want to have the maximum possible time for the data to be stable when the receiver of the data samples it at the rising edge. Just like when we wait for the rising edge of the clock to register the input we want the data to be stable. 
 
 \subsection{Inter-Integrated Circuit (I2C) Bus}
-	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : PROOF READ>
+	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : DONE>
 
 The \ac{I2C} bus communication protocol is similar to the \ac{SPI} interface in that it is used for inter chip communication. The major advantage to \ac{I2C} is that is uses half the lines as \ac{SPI}. You may be thinking who cares about the number of \ac{IO} pins a chip takes but this can be an issue with interfacing to a few peripherals, especially when a few of them are high speed \ac{LVDS}. In this case saving a few \ac{IO} pins per chip is necessary to ensure \ac{IO} pins are available for a high speed \ac{ADC} or \ac{DDR} memory chip. 	
 	
-In the \ac{I2C} bus there are two wires, clock and data. And similar to \ac{SPI} each chip that you interface to will have a different clock speed and signal timing associated with the chip. For the \ac{I2C} example we show what happens when we know the chip has 32 bits per transaction. 	
+In the \ac{I2C} bus there are two wires, clock and data. And similar to \ac{SPI} each chip that you interface to will have a different clock speed and signal timing associated with the chip. For the \ac{I2C} example we show what happens when we know the chip has $32$ bits per transaction. 	
 	
-In the \ac{I2C} protocol data is sent in eight bit chunks. So to interface to the 32 bit transaction size we break the transaction down into four - eight bit sections and ensure we have an acknowledge bit at the end of each eight bit section. 
+In the \ac{I2C} protocol data is sent in eight bit chunks. So to interface to the $32$ bit transaction size we break the transaction down into four - eight bit sections and ensure we have an acknowledge bit at the end of each eight bit section. 
 	
 We can look at some example code to see how this is done in \ac{VHDL}.	
 
@@ -815,9 +812,9 @@ begin
 end rtl;
 \end{VHDLlisting}
 
-For this implementation we know that we are going to send $32$ bits so we don't need a generic to specify the data width. As far as the other inputs of the block we have the system clock as well as the reset line. The two \ac{I2C} lines clock and data. And finally the data the send with a data valid flag and a busy signal. 
+For this implementation we know that we are going to send $32$ bits so we do not need a generic to specify the data width. As far as the other inputs of the block we have the system clock as well as the reset line. The two \ac{I2C} lines clock and data. And finally the data to send with a data valid flag and a busy signal. 
 
-For the \ac{I2C} implementation we again start off the state \emph{s\_idle}. Once $32$ bits are provided to the core with the data valid flag we move to the \emph{s\_init\_frame}. In this state we set the timing between the deassertion of SDA and the falling edge of the clock. This timing is specified in the data sheet for the chip that you will be interfacing to. 
+For the \ac{I2C} implementation we again start off the state \emph{s\_idle}. Once $32$ bits are provided to the core with the data valid flag we move to the \emph{s\_init\_frame}. In this state we set the timing between the deassertion of \emph{SDA} and the falling edge of the clock. This timing is specified in the data sheet for the chip that you will be interfacing to. 
 
 Next we start the data frame in \emph{s\_write\_data\_frame}. Where we set the current bit of \emph{f\_data} to the output on the falling edge. Then after each eight bit section we jump to \emph{s\_ack\_bit} which ensure data is being sent successfully to the \ac{I2C}-Slave.
 
@@ -825,27 +822,27 @@ Finally after sending all $32$ bits the done flag is asserted and we end the tra
 	
 	
 \subsection{Texas Instruments universal Parallel Port (uPP)}
-	<TODO Subsection Texas Instruments universal Parallel Port (uPP) : PROOF READ>
+	<TODO Subsection Texas Instruments universal Parallel Port (uPP) : DONE>
 	
 A \ac{TI}-\ac{DSP} is an embedded processor that specializes in operations specific to signal processing. What that means is that the \ac{MAC} structure is used often in \ac{FIR} filter design, calculating \ac{FFT}s, and even some matrix multiplication calculations. The \ac{DSP} is equipped with with the ability to perform parallel \ac{MAC} operations. Depending on the specific processor you can expect eight parallel \ac{MAC} operations. 
 
-The \ac{DSP} a very powerful processing platform with the added hardware to the ease of development in the C programming language. Because of these reasons is it popular to interface a \ac{DSP} to an \ac{FPGA}. With both chips on a \ac{PCB} you get the best of both worlds. 
+The \ac{DSP} a very powerful processing platform with the added hardware to the ease of development in the \index{C programming language}. Because of these reasons is it popular to interface a \ac{DSP} to an \ac{FPGA}. With both chips on a \ac{PCB} you get the best of both worlds. 
 
 To leverage having an \ac{FPGA} interface to a \ac{TI} - \ac{DSP} we need to communicate data between the two chips quickly. \ac{TI} has dedicated pins on their part specifically for this task. The \ac{TI} \ac{uPP} bus offers $16$ bit width data bus, with a start, clock, enable, and wait pins to control data flow. The \ac{TI} part also offers to send and receive data at \ac{DDR}. 
 
-First to look at how the \ac{uPP} bus works we will look at the transmitter from the \ac{FPGA} to the \ac{TI}-\ac{DSP}. The \ac{VHDL} that defines the transmitter include to generics. The first generic is the \ac{DMA} size. For the \ac{FPGA} the \ac{DMA} size is the transfer length. The second generic is the \ac{uPP} clock rate ratio, which defines the clock speed for the transfers. 
+First to look at how the \ac{uPP} bus works we will look at the transmitter from the \ac{FPGA} to the \ac{TI}-\ac{DSP}. The \ac{VHDL} that defines the transmitter include two generics. The first generic is the \ac{DMA} size. For the \ac{FPGA} the \ac{DMA} size is the transfer length. The second generic is the \ac{uPP} clock rate ratio, which defines the clock speed for the transfers. 
 
 Next we will define the \ac{IO} to the component. First the the clock and the reset line for the core. Next are the control lines for the \ac{uPP} bus, clock, start, enable, and wait. We also have the $16$ bit data bus. Finally we have the application signals that are used for the \ac{IO} between the other \ac{FPGA} logic and this core. 
 
 After the signal declarations we start the architecture block with defining the outputs. We set the outputs first so that if you are looking at the block later you know what is being calculated. After we assign the full flag for the \ac{FIFO} we set the four \ac{uPP} control lines. 
 
-We now move on to the process where we transmit data. We first reset some registers, then we define a state machine. The state machine defines two states, idle and transfer. While in idle we wait until the input \ac{FIFO} is not empty. If the input \ac{FIFO} isn't empty then we have data to transfer. Once we detect the empty flag is zero we read the data and move to the transfer state. 
+We now move on to the process where we transmit data. We first reset some registers, then we define a state machine. The state machine defines two states, idle and transfer. While in idle we wait until the input \ac{FIFO} is not empty. If the input \ac{FIFO} is not empty then we have data to transfer. Once we detect the \emph{empty flag} is zero we read the data and move to the transfer state. 
 
-Once in the transfer state we first assign the data out of the \ac{FIFO} when the \ac{FIFO} data valid is high. Next when the f\_upp\_clk\_strobe is high we are at a rising edge of the upp\_clk. We generate this strobe in a process later. For now we just assume the strobe is high for a clock cycle when the upp\_clk has a rising edge. 
+Once in the transfer state we first assign the data out of the \ac{FIFO} when the \ac{FIFO} data valid goes high. Next when the f\_upp\_clk\_strobe is high we are at a rising edge of the upp\_clk. We generate this strobe in a process later. For now we just assume the strobe is high for a clock cycle when the upp\_clk has a rising edge. 
 
 If the clock strobe is high we then check the wait signal from the receiver. The wait signal is how the receiver stalls the transmitter. So if the wait signal is low we enable the \ac{uPP} transfer, read from the \ac{FIFO}, and increment the transfer count. Then if the transfer count is zero then we assert the \ac{uPP} start signal. If we are at the \ac{DMA} transfer size then we have completed the transfer then we go back to the idle state. 
 
-However, if \ac{uPP} wait is asserted or if the clock strobe isn't high then we disable reading from the \ac{FIFO}. The only time we disable the \ac{uPP} transfer is when \ac{uPP} wait is asserted since the transfer stalls. If the clock strobe is not high that means we do not want to read from the \ac{FIFO} but we are still within a clock cycle of the \ac{uPP} clock. 
+However, if \ac{uPP} wait is asserted or if the clock strobe is not high then we disable reading from the \ac{FIFO}. The only time we disable the \ac{uPP} transfer is when \ac{uPP} wait is asserted since the transfer stalls. If the clock strobe is not high that means we do not want to read from the \ac{FIFO} but we are still within a clock cycle of the \ac{uPP} clock. 
 
 The next instantiation is the \ac{FIFO} itself with the port map. Which is then followed by a process that generates the \ac{uPP} clock, and the \ac{uPP} clock strobe. First we have a reset the clears the clock counter and holds the clock low. We leave it to the user logic to hold the transmitter in reset when not in use. 
 
@@ -1006,15 +1003,15 @@ begin
 	end process;
 \end{VHDLlisting}
 
-Now that we have seen how the \ac{FPGA} transmits data we will transition to how the \ac{FPGA} received data from the \ac{TI}-\ac{DSP}. Once again in the entity declaration we have a clock and a reset. We next have the \ac{uPP} \ac{IO} lines. These lines are just like the transmitter's \ac{IO} lines in reverse direction. Finally we have the application logic lines. 
+Now that we have seen how the \ac{FPGA} transmits data we will transition to how the \ac{FPGA} receives data from the \ac{TI}-\ac{DSP}. Once again in the entity declaration we have a clock and a reset. We next have the \ac{uPP} \ac{IO} lines. These lines are just like the transmitter's \ac{IO} lines in reverse direction. Finally we have the application logic lines. 
 
 In the architecture declaration we have the internal signal definitions. These include the the internal registers for the data received by the core, the busy signal that is an output to the other \ac{FPGA} logic, and a \ac{DMA} count to ensure we have all the data we expect. We also have a signal that is a wire that is the full flag from the receive \ac{FIFO}.
 
-We move past the begin keyword to the instantiated code. First we see the output declarations. As part of our coding style and guidelines we assign the outputs right after the begin to ensure other reviewers of our code can find the results for our core. Immediately after we assign some of the outputs we see an instantiation of a \ac{FIFO}. Here we need a dual clock \ac{FIFO} since the \ac{uPP} clock is different than the system clock. The dual clock \ac{FIFO} defines the reset of the outputs of the core. 
+We move past the begin keyword to the instantiated code. First we see the output declarations. As part of our coding style and guidelines we assign the outputs right after the begin to ensure other reviewers of our code can find the results for our core. Immediately after we assign some of the outputs we see an instantiation of a \ac{FIFO}. Here we need a dual clock \ac{FIFO} since the \ac{uPP} clock is different than the system clock. The dual clock \ac{FIFO} defines the rest of the outputs of the core. 
 
-The port map of the \ac{FIFO} is separated into two section the write section and read section. The write section is controlled by a process which we will discuss later. The read section is of the \ac{FIFO} is controlled by logic external to this core. The read clock is the system clock and the read enable is an input to the core. The read data, read data valid, and empty signals are all outputs to inform the external user logic. 
+The port map of the \ac{FIFO} is separated into two sections, the write section and read section. The write section is controlled by a process which we will discuss later. The read section is of the \ac{FIFO} is controlled by logic external to this core. The read clock is the system clock and the read enable is an input to the core. The read data, read data valid, and empty signals are all outputs to inform the external user logic. 
 
-We move to the receive data process. In this process we first have a synchronous reset. In the reset we clear the \ac{DMA} transfer count the receive data valid and \ac{uPP} busy signal. While not in reset we resister the \ac{uPP} start signal. Then we edge detect the \ac{uPP} start signal and if detect the rising edge of the start signal we assert the busy signal. Next we check the \ac{DMA} transfer count and if we are at the end of the transfer we de-assert the busy signal. 
+We move to the receive data process. In this process we first have a synchronous reset. In the reset we clear the \ac{DMA} transfer count the receive data valid and \ac{uPP} busy signal. While not in reset we resister the \ac{uPP} start signal. Then we \index{rising edge detect} the \ac{uPP} start signal and if we detect the rising edge of the start signal we assert the busy signal. Next we check the \ac{DMA} transfer count and if we are at the end of the transfer we de-assert the busy signal. 
 
 The last if statement registers data of the \ac{uPP} data bus. If the transfer is enabled then we increment the \ac{DMA} count, register the data bus, and assert the write enable line for the \ac{FIFO}. If \ac{uPP} enable is low then we de-assert write enable. This process fills up the \ac{FIFO} and the external logic pulls data from the \ac{FIFO} but the \ac{FIFO} should be configured to be to be able to support the \ac{DMA} length. 
 
@@ -1114,16 +1111,16 @@ end rtl;
 \section{Data Processing Projects}
 	<TODO Section Data Processing Projects : PROOF READ>
 	
-We now transition to \ac{VHDL} examples that are processing data. The first example calculates the multiplication of two matrices. Matrix multiplication has applications in signal processing and machine learning. We next look at the knapsack problem. In this problem we are looking to maximize the reward which is applicable to \ac{FPGA} development itself. Finally we present some signal processing examples, a \ac{FIR} filter and an \ac{NCO}, both of which are used regularly in \ac{DSP} applications. 
+We now transition to \ac{VHDL} examples that are processing data. The first example calculates the multiplication of two matrices. Matrix multiplication has applications in signal processing and machine learning. Then we present some signal processing examples, a \ac{FIR} filter and an \ac{NCO}, both of which are used regularly in \ac{DSP} applications. 
 
 \subsection{Strassen's Matrix Multiplication}
 	<TODO Subsection Strassen's Matrix Multiplication : PROOF READ>
 	
-Matrix multiplication is a common operation is \ac{DSP}, machine learning, and graphics processing applications. Here we look at how to make matrix multiplication more efficient. Matrix multiplication in general is $\mathbf{O}(n^3)$. To make the algorithm more efficient in terms of \ac{FPGA} resource we will use the Strassen matrix multiplication. 
+Matrix multiplication is a common operation is \ac{DSP}, machine learning, and graphics processing applications. Here we look at how to make matrix multiplication more efficient. Matrix multiplication in general is $\ord(n^3)$. To make the algorithm more efficient in terms of \ac{FPGA} resource we will use the Strassen matrix multiplication. 
 
 In essence the Strassen matrix multiplication reduces the number of multiplies required. Since the dedicated multiply resources are very advantageous we look to minimize the usage if we can. To multiply very large matrices we need to use the dedicated multiply blocks efficiently. The Strassen matrix multiply does this optimally for reducing input matrices to a $2 \times 2$.
 
-We are going to calculate the matrix multiplication $\mathbf{A}\mathbf{B}=\mathbf{C}$. We assume that $\mathbf{A}$ and $\mathbf{B}$ have specific dimensions, namely, the number of rows and columns equate to a power of 2. If the matrices you want to multiply are not powers of $2$ you can zero pad each dimension. Each dimension is zero padded to $2^k$ where $k$ is an integer. If both $\mathbf{A}$ and $\mathbf{B}$ have dimensions that are $2^k$ then the matrix multiplication can be recursively reduced to a number of $2 \times 2$ matrices. 
+We are going to calculate the matrix multiplication $\mathbf{A}\mathbf{B}=\mathbf{C}$. We assume that $\mathbf{A}$ and $\mathbf{B}$ have specific dimensions, namely, the number of rows and columns equate to a power of $2$. If the matrices you want to multiply are not powers of $2$ you can zero pad each dimension. Each dimension is zero padded to $2^k$ where $k$ is an integer. If both $\mathbf{A}$ and $\mathbf{B}$ have dimensions that are $2^k$ then the matrix multiplication can be recursively reduced to a number of $2 \times 2$ matrices. 
 
 To calculate a $2 \times 2$ matrix multiply we turn to the Strassen algorithm. The input to the Strassen algorithm are the two matrices $\mathbf{A}$ and $\mathbf{B}$. Each matrix is indexed into by a row and column;
 
@@ -1164,7 +1161,7 @@ c_{2,2} &=& P + R - Q + U
 \label{eq:couts}
 \end{eqnarray}
 
-Now that the algorithm is defined we will spend the reset of this section discussing how we can implement the Strassen Matrix Multiplication algorithm in \ac{VHDL}. Before we start implementing the algorithm we first must think about what the expected data rate is going to be. Since the Strassen algorithm helps with reducing the number of multiplies required from eight to seven we won't see a huge savings in \ac{FPGA} resources with small matrix multiplies. Our target implementation is going to be handling very large matrices that will be parted down to many $2 \times 2$ matrix multiplication. For this implementation we expect to instantiate this block many times so that we can handle all the data as it is streaming in. 
+Now that the algorithm is defined we will spend the reset of this section discussing how we can implement the Strassen Matrix Multiplication algorithm in \ac{VHDL}. Before we start implementing the algorithm we first must think about what the expected data rate is going to be. Since the Strassen algorithm helps with reducing the number of multiplies required from eight to seven we will not see a huge savings in \ac{FPGA} resources with small matrix multiplies. Our target implementation is going to be handling very large matrices that will be parted down to many $2 \times 2$ matrix multiplication. For this implementation we expect to instantiate this block many times so that we can handle all the data as it is streaming in. 
 
 So for this implementation we want to be able to handle the two input matrices in parallel and data can be valid every clock cycle. So after the latency of the core is over we will have resulting $\mathbf{C}$ matrices every clock cycle. This implementation will be able to handle the largest data rates possible. 
 
@@ -1202,7 +1199,7 @@ entity matrix_multiply_strassen is
 end entity matrix_multiply_strassen;
 \end{VHDLlisting}
 
-The entity declaration for \emph{matrix\_multiply\_strassen}has one generic which sets the bit width for the elements of the matrices. The port definitions start with the clock and reset, then the two matrix inputs, with four elements each along with a single data valid line for both matrices. This interface puts the responsibility of ensuring the data is ready and valid in a single clock cycle on the instantiating core. The last set of signals are the output, the four elements of the matrix $\mathbf{C}$ and a data valid line. 
+The entity declaration for \emph{matrix\_multiply\_strassen} has one generic which sets the bit width for the elements of the matrices. The port definitions start with the clock and reset, then the two matrix inputs, with four elements each along with a single data valid line for both matrices. This interface puts the responsibility of ensuring the data is ready and valid in a single clock cycle on the instantiating core. The last set of signals are the output, the four elements of the matrix $\mathbf{C}$ and a data valid line. 
 
 Now we will move on the architecture block of the core. First we define a shift register for the data valid line. The shift register keeps track of the pipeline stage. If the data was valid in a clock cycle then the data calculation and the valid is registered. In this way the valid flag follows along with the data. 
 
@@ -1220,9 +1217,9 @@ signal f_b_21 : signed(g_bitwidth-1 downto 0);
 signal f_b_22 : signed(g_bitwidth-1 downto 0);
 \end{VHDLlisting}
 
-We now look at the signals that are going to be used in each stage of calculation. In the signal declaration section we organize and comment the groups of signals so that as our \ac{VHDL} files get larger we can orgainize the file in a logical order which helps keeps the logic more manageable. 
+We now look at the signals that are going to be used in each stage of calculation. In the signal declaration section we organize and comment the groups of signals so that as our \ac{VHDL} files get larger we can organize the file in a logical order which helps keeps the logic more manageable. 
 
-The first stage of calculation is registering the inputs under the data valid line. It is a good habit to register the inputs and outputs of any block that you write. This way when you instantiate the core you won't have to worry about if another core registers it's outputs. If you are using other people's code that doesn't register outputs and if you don't register inputs then its likely that those paths will be the first to fail timing. 
+The first stage of calculation is registering the inputs under the data valid line. It is a good habit to register the inputs and outputs of any block that you write. This way when you instantiate the core you do not have to worry about if another core registers the outputs. If you are using other people's code that does not register outputs and if you do not register inputs then its likely that those paths will be the first to fail timing. 
 
 If the code you are interfacing to does register the outputs and you register the inputs the synthesizer is reliable enough to remove one register. This practice is very helpful when you are trying to achieve the highest data rate possible. Once we have made this core fully pipelined then the only other way to increase the data rate is to increase the clock speed. To run this core at the highest possible clock speed we will be glad to have the extra registers in the code. 
 
@@ -1298,7 +1295,7 @@ p_s2 : process(i_clk)
 	end process;
 \end{VHDLlisting}
 
-For each term we follow \eq{capp}-\eq{capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline next clock cycle overwriting our data. So we need to register it in this process.
+For each term we follow \eq{capp}-\eq{capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline on the next clock cycle overwriting our data. So we need to register it in this process.
 
 \begin{VHDLlisting}[tabsize=2]
 -- Stage 3 : P,Q,R,S,T,U,V Calculations
@@ -1361,7 +1358,6 @@ begin
 		    f4_c21_t1 <= fff_q + fff_s;
 		    f4_c22_t1 <= fff_p + fff_r;
 		    f4_c22_t2 <= fff_q + fff_u;
-		
 		end if;
 	end if;
 end process;
@@ -1406,15 +1402,15 @@ A common application for \ac{FPGA}s is \ac{DSP}. In this section we discuss the 
 \subsubsection{Finite Impulse Response Filter}
 	<TODO Subsubsection  Finite Impulse Response Filter : PROOF READ>
 
-There are many needs for \ac{FIR} filters in \ac{DSP}. Here we will present one type of \ac{FIR} filter that is quite useful. The type of filter we will be implementing in this section is the \emph{half-band \ac{FIR} \ac{LPF}}. Breaking down the name we first know what a \ac{FIR} filter is and does which depending on the impulse response attenuates some frequencies while keeping other frequencies of interest. 
+There are many needs for \ac{FIR} filters in \ac{DSP}. Here we will present one type of \ac{FIR} filter that is quite useful. The type of filter we will be implementing in this section is the \emph{half-band \ac{FIR} \ac{LPF}}. Breaking down the name, we first know what a \ac{FIR} filter is which depending on the impulse response attenuates some frequencies while keeping other frequencies of interest. 
 
-The \emph{half-band} aspect of this filter refers to the ability of the filter to reduce the bandwidth of the filtered signal by half. The reduction of bandwidth of the filtered signal reduces the data rate of the system after the filter. You may be asking why would you have a higher data-rate coming into the \ac{FPGA} from the \ac{ADC} than you would need. The data-rate coming into the \ac{FPGA} is dependent on the \ac{IF} used in the \ac{RF} front-end and the \ac{ADC} sample rate. 
+The \emph{half-band} aspect of this filter refers to the ability of the filter to reduce the bandwidth of the filtered signal by half. The reduction of bandwidth of the filtered signal reduces the data rate of the signal after the filter. You may be asking why would you have a higher data-rate coming into the \ac{FPGA} from the \ac{ADC} than you would need. The data-rate coming into the \ac{FPGA} is dependent on the \ac{IF} used in the \ac{RF} front-end and the \ac{ADC} sample rate. 
 
 The \ac{IF} used in the front-end is usually standard and your selection of the \ac{IF} is fixed. What you do have control over is the \ac{ADC} sampling rate. The main input parameter used in deciding your sampling rate is the bandwidth of the signal you are interested in, since your sampling rate needs to be at least twice the bandwidth of the signal you are interested in. 
 
 Once the \ac{ADC} sampling rate is chosen we can start interfacing the \ac{ADC} to the \ac{FPGA}. The data lines are routed to the \ac{FPGA} along with a clock if the \ac{ADC} is has a source-synchronous interface. In any case the data is registered on the \ac{FPGA} and now we have another design parameter to decide. What processing speed are we going to use. In general we can slow the clock down and process multiple samples in parallel or speed the clock up and have more clocks per sample. In either case we need to consider the algorithm in which we are implementing. 
 
-With all that said we will assume moving forward all of those parameters have been worked out. What happens quite frequently is that the bandwidth of the received signal is twice as large as we are interested in so we are going to decimate by two. To decimate by two we need to filter out the aliases to avoid sampling interference. This filter is called an anti-alias filter. So the filter we are going to design here is going to be out anti-alias filter. The data is then sent out of the core where the data valid line is dropped every other sample to perform the decimation by two. 
+With all that said we will assume moving forward all of those parameters have been worked out. What happens quite frequently is that the bandwidth of the received signal is twice as large as we are interested in so we are going to decimate by two. To decimate by two we need to filter out the aliases to avoid sampling interference. This filter is called an anti-alias filter. So the filter we are going to design here is going to be an anti-alias filter. The data is then sent out of the core where the data valid line is dropped every other sample to perform the decimation by two. 
 
 \begin{VHDLlisting}[tabsize=2]
 -- halfbandLPF.vhd
@@ -1509,15 +1505,15 @@ begin
 end rtl;
 \end{VHDLlisting}
 	
-In the entity declaration we have two generics defined. The first the is bit-width of the input samples. The second is the number of coefficients or taps in the \ac{FIR} filter. The port declarations have the clock, reset, input, and output data lines. We notice that the output is twice the bit width as the input since the \ac{FIR} taps are the same bit width as the input data and we multiply the data by the taps getting twice the bit-width in growth. 
+In the entity declaration we have two generics defined. The first the is bit-width of the input samples. The second is the number of coefficients or taps in the \ac{FIR} filter. The port declarations have the clock, reset, input, and output data lines. We notice that the output is twice the bit width as the input since the \ac{FIR} taps are the same bit width as the input data and we multiply the data by the taps getting twice the bit-width of growth. 
 
 In the architecture block before the \emph{begin} keyword we define two types. Each of which is an array one for the input data width and the other twice the input data width. The first signal that is declared is a shift register for the input data and a data valid shift register is defined after. 
 
-Next we have signal that is initialized to a set of 10 coefficients. We first develop the \ac{FIR} filter with the taps already in place so that we know there are not any issues we loading the coefficients externally. Loading the coefficients externally would make this \ac{FIR} filter implementation the most flexible and very easy to reuse the the data-rates were to change in future projects. Lastly defined are signals for five stages of an adder tree.
+Next we have signal that is initialized to a set of $10$ coefficients. We first develop the \ac{FIR} filter with the taps already in place so that we know there are not any issues we loading the coefficients externally. Loading the coefficients externally would make this \ac{FIR} filter implementation the most flexible and very easy to reuse the the data-rates were to change in future projects. Lastly defined are signals for five stages of an adder tree.
 
 After the \emph{begin} keyword we have the outputs being assigned. Next we move to a calculation process that has a synchronous reset. Then we have the shift register for the data. Then another shift register for the data valid. This implementation assumes that the input is directly from an \ac{ADC} so once the data valid is asserted the input is always valid. 
 
-Next we take advantage of the symmetric filter taps used in this \ac{FIR} filter to reduce the number of multiples. To do this we need to add the data at various indices together. Then in the next stage the impulse response is multiplied by the summation in the previous step. After which the ten values are summed in an adder tree where the number of adders is $log_2$ of the number of elements left to add. 
+Next we take advantage of the symmetric filter taps used in this \ac{FIR} filter to reduce the number of multiples. To do this we need to add the data at various indices together. Then in the next stage the impulse response is multiplied by the summation in the previous step. After which the ten values are summed in an \index{adder tree} where the number of adders is $log_2$ of the number of elements left to add. 
 	
 \subsubsection{Numerically Controlled Oscillator}
 	<TODO Subsubsection  Numerically Controlled Oscillator : PROOF READ>
@@ -1588,7 +1584,7 @@ end rtl;
 
 The entity declaration starts with the generic declarations. We have a generic that determines the phase increment width, denoted \emph{phinc\_width}. We also define a generic that determines the bit width of the \ac{NCO} output. The difference here is that our frequency resolution in our \ac{NCO} is independent of our dynamic range of our sinusoidal wave. 
 
-We move on to the port definitions of the core. We, of course, have the clock and reset. Next we have an enable line that activates the core in producing outputs. Then two data lines with corresponding valid flags for phase initial value and phase increment value, each of which are discussed later on. Finally the output of the \ac{NCO} with a valid line. 
+We move on to the port definitions of the core. We have the clock and reset. Next we have an enable line that activates the core in producing outputs. Then two data lines with corresponding valid flags for phase initial value and phase increment value, each of which are discussed later on. Finally the output of the \ac{NCO} with a valid line. 
 
 In the architecture block we first define signals for internal use of the core. The core uses a \ac{BRAM} to store the \ac{LUT} for the sinusoid, for which we need a type definition. Next we have the phase accumulator. Then we have the registered phase increment. Finally registers for the outputs are defined.
 
