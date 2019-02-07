@@ -1109,12 +1109,12 @@ end rtl;
 \end{VHDLlisting}
 
 \section{Data Processing Projects}
-	<TODO Section Data Processing Projects : PROOF READ>
+	<TODO Section Data Processing Projects : DONE>
 	
 We now transition to \ac{VHDL} examples that are processing data. The first example calculates the multiplication of two matrices. Matrix multiplication has applications in signal processing and machine learning. Then we present some signal processing examples, a \ac{FIR} filter and an \ac{NCO}, both of which are used regularly in \ac{DSP} applications. 
 
 \subsection{Strassen's Matrix Multiplication}
-	<TODO Subsection Strassen's Matrix Multiplication : PROOF READ>
+	<TODO Subsection Strassen's Matrix Multiplication : DONE>
 	
 Matrix multiplication is a common operation is \ac{DSP}, machine learning, and graphics processing applications. Here we look at how to make matrix multiplication more efficient. Matrix multiplication in general is $\ord(n^3)$. To make the algorithm more efficient in terms of \ac{FPGA} resource we will use the Strassen matrix multiplication. 
 
@@ -1395,12 +1395,12 @@ After the final stage is calculated and registered we can use these registers as
 This shift register denotes the latency of the core. If we put in data at clock cycle zero. It will take six clock cycles to get valid data out. Note that index five in the data valid array is actually the sixth element since the array is zero indexed. 
 
 \subsection{Digital Signal Processing}
-	<TODO Subsection Digital Signal Processing : PROOF READ>
+	<TODO Subsection Digital Signal Processing : DONE>
 	
 A common application for \ac{FPGA}s is \ac{DSP}. In this section we discuss the implementation of common \ac{DSP} functions. Here will discuss the \ac{FIR} filter and an \ac{NCO}. Which are both vital in a \ac{DSP} application. 
 
 \subsubsection{Finite Impulse Response Filter}
-	<TODO Subsubsection  Finite Impulse Response Filter : PROOF READ>
+	<TODO Subsubsection  Finite Impulse Response Filter : DONE>
 
 There are many needs for \ac{FIR} filters in \ac{DSP}. Here we will present one type of \ac{FIR} filter that is quite useful. The type of filter we will be implementing in this section is the \emph{half-band \ac{FIR} \ac{LPF}}. Breaking down the name, we first know what a \ac{FIR} filter is which depending on the impulse response attenuates some frequencies while keeping other frequencies of interest. 
 
@@ -1516,7 +1516,7 @@ After the \emph{begin} keyword we have the outputs being assigned. Next we move 
 Next we take advantage of the symmetric filter taps used in this \ac{FIR} filter to reduce the number of multiples. To do this we need to add the data at various indices together. Then in the next stage the impulse response is multiplied by the summation in the previous step. After which the ten values are summed in an \index{adder tree} where the number of adders is $log_2$ of the number of elements left to add. 
 	
 \subsubsection{Numerically Controlled Oscillator}
-	<TODO Subsubsection  Numerically Controlled Oscillator : PROOF READ>
+	<TODO Subsubsection  Numerically Controlled Oscillator : DONE>
 	
 An \ac{NCO} is used to generate \emph{sine} and \emph{cosine} waves on an \ac{FPGA}. The generation of sinusoidal waves is beneficial for digitally mixing signals. In this section we discuss how to make an \ac{NCO} in two parts. First a phase accumulator is used to generate an address which is used to index in to a \ac{BRAM} which is assigned as the output. 
 
@@ -1595,7 +1595,7 @@ While not in reset we perform three major tasks. First of which is registering t
 The third major task has two parts. While the enable is high the phase accumulator is incremented by the phase increment. The phase increment is used as an address into a \ac{BRAM}. The \ac{BRAM} is initialized with a sinusoid that is sampled by the phase accumulator. As the phase accumulator rolls over in unsigned value the sinusoid \ac{BRAM} cycles over the next period of the wave being generated. The sinusoid is an output of the core. 
 
 \section{Security in Hardware}
-	<TODO Section Security in Hardware : PROOF READ>
+	<TODO Section Security in Hardware : DONE>
 
 There is a fundamental difference in programming a processor and designing hardware, as we have seen in this chapter. Consider the differences, when programming a processor there is an atomic instruction that is executed with references to register addresses. However, in an \ac{FPGA}, data is registered with no way of accessing the data by address and no way of changing the \ac{FPGA} configuration without erasing the data. 
 
