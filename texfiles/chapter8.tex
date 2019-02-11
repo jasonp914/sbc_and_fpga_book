@@ -1,13 +1,11 @@
 \chapter{Communication System}
-	<TODO Chapter Communication System : PROOF READ>
+	<TODO Chapter Communication System : DONE>
 
 To move data from one location to another we need a communication protocol. To select an appropriate communication protocol we need to understand the how the two entities will send data. In general there are wired communications and wireless communications. Under each category there are numerous variants, for example, for wired communication you can have a one wire connecting the transmitter to the receiver. Or you can have potentially hundreds of wires. The physical medium is just one part of the story, if you have tens or hundreds of wires how do you encode the data onto the wires to provide the fastest data rate or highest reliability.	
-	
-To move data from one location to another we need a communication protocol. To select an appropriate communication protocol we need to understand the how the two entities will send data. In general there are wired communications and wireless communications. Under each category there are numerous variants, for example, for wired communication you can have a one wire connecting the transmitter to the receiver. Or you can have potentially hundreds of wires. The physical medium is just one part of the story, if you have tens or hundreds of wires how do you encode the data onto the wires to provide the fastest data rate or highest reliability.
 
-The number of variant solutions for wireless communications is large as well. The most common form of wireless communication uses \ac{RF} energy to relay information. \ac{RF} energy can be allocated in many ways to provide a high data rate and reliable communications but another concern with wireless is a security aspect. Some wireless transmitters do not want to assume directionality, like a cell phone doesn't have to be pointed at the cell tower. Because of the omni-directional transmission scheme the everyone can \emph{hear} the message intended for you. How do we ensure someone we don't want getting our messages can't.
+The number of variant solutions for wireless communications is large as well. The most common form of wireless communication uses \ac{RF} energy to relay information. \ac{RF} energy can be allocated in many ways to provide a high data rate and reliable communications but another concern with wireless is a security aspect. Some wireless transmitters do not want to assume directionality, like a cell phone doe snot have to be pointed at the cell tower. Because of the omni-directional transmission scheme everyone can \emph{hear} the message intended for you. How do we ensure someone we do not want getting our messages can not.
 
-There are other technologies that don't use \ac{RF}, they use lasers. The advantage Lasers have is that it can take less time to send a bit. Light pulses can turn on and off faster than Voltage in a wire, or in the air can change from \emph{high} to \emph{low}. This is the reason why we have seen a large under taking of fiber optics being used in \ac{ISP}. Fiber optics can handle the higher data transfer speeds that are required.
+There are other technologies that do not use \ac{RF}, suh as lasers. The advantage lasers have is that it can take less time to send a bit. Light pulses can turn on and off faster than Voltage in a wire, or the air can change from \emph{high} to \emph{low}. This is the reason why we have seen a large under taking of fiber optics being used for \ac{ISP}. Fiber optics can handle the higher data transfer speeds that are required.
 
 In this chapter we discuss a small sample of wired and wireless technologies. For wired communications we look at \ac{PCIe} and \ac{USB} protocols at a high level. We then also talk about \ac{LVDS} which is a physical layer method to increase data rates. We then transition to wireless protocols where we look at single-carrier digital communication signaling like \ac{BPSK}, \ac{QAM}, and \ac{GMSK}. Then we move on to multiple-carrier modulation schemes, such as \ac{OFDM} and a few variants of \ac{OFDM} like \ac{OFDMA} and \ac{SC-FDMA}.
 
@@ -16,63 +14,61 @@ Next we move into the concept of \ac{FEC}. \ac{FEC} is the method of introducing
 Finally, we look at a case study of building a basic transceiver pair. In this study we look at developing the transceiver from concept to implementation. The concept of the transceiver is investigated with the system model. Its in the system model where we determine the data rate needed for the system and other key parameters. Then discuss how to design \ac{HDL} to match the system model and we walk through the design of each component or module in the design. Finally we look at putting all the modules together and testing the entire transceiver design. 
 
 \section{Wired Communications}
-	<TODO Section Wired Communications : PROOF READ>
+	<TODO Section Wired Communications : DONE>
 
 You have seen wired communications many times. If you have ever plugged in a \ac{USB} cord you have used wired communications. Even inside a computer there are chips on the mother board that are communicating through the little wires embedded in the layers of the \ac{PCB}.	
 	
-Even with inter-chip communication the data rate is which data is transferred varies greatly. As we will see with our examples in this section the \ac{PCIe} has the highest data rate capability. The \ac{USB} protocol is maybe the most popular protocol used for data transfers. We end with a discussion of how \ac{IC}s communicate with each other on a \ac{PCB}.
+Even with inter-chip communication the data rate in which data is transferred varies greatly. As we will see with our examples in this section the \ac{PCIe} has the highest data rate capability. The \ac{USB} protocol is maybe the most popular protocol used for data transfers. We end with a discussion of how \ac{IC}s communicate with each other on a \ac{PCB}.
 	
 \subsection{PCI}
-	<TODO Subsection PCI : PROOF READ>
+	<TODO Subsection PCI : DONE>
 
-\ac{PCIe} is a high speed serial interface that connects endpoints in a computer system. Endpoints for the \ac{PCIe} bus include video cards, \ac{CPU}, \ac{RAM}, sound cards, network interface cards, hard drives, \ac{USB} expansion cards, and Bluetooth cards. The \ac{PCIe} is a high speed backbone for computer peripherals to intercommunicate. \cite{http://www.ni.com/white-paper/3767/en/}	
+\ac{PCIe} is a high speed serial interface that connects endpoints in a computer system. Endpoints for the \ac{PCIe} bus include video cards, \ac{CPU}, \ac{RAM}, sound cards, network interface cards, hard drives, \ac{USB} expansion cards, and Bluetooth cards. The \ac{PCIe} is a high speed backbone for computer peripherals to intercommunicate. \cite{pcieref}	
 	
-During the initialization the two endpoints negotiate the number of lanes they will use for communication. They are able to use between $1$-$32$. At any given time a lane is driven by one endpoint, so if full-duplex communication is required then two lanes are allocated to the two endpoints.
+During the initialization the two endpoints negotiate the number of lanes they will use for communication. They are able to use between $1$-$32$. At any given time, a lane is driven by one endpoint, so if full-duplex communication is required then two lanes are allocated to the two endpoints.
 
-If both endpoints support multiple lanes then the during initialization the negotiation will result in using the maximum number of lanes supported by both endpoints. When multiple lanes are used the transmitter of data strides the data across the multiple lanes increasing the effective data rate supported by communication link.
+If both endpoints support multiple lanes then the during initialization the negotiation will result in using the maximum number of lanes supported by both endpoints. When multiple lanes are used the transmitter strides the data across the multiple lanes increasing the effective data rate supported by communication link.
 
-The data rate supported by a single lane has roughly doubled with ever version of the \ac{PCIe} bus. At the time of writing \ac{PCIe} version five is released with a single lane capable of $4$ \ac{GB} per second. If data is strides across $16$ lanes then the overall data rate is around $63$ \ac{GB} per second due to some overhead.
+The data rate supported by a single lane has roughly doubled with ever version of the \ac{PCIe} bus. At the time of writing \ac{PCIe} version five is released with a single lane capable of $4$ \ac{GB} per second. If data strides across $16$ lanes then the overall data rate is around $63$ \ac{GB} per second due to some overhead.
 
-The two endpoints that require the highest data rate is the \ac{HDD} and the video card. These two devices can handle a lot of data and with the speeds of \ac{PCIe} and the flexibility of negotiating multiple lanes for a link the communication link shouldn't be a bottle neck for data storage or graphics rendering.
+The two endpoints that require the highest data rate is the \ac{HDD} and the video card. These two devices can handle a lot of data and with the speeds of \ac{PCIe} and the flexibility of negotiating multiple lanes for a link the communication link should not be a bottle neck for data storage or graphics rendering.
 	
 \subsection{USB}
-	<TODO Subsection USB : PROOF READ>
+	<TODO Subsection USB : DONE>
 
-The \ac{USB} standard is a very common bus with a variety of connector types for many applications. The \ac{USB} Version 3.2 which is the newest at the time of writing has a transfer speed of $2.5$ \ac{GB} per second. \cite{ "USB 3.0 Promoter Group Announces USB 3.2 Update" (PDF) (Press release). Beaverton, OR, USA. 25 July 2017. Retrieved 27 July 2017 – via www.usb.org.}
+The \ac{USB} standard is a very common bus with a variety of connector types for many applications. The \ac{USB} Version $3.2$ which is the newest at the time of writing has a transfer speed of $2.5$ \ac{GB} per second. \cite{usbref}
 
-The \ac{USB} protocol transfers information in packets. There are four types of packets in which \ac{USB} uses to establish a communication channel and to send data. The four types are \emph{Link Management Packets}, \emph{Transaction Packets}, \emph{Data Packets} and \emph{Isochronous Timestamp Packets}. For further details see, 
-
-%\cite{http://www.usb3.com/whitepapers/USB%203%200%20(11132008)-final.pdf}	
+The \ac{USB} protocol transfers information in packets. There are four types of packets in which \ac{USB} uses to establish a communication channel and to send data. The four types are \emph{Link Management Packets}, \emph{Transaction Packets}, \emph{Data Packets} and \emph{Isochronous Timestamp Packets}. For further details see, \cite{usbproto}.	
 	
 \subsection{LVDS}  
-	<TODO Subsection LVDS : PROOF READ>	
+	<TODO Subsection LVDS : DONE>	
 	
-\ac{LVDS} is used most commonly in a \ac{PCB} when two chips communicate with a high data rate and when there is a lot of noise on the board. The \ac{LVDS} signaling is resistant to cross-talk and other interference. The problem is that when you have a single wire (termed singled-ended) running from the transmitter chip to the receive chip there is interference on the trace. The interference can be from another unrelated trace that has voltage changes on it. When the voltage changes on the unrelated trace a voltage fluctuation can occur on the single-ended connection. If the fluctuations are large enough data corruption can occur.
+\ac{LVDS} is used most commonly in a \ac{PCB} when two chips communicate with a high data rate and when there is a lot of noise on the board. The \ac{LVDS} signaling is resistant to cross-talk and other interference. The problem is that when you have a single wire (termed \index{singled-ended}) running from the transmitter chip to the receive chip there is interference on the trace. The interference can be from another unrelated trace that has voltage changes on it. When the voltage changes on the unrelated trace a voltage fluctuation can occur on the single-ended connection. If the fluctuations are large enough data corruption can occur.
 
-\ac{LVDS} cancels or subtracts out the fluctuations before the bit is sampled. To do this for each singled-ended line a differential-pair is ran. This just means that two wires are ran right next to each other and are length matched; there should be minimal skew between the two wires in the differential-pair. Once the differential-pair is ran properly then any fluctuations that occur to one wire will occur to the other since they are ran on the \ac{PCB} next to each other. Then at the receiver the differential-pair is subtracted in the analog domain and sampled for digital use.
+\ac{LVDS} cancels or subtracts out the fluctuations before the bit is sampled. To do this for each singled-ended line a \index{differential-pair} is ran. This just means that two wires are ran right next to each other and are length matched; there should be minimal skew between the two wires in the differential-pair. Once the differential-pair is ran properly then any fluctuations that occur to one wire will occur to the other since they are ran on the \ac{PCB} next to each other. Then at the receiver the differential-pair is subtracted in the analog domain and sampled for digital use.
 
 Another benefit of \ac{LVDS} is the low voltage aspect. Since wire can be modeled as a series of capacitors then the longer the wire the larger the capacitance. As voltage is applied to a wire the voltage that is measured at the receiver will not be a sharp step-function. Due to the capacitance there will be a ramp up effect that blurs the line of when the voltage was applied. This becomes an issue when the timing of bit is blurred.
 
-Since there isn't much we can do about trace length to a certain degree. We can try to make the board smaller but assuming the board is physically as small as possible the next best thing to do is to reduce the voltage swing. The wire capacitance effect increases the \emph{rise time} and \emph{fall time} of the voltage but if we reduce the voltage that designates \emph{high} then we can effectively reduce \emph{rise time} and \emph{fall time}.	
+Since there is not much we can do about trace length to a certain degree. We can try to make the board smaller but assuming the board is physically as small as possible the next best thing to do is to reduce the voltage swing. The wire capacitance effect increases the \emph{\index{rise time}} and \emph{\index{fall time}} of the voltage but if we reduce the voltage that designates \emph{high} then we can effectively reduce \emph{rise time} and \emph{fall time}.	
 	
 	
 \section{Wireless Communications}
-	<TODO Section Wireless Communications : PROOF READ>
+	<TODO Section Wireless Communications : DONE>
 
-Wireless communications is a very broad topic. In this section we will reduce the scope to digital \ac{RF} communications. Further yet we will pick a few of the most common modulation types. This section is not an exhaustive discussion of all digital communication techniques but is meant to be an introduction to all the build blocks needed for a basic communications system. We do touch on improvements to the basic transceiver design, these topics include \ac{FEC} and multi-path mitigation techniques.
+Wireless communications is a very broad topic. In this section we will reduce the scope to digital \ac{RF} communications. Further yet we will pick a few of the most common modulation types. This section is not an exhaustive discussion of all digital communication techniques but is meant to be an introduction to all the build blocks needed for a basic communications system. We do touch on improvements to the basic transceiver design, these topics include \index{\ac{FEC}} and \index{multi-path mitigation} techniques.
 
-Some of the topics in the section may require a signal processing background. Where appropriate we point to underlying concepts that can be further studied but are out of the scope of this section. In general the reader should be familiar with sampling theory and the \ac{FFT} operation, including the time and frequency relationships. Also used are filtering concepts such as using a \ac{FIR} filter to reduce unwanted spectrum energy. It would also be beneficial to know and understand what a \emph{matched filter} is but we will dive into this concept a little more. Finally the design of the \ac{RF} front-end is mention but not discussed.
+Some of the topics in the section may require a signal processing background. Where appropriate we point to underlying concepts that can be further studied but are out of the scope of this section. In general the reader should be familiar with \index{sampling theory} and the \ac{FFT} operation, including the time and frequency relationships. Also used are filtering concepts such as using a \ac{FIR} filter to reduce unwanted spectrum energy. It would also be beneficial to know and understand what a \emph{matched filter} is but we will dive into this concept a little more. Finally the design of the \ac{RF} front-end is mention but not discussed.
 
 The reset of this section is organized first by addressing the topic of mixing to a carrier frequency. In all wireless communications there will be a carrier frequency. Next we look at three modulation schemes where we use a single carrier frequency. We then transition to using multiple-carriers and we look at two modulation schemes which are commonly employed. We are then done with our modulation types discussion and introduce \ac{FEC} to improve our reliability at the receiver. And lastly, this section and chapter are concluded with an in-depth end-to-end design of a transceiver.
 
 \subsection{Frequency Mixing} 
-	<TODO Subsection Frequency Mixing : PROOF READ>	
+	<TODO Subsection Frequency Mixing : DONE>	
 	
-The reason for the carrier frequency is due to the physical phenomena that higher frequencies travel further in general. There are some exceptions to this general rule but more likely you will be directed to use a carrier frequency the \ac{FCC} allows you to use. For most research and development projects the free \ac{ISM} bands are perfect.
+A carrier frequency is needed due to the physical phenomena that higher frequencies travel further. There are some exceptions to this general rule but more likely you will be directed to use a carrier frequency the \ac{FCC} allows you to use. For most research and development projects the free \ac{ISM} bands are perfect.
 
-Here we can assume we are going to use the \ac{ISM} bands but hopefully by the end of this discussion you will see that it doesn't matter which frequency we use. To get started lets first assume we have a signal we wish to send to a receiver, we will call this signal $\mathbf{x}$. We will talk in the next section how to get $\mathbf{x}$ for now we assume $\mathbf{x}$ has some frequency content sampled at $f_s$.
+Here we can assume we are going to use the \ac{ISM} bands but hopefully by the end of this discussion you will see that it does not matter which frequency we use. To get started lets first assume we have a signal we wish to send to a receiver, we will call this signal $\mathbf{x}$. We will talk in the next section how to get $\mathbf{x}$, for now we assume $\mathbf{x}$ has some frequency content sampled at $f_s$.
 
-Since we want to send $\mathbf{x}$ to the receiver we will need to mix the content of $\mathbf{x}$ to a carrier to transmit over a longer distance. Think of $\mathbf{x}$ as being voice data recording, it has some frequency content but if we don't mix the data up to a carrier we will never be able to make a phone call around the world. The carrier that we will pick is going to be $f_c$ \ac{Hz}. For our \ac{ISM} band we can choose $f_c = 2.48$ \ac{GHz}.
+Since we want to send $\mathbf{x}$ to the receiver we will need to mix the content of $\mathbf{x}$ to a carrier to transmit over a longer distance. Think of $\mathbf{x}$ as being voice data recording, it has some frequency content but if we do not mix the data up to a carrier we will never be able to make a phone call around the world. The carrier that we will pick is going to be $f_c$ \ac{Hz}. For our \ac{ISM} band we can choose $f_c = 2.48$ \ac{GHz}.
 
 To mix $\mathbf{x}$ to the carrier we simply multiply by a sinusoid with a frequency of $f_c$ with a sampling rate of $f_s$. We can define $x_{rf}$ as:
 
@@ -81,7 +77,7 @@ To mix $\mathbf{x}$ to the carrier we simply multiply by a sinusoid with a frequ
 x_{rf}[n] = \sin\left(2\pi\frac{f_c}{f_s}n\right)x[n].
 \end{equation}	
 
-This holds if we do not violate Nyquist sampling theory which states that to maintain all the information in the analog signal our sampling frequency needs to be $f_s \geq 2BW$ where $BW$ is the bandwidth of the signal. In our case in \eq{mix} the bandwidth of the signal is $f_c$ so $f_s = 2f_c$. We can design a better system than this with the help of an \ac{RF} front-end. An analog mixer will take our signal to the \ac{RF} range but we will need to work with an \ac{IF} since the \ac{RF} front-end doesn't handle \ac{DC} or negative frequencies.
+This holds if we do not violate \index{Nyquist sampling theory} which states that to maintain all the information in the analog signal our sampling frequency needs to be $f_s \geq 2BW$ where $BW$ is the bandwidth of the signal. In our case in \eq{mix} the bandwidth of the signal is $f_c$ so $f_s = 2f_c$. We can design a better system than this with the help of an \ac{RF} front-end. An analog mixer will take our signal to the \ac{RF} range but we will need to work with an \ac{IF} since the \ac{RF} front-end does not handle \ac{DC} or negative frequencies.
 
 You can think of the use of the \ac{IF} to be a mapping of frequencies. The \ac{RF} front-end's job is to take the signal and move the frequency content at the \ac{IF} to the carrier frequency. The \ac{RF} front-end is designed with a bandwidth in mind. The input is a bandwidth with frequency content around the \ac{IF} and the output is the same bandwidth with the frequency content around the carrier frequency.
 
@@ -131,11 +127,11 @@ The scale factor of one half is a because we mix the real signal into its \ac{I}
 Now we can discuss generating an $\mathbf{x}$ for a set of bits we would like to send to the receiver. 
 	
 \subsection{Binary Phase Shift Keying (BPSK)}
-	<TODO Subsection Binary Phase Shift Keying (BPSK) : PROOF READ>
+	<TODO Subsection Binary Phase Shift Keying (BPSK) : DONE>
 
-\ac{BPSK} is this simplest method for mapping bits to the \ac{I} and \ac{Q} space. If we break down the name we can get a better understanding of how \ac{BPSK} works. First part of the name is \emph{binary} which \emph{on} and \emph{off} are also binary. So we will have two choices. The next part is \emph{phase shift}. We will be taking a sinusoidal wave varying its phase. In \ac{BPSK} we will have two values of the phase shift. The final part is \emph{keying} which just means that we will be operating on the data and mapping bits to the \ac{I} and \ac{Q} space.
+\index{\ac{BPSK}} is this simplest method for mapping bits to the \ac{I} and \ac{Q} space. If we break down the name we can get a better understanding of how \ac{BPSK} works. The first part of the name is \emph{binary} which means we will have two symbols to represent data. The next part is \emph{phase shift}. We will be taking a sinusoidal wave and vary its phase to relay information. In \ac{BPSK} we will have two values of the phase shift. The final part is \emph{keying} which just means that we will be operating on the data and mapping bits to the \ac{I} and \ac{Q} space.
 
-Now that we have the definition of \ac{BPSK} we can look at some practical examples. First we will look at the signals at the carrier. Then we will look at the signals at \emph{base band} like we discussed in \sect{cmix} we don't need to know what the carrier will be when we design the signal. We can mix to any frequency we like.
+Now that we have the definition of \ac{BPSK} we can look at some practical examples. First we will look at the signals at the carrier. Then we will look at the signals at \emph{base band} like we discussed in \sect{cmix} we do not need to know what the carrier will be when we design the signal. We can mix to any frequency we like.
 
 We need to define two signals. One that will be mapped to a bit $0$ and another that will be mapped to a bit $1$. To distinguish between the two bits \ac{BPSK} uses two different phase values. So we can turn to the equation for a sinusoidal wave:
 
@@ -154,7 +150,7 @@ our \ac{BPSK} symbols where $0 \leq t \leq T_b$.
 
 Now that $s_0$ and $s_1$ are defined, conceptually we can think of sending bits as just appending $s_0$ and $s_1$ to the transmit stream according to the bits we want to send. For example if we wanted to send bits $1010_0110$ we would transmit $s_1, s_0, s_1, s_0, s_0, s_1, s_1, s_0$.
 
-Just as we saw in \sect{cmix} this method is not practical for the same reasons. We also wouldn't want to store $s_0$ and $s_1$ in memory. If we had a large $T_b$ or large $f_s$ then the amount of data will be too large. Once again working with the \emph{base band} signal is the best approach.
+Just as we saw in \sect{cmix} this method is not practical for the same reasons. We also would not want to store $s_0$ and $s_1$ in memory. If we had a large $T_b$ or large $f_s$ then the amount of data will be too large. Once again working with the \emph{base band} signal is the best approach.
 
 We can refine $s_0$ and $s_1$ for the base band signal. The new symbols will be denoted as $s_{B0}$ and $s_{B1}$ to remind ourselves we are at base band. Now we need to determine what $s_{B0}$ and $s_{B1}$ are for \ac{BPSK}. We will start with the easy one $s_{B0}$. We know that to mix $s_{B0}$ we multiply so we can solve:
 
@@ -171,7 +167,7 @@ s_1 = s_{B1}\sin\left(2\pi f_ct\right),
 where $s_1$ has a phase shift of $\pi$ radians. To shift the phase by $\pi$ radians we invert the $\sin$ function, so $s_{B1}=-1$. So now we have our base band symbols defined and we can map the bits we want to send to base band symbols. Once again if we can to send $1010_0110$ we would send to the \ac{RF} front-end the symbols  $s_{B1}, s_{B0}, s_{B1}, s_{B0}, s_{B0}, s_{B1}, s_{B1}, s_{B0}$ or $-1,1,-1,1,1,-1,-1,1$. If it is confusing to map bit $0$ to symbol $1$ and bit $1$ to symbol $-1$ you can switch the mapping as long as the transmitter and receiver are consistent.
 	
 \subsection{Quadrature Amplitude Modulation (QAM)}
-	<TODO Subsection Quadrature Amplitude Modulation (QAM) : PROOF READ>
+	<TODO Subsection Quadrature Amplitude Modulation (QAM) : DONE>
 
 In an effort to increase our data rate over \ac{BPSK} with can use \ac{QAM}. \ac{QAM} is more general than \ac{BPSK}. We saw that \ac{BPSK} only varies the phase of the signal with \ac{QAM} we vary both the phase and the amplitude of the sinusoid. Lets revisit the equation for the sinusoid,
 
@@ -181,57 +177,57 @@ s = A\sin\left(2\pi ft + \phi\right).
 	
 \noindent
 
-where we explicitly add a term $A$ which is the amplitude of the sinusoid. We can now vary $\phi$ and $A$. The number of distinct permutations of $\phi$ and $A$ we have the more bits per $T_b$ we can transmit.
+where we explicitly add a term $A$ which is the amplitude of the sinusoid. We can now vary $\phi$ and $A$. The number of distinct permutations of $\phi$ and $A$ we have more bits per $T_b$ we can transmit.
 
 To increase the data rate we could also work to reduce $T_b$. Making our bit duration smaller would increase our ability to send data faster however when designing a communication system we are usually allocated a set bandwidth. The set bandwidth and the bit duration are inversely related. So to reduce $T_b$ we would need more bandwidth.
 
 Assuming we are allocated as much bandwidth as possible what else can we do to increase our data rate. We can increase our constellation size. Our constellation size is the number of distinct permutations of $\phi$ and $A$. So if we make $A=1$ just like in \ac{BPSK} but we make $\phi$ take one of four values $\frac{\pi}{4}$, $\frac{3\pi}{4}$, $\frac{5\pi}{4}$ or $\frac{7\pi}{4}$. Instead of each symbol representing one bit, with this mapping each symbol can represent two bits. This constellation if referred to as \emph{4-\ac{QAM}}. The base band symbols are, $1+1i$, $1-1i$, $-1+1i$, and $-1-1i$. The symbol set can be write succinctly as $\pm1\pm1i$.
 
-We also have an amplitude term to vary. If we add the ability for $A$ to take on $\pm1$ and $\pm3$ then we have 16-\ac{QAM}. The 16-\ac{QAM} symbols can each represent four bits, where for example the symbol $-3+1i$ could be mapped to $0010$. The mapping between bits and symbols can done in an arbitrary fashion as long as the transmitter and receiver are consistent. However we can squeeze a little better performance out of the system if we employ a concept called \emph{gray coding}.
+We also have an amplitude term to vary. If we add the ability for $A$ to take on $\pm1$ and $\pm3$ then we have 16-\ac{QAM}. The 16-\ac{QAM} symbols can each represent four bits, where for example the symbol $-3+1i$ could be mapped to $0010$. The mapping between bits and symbols can done in an arbitrary fashion as long as the transmitter and receiver are consistent. However we can squeeze a little better performance out of the system if we employ a concept called \emph{\index{gray coding}}.
 
 Before we dive into \emph{gray coding} we need to first talk about the drawbacks are for adding more bits per symbol. If we gain a higher data rate what are we sacrificing to get the higher data rate. We are sacrificing the ability to reliably detect which symbol is sent at the receiver. The receiver will see a corrupted value of the symbol due to channel noise. If the noise is large enough then the symbol will end up being closer to a wrong symbol which will result in bit errors.
 
-We can minimize the \ac{BER} by using a gray coding scheme. This means that the symbols closest to particular symbol should be one bit different. For example, if we map symbol $3+3i$ to $0000$. Then the closest symbols are $1+3i$ and $3+1i$ with a distance of two and $1+1i$ with a distance of $2\sqrt{2}$. If the noise is large enough $3+3i$ could be confused with, most likely, $1+3i$ or $3+1i$. Which is a better mapping for $1+3i$, $1111$ or $0001$. We will want to choose the mapping that produces the least amount of bit errors, so we will choose $0001$. Then for $3+1i$ we can choose $0010$ and so forth such that all adjacent symbols are one bit different.
+We can minimize the \ac{BER} by using a gray coding scheme. This means that the symbols closest to particular symbol should be one bit different. For example, if we map symbol $3+3i$ to $0000$. Then the closest symbols are $1+3i$ and $3+1i$ with a distance of two and $1+1i$ with a distance of $2\sqrt{2}$. If the noise is large enough $3+3i$ could be confused with, most likely, $1+3i$ or $3+1i$. Which is a better mapping for $1+3i$, $1111$ or $0001$? We will want to choose the mapping that produces the least amount of bit errors, so we will choose $0001$. Then for $3+1i$ we can choose $0010$ and so forth such that all adjacent symbols are one bit different.
 
-In practical systems such as \ac{4G-LTE} and \ac{WLAN} they use a varying constellation size. First they transmit some initialization data with \ac{BPSK}. The amount of initialization data is kept to a minimum just enough to estimate how noisy the channel is. Then they agree based on the noise level what constellation size the transmitter and receiver will use. They can use up to a 2048-\ac{QAM} constellation which has $11$ bits per symbol.	
+In practical systems such as \ac{4G-LTE} and \ac{WLAN} they use a varying constellation size. First they transmit some initialization data with \ac{BPSK} \cite{LTEBook}. The amount of initialization data is kept to a minimum just enough to estimate how noisy the channel is. Then they agree based on the noise level what constellation size the transmitter and receiver will use. They can use up to a $2048$-\ac{QAM} constellation which has $11$ bits per symbol.	
 	
 \subsection{Gaussian Minimum Shift Keying (GMSK)}
-	<TODO Subsection Gaussian Minimum Shift Keying (GMSK) : PROOF READ>
+	<TODO Subsection Gaussian Minimum Shift Keying (GMSK) : DONE>
 
-The next modulation scheme we will discuss is \ac{GMSK}, which is more complicated. \ac{GMSK} needs a higher transmit power to achieve the same performance but spectral efficiency is what makes it attractive. Which is why its used in the \ac{GSM} and the Automatic Identification System \ac{AIS}.
+The next modulation scheme we will discuss is \ac{GMSK}, which is more complicated. \ac{GMSK} needs a higher transmit power to achieve the same performance but spectral efficiency is what makes it attractive. Which is why its used in the \ac{GSM} and the Automatic Identification System \ac{AIS} \cite{}.
 
 To understand \ac{GMSK} we will first discuss the \ac{MSK} portion. \ac{MSK} is based on \ac{FSK} where instead of phase or amplitude we use frequency to distinguish between bits. We choose two frequencies $f_0$ and $f_1$ and at the receiver if there is more energy at $f_0$ then a zero was sent if more energy is at $f_1$ a one was sent.
 
-In \ac{MSK} $f_0$ and $f_1$ are set to have a very specific relationship. For each frequency there needs to be an integer number of periods in $T_b$, which then guarantees the transmitted waveform will have continuous phase. Which is opposed to \ac{QAM} where we piece-wise append the next symbol resulting in potentially large jumps in phase.
+In \ac{MSK} $f_0$ and $f_1$ are set to have a very specific relationship. For each frequency there needs to be an integer number of periods in $T_b$, which then guarantees the transmitted waveform will have continuous phase. Which is opposed to \ac{QAM} where we piece-wise append the next symbol results in potentially large jumps in phase.
 
 To use the least amount of bandwidth we would like $f_0$ and $f_1$ to be as close as possible. For this we can make $f_0-f_1=\frac{1}{2T_b}$. With $f_0$ and $f_1$ set we have a \ac{MSK} system defined. We now can move on to the \ac{GMSK}.
 
-One additional step is needed for \ac{GMSK}. After our \ac{MSK} waveform is generated we filter with a Gaussian window. The effect of the Gaussian window limits the frequency variations providing a much narrower bandwidth signal. Once again we get nothing for free. The reduced bandwidth signal will have some \ac{ISI} effects introduced from the Gaussian filter. \ac{ISI} is introduced when symbol energy leaks over to adjacent symbols.
+One additional step is needed for \ac{GMSK}. After our \ac{MSK} waveform is generated we filter with a Gaussian window. The effect of the Gaussian window limits the frequency variations providing a much narrower bandwidth signal. Once again we get nothing for free. The reduced bandwidth signal will have some \ac{ISI} effects introduced from the Gaussian filter. \ac{ISI} is introduced when symbol energy leaks over to adjacent symbols \cite{Skl01}
 
 	
 	
 \subsection{Multiple-Carrier Modulation Schemes}
-	<TODO Subsection Multiple-Carrier Modulation Schemes : PROOF READ>
+	<TODO Subsection Multiple-Carrier Modulation Schemes : DONE>
 
 Multiple-Carrier modulation schemes were developed to address the issue of \ac{ISI}. We discussed \ac{ISI} a little in the previous section. We said that \ac{ISI} occurs when adjacent symbol energy interferes with each other, which also occurs in frequency selective channels.
 
-In a frequency selective channel we model the channel with an impulse response. We will denote this impulse response as, $\mathbf{h}$. The length of $\mathbf{h}$ is $L$ and each element of $\mathbf{h}$ is complex. In general $L$ is not known in a real system but it can be approximated. We can think of $L$ as the number of refections or echoes that the receiver gets of the transmitted waveform. We model the recieved signal by convolving the transmitted signal $x[n]$ with $\mathbf{h}$, so the received signal is:
+In a frequency selective channel we model the channel with an impulse response. We will denote this impulse response as, $\mathbf{h}$. The length of $\mathbf{h}$ is $L$ and each element of $\mathbf{h}$ is complex. In general $L$ is not known in a real system but it can be approximated. We can think of $L$ as the number of refections or echoes that the receiver gets of the transmitted waveform. We model the received signal by convolving the transmitted signal $x[n]$ with $\mathbf{h}$, so the received signal is:
 
 \begin{equation}
 \label{eq:conv}
 y[n] = \sum_{\ell=0}^{L-1}x[n-\ell]h[\ell].
 \end{equation}
 \noindent
-From \eq{conv} we can see the possibility where $y[n]$ can contain energy from more than one symbol. Since each $y[n]$ is a summation of $L$ terms and each of the $L$ term has a different index into $x$, it is possible at some point that $x[n-(L-1)]$ is in one symbol and $x[n]$ (where $\ell=0$) is in an adjecent symbol. And with that \ac{ISI} is present, degrading our system performance.
+From \eq{conv} we can see the possibility where $y[n]$ can contain energy from more than one symbol. Since each $y[n]$ is a summation of $L$ terms and each of the $L$ terms has a different index into $x$, it is possible at some point that $x[n-(L-1)]$ is in one symbol and $x[n]$ (where $\ell=0$) is in an adjacent symbol. And with that \ac{ISI} is present, degrading our system performance.
 
-To \emph{equalize} or undo the \ac{ISI} we would need to be able to perform a costly \emph{deconvolution} operation. Costly in terms of computationally intensive. We can do better. We can take advantage of the time frequency relationship of convolution in the time domain is multiplication in the frequency domain. If we define our symbols in the frequency domain our deconvolution operation becomes division. This is exactly what Multiple-Carrier Modulation Schemes do.
+To \emph{equalize} or undo the \ac{ISI} we would need to be able to perform a computationally intensive \emph{deconvolution} operation. We can do better. We can take advantage of the time frequency relationship of convolution, which states that convolution in the time domain is multiplication in the frequency domain. If we define our symbols in the frequency domain our deconvolution operation becomes division. This is exactly what \index{Multiple-Carrier Modulation Schemes} do.
 
-The two Multiple-Carrier schemes we will discuss here are \ac{OFDM} and \ac{SC-FDMA}. Both of which are used in \ac{4G-LTE}, although the \ac{OFDM} used has a slight variation which we will discuss. Satellite radio also uses \ac{OFDM}. And the case study at the end of this chapter provides an in-depth investigation into how to design an \ac{OFDM} transceiver.
+The two Multiple-Carrier schemes we will discuss here are \index{\ac{OFDM}} and \index{\ac{SC-FDMA}}. Both of which are used in \ac{4G-LTE}, although the \ac{OFDM} used has a slight variation which we will discuss. Satellite radio also uses \ac{OFDM}. And the case study at the end of this chapter provides an in-depth investigation into how to design an \ac{OFDM} transceiver.
 
 \subsubsection{Orthogonal Frequency Division Multiplexing (OFDM)}
- <TODO Subsubsection Orthogonal Frequency Division Multiplexing (OFDM) : PROOF READ>
+ <TODO Subsubsection Orthogonal Frequency Division Multiplexing (OFDM) : DONE>
 
-As we have mentioned Multiple-Carrier Modulation Schemes allocate symbols in the frequency domain. So to start we will first define some notation for the frequency domain signals. If a vector is in the frequency domain we will use a tilde (~) to denote it. So the vector $\tilde{\mathbf{x}}$ is a frequency domain vector. The length of the frequency domain vector is $N$; the number of subcarriers. The $N$ subcarriers are what are referred to in the name and make it a \emph{Multiple-Carrier} Modulation Scheme.
+As we have mentioned Multiple-Carrier Modulation Schemes allocate symbols in the frequency domain. So to start we will first define some notation for the frequency domain signals. If a vector is in the frequency domain we will use a tilde (~) to denote it. So the vector $\tilde{\mathbf{x}}$ is a frequency domain vector. The length of the frequency domain vector is $N$; the number of subcarriers, hence a \emph{Multiple-Carrier} Modulation Scheme.
 
 Just like before we map the bits we are trying to send to the receiver to symbols. You can pick your favorite constellation. Once we have the symbols we can assign $N$ of the symbols to the $N$ available subcarriers. For example, if we have $N=4$ and we use \ac{BPSK} then for bits $1010$ we have:
 
@@ -249,9 +245,9 @@ The $T$ is the transpose operator, we define all vectors as column-vectors. Once
 \noindent
 $\mathbf{x}$ is now in the time domain and is referred to as an \ac{OFDM} symbol. We now can generate \ac{OFDM} symbols for all the bits we want to send but if we stack them back to back we will still have \ac{ISI} induced on the receive signal, but now the \emph{symbol} interference is referring to the \ac{OFDM} symbol. To distinguish this difference \ac{OFDM} symbol interference is referred to as \ac{IBI}. Where an \ac{OFDM} symbol is termed a \emph{block}.
 
-\emph{As an aside: the reason for all the terms and what may seem like splitting hairs is that when you are designing a system and working with a lot of people communicating the steps of the processing can get tideous. To alleviate some of the confusion we try to avoid overloading terms like \bf{symbol}}.
+\emph{As an aside: the reason for all the terms and what may seem like splitting hairs is that when you are designing a system and working with a lot of people communicating the steps of the processing can get tedious. To alleviate some of the confusion we try to avoid overloading terms like \bf{symbol}}.
 
-To avoid \ac{IBI} we will use a \ac{CP}. A \ac{CP} is just a copy of the last, $N_{CP}$ samples of the \ac{OFDM} block prepended to the \ac{OFDM} block. For our example in \eq{ofdmtime} we can set our $N_{CP}=2$. Then we can now define our \ac{OFDM} block with a \ac{CP} as:
+To avoid \ac{IBI} we will use a \ac{CP}. A \ac{CP} is just a copy of the last, $N_{CP}$ samples of the \ac{OFDM} block. The $N_{CP}$ are then pre-pended to the \ac{OFDM} block. For our example in \eq{ofdmtime} we can set our $N_{CP}=2$. Then we can now define our \ac{OFDM} block with a \ac{CP} as:
 
 \begin{equation}
 \mathbf{x}_{cp}= [-2~0~0~0~-2~0]^T.
@@ -311,7 +307,7 @@ Our estimated frequency response is just an \ac{FFT} of the estimated impulse re
 \tilde{\mathbf{h}} = \operatorname{FFT}\left[\hat{\mathbf{h}}\right].
 \end{equation}
  
-Finally, now that we have our estimated frequency response we can estimate the received symbols. For each data tone in \eq{rxfft}, which we will index with $k$ we can equalize the received symbol as,
+Now that we have our estimated frequency response we can estimate the received symbols. For each data tone in \eq{rxfft}, which we will index with $k$ we can equalize the received symbol as,
 
 \begin{equation}
 \hat{\tilde{x}}_k= \frac{\tilde{y}_k}{\hat{\tilde{h}}_k}
@@ -334,9 +330,9 @@ The result of understanding that the \ac{CLT} applies to the time domain signal 
 
 The \ac{PAPR} is clearly defined as the peak power, which as we have just discussed can be quite large due to the \ac{CLT}. The average power however stays relatively low since the Gaussian distribution is symmetric. Which results in a large \ac{PAPR}. To transmit a signal there is a power amplifier in the transmit chain. Power amplifiers need to operate in a linear region for the range of the transmitted signal. With a large \ac{PAPR} the power amplifier needs to have a large linear region of operation, making the power amplifier more expensive in terms of power consumption and dollars to make the system.
 
-When cell phone designs ran into this problem they need to solve this because they needed to make the cell phones as cheaply as possible. Also battery life is a large issue for consumers. Increasing the power required to transmit signal would be very costly for a cell phone. So the came up with a slight variation of \ac{OFDM} called \ac{SC-FDMA}. Which is the topic of the next section.
+When cell phone designs ran into this problem they need to solve this because they needed to make the cell phones as cheaply as possible. Also battery life is a large issue for consumers. Increasing the power required to transmit signal would be very costly for a cell phone. So they came up with a slight variation of \ac{OFDM} called \ac{SC-FDMA} \cite{LTEBook}. Which is the topic of the next section.
 
-Before moving on to \ac{SC-FDMA} which has the ability to support multiple users, we will discuss the multiple user case of \ac{OFDM}, namely \ac{OFDMA}. In \ac{OFDMA} a user is assigned specific subcarriers and has to blank the subcarriers that aren't alloted for the user. So as we are defining our symbols in the frequency domain as in \eq{subcar} we allocate our symbols in our negotiated subcarriers and put zeros where we can't transmit,
+Before moving on to \ac{SC-FDMA} which has the ability to support multiple users, we will discuss the multiple user case of \ac{OFDM}, namely \ac{OFDMA}. In \ac{OFDMA} a user is assigned specific subcarriers and has to blank the subcarriers that are not alloted for the user. So as we are defining our symbols in the frequency domain as in \eq{subcar} we allocate our symbols in our negotiated subcarriers and put zeros where we can not transmit,
 
 \begin{equation}
 \tilde{\mathbf{x}}=\left[0,\dots,0,s,\dots,s,0,\dots,0\right]^T.
@@ -345,9 +341,9 @@ Before moving on to \ac{SC-FDMA} which has the ability to support multiple users
 We then continue with our processing just like before. In this scheme we could support up to $N$ users, each getting one subcarrier. This scheme also allows for easy dynamic subcarrier allocation. The cell phone tower does dynamic carrier allocation where a user (with a cell phone) is inactive, that cell phone is allocated the minimal connection number of subcarriers. Then as the phone becomes more active then as the cell phone requests are answered by the cell tower the cell phone can be allocated more subcarriers to get the data requested back to the user in a timely manner. 
 	
 \subsubsection{Single-Carrier Frequency Division Multiple-Access (SC-FDMA)}
-	<TODO Subsubsection  Single-Carrier Frequency Division Multiple-Access (SC-FDMA) : PROOF READ>
+	<TODO Subsubsection  Single-Carrier Frequency Division Multiple-Access (SC-FDMA) : DONE>
 
-The \ac{SC-FDMA} waveform was designed to reduce the \ac{PAPR}. To do accomplish this we need to reduce the effective $N$ number of samples being averaged in the \ac{FFT} operation. Up until now the number of subcarriers $N$ was equal to the number of samples average in our \ac{CLT} analysis. We can now designate the number of samples in our \ac{CLT} analysis as $N_{CLT}$. The \ac{CLT} says that as $N_{CLT}$ increases the result converges to the Gaussian distribution so reducing $N_{CLT}$ aleviates our \ac{PAPR} issue.
+The \ac{SC-FDMA} waveform was designed to reduce the \ac{PAPR}. To do accomplish this we need to reduce the effective $N$ number of samples being averaged in the \ac{FFT} operation. Up until now the number of subcarriers $N$ was equal to the number of samples averaged in our \ac{CLT} analysis. We can now designate the number of samples in our \ac{CLT} analysis as $N_{CLT}$. The \ac{CLT} says that as $N_{CLT}$ increases the result converges to the \index{Gaussian distribution} so reducing $N_{CLT}$ alleviates our \ac{PAPR} issue.
 
 In \ac{OFDM} (and \ac{OFDMA}) $N_{CLT}=N$; the number of subcarriers. For \ac{SC-FDMA} we group $N_{rb}$ subcarriers together and call it a \emph{resource block}. The grouping of subcarriers then redefines the atomic unit of subcarriers that can be allocated to a user. A user can get one resource block but cannot get fraction of a resource block.
 
@@ -357,20 +353,20 @@ In \ac{SC-FDMA} we will still have $N$ subcarriers but the effective number of a
 \item{Define $N$, $N_{rb}$, $N_{CP}$.}
 \item{Define the number of resource blocks available for this transmission.}
 \item{Define the constellation that will be used.}
-\item{Generate the number of bits that are needed for the constellation size, number of subcarriers in a resource block ($N_{rb}$), and number of resource block allotted to the user.}
+\item{Generate the number of bits that are needed for the constellation size, number of subcarriers in a resource block ($N_{rb}$), and number of resource blocks allotted to the user.}
 \item{For each resource block:}
  \begin{enumerate}
  \item{Define a vector $\mathbf{x}_{rb}$ in the time domain of $N_{rb}$ symbols}
  \item{Take the $N_{rb}$-point \ac{FFT} of $\mathbf{x}_{rb}$}
  \end{enumerate}
 \item{We can now assign the $\tilde{\mathbf{x}}_{rb}$ blocks to $\tilde{\mathbf{x}}$ vector that is the full $N$ subcarriers in the alloted resource block locations.}
-\item{Now we have a $\tilde{\mathbf{x}}$ vector that consists of zeros in resource blocks that aren't allocated to us, and resource blocks that are allocated to us are populated with our data. We can now take the \ac{IFFT}} 
-\item{The last step is to prepend the \ac{CP}. Then we are ready to transmit the resulting signal}
+\item{Now we have a $\tilde{\mathbf{x}}$ vector that consists of zeros in resource blocks that are not allocated to us, and resource blocks that are allocated to us are populated with our data. We can now take the \ac{IFFT}} 
+\item{The last step is to pre-pend the \ac{CP}. Then we are ready to transmit the resulting signal}
 \end{enumerate}
  
 We can start our example by defining our signal parameters as in \emph{Step 1}; $N=64$ subcarriers. We will have our resource blocks be $N_{rb} = 16$ subcarriers with a \ac{CP} of size $N_{CP}=16$. \emph{Step 2} we will assume we have two resource blocks allocated to us, resource block two and four. The resource blocks are counted from \ac{DC} starting at one. Since we have $N/N_{rb}=4$ we will be using the half the bandwidth.
 
-\emph{Step 3}, we will be using $4$-\ac{QAM} for simplicity but in practice we would use the highest order \ac{QAM} we could while maintaining the desired \ac{BER} performance. \emph{Step 4} we can randomly generate the number of bits we need since we don't have a particular application in mind. But we need to calculate how many bits we need. Since we are using $4$-\ac{QAM} we need two bits per symbol. Each resource block has $N_{rb} = 16$ subcarriers. So we need $(2)(16)=32$ bits per resource block. We have two resource blocks so $64$ bits total.
+\emph{Step 3}, we will be using $4$-\ac{QAM} for simplicity but in practice we would use the highest order \ac{QAM} we could while maintaining the desired \ac{BER} performance. \emph{Step 4} we can randomly generate the number of bits we need since we do not have a particular application in mind. But we need to calculate how many bits we need. Since we are using $4$-\ac{QAM} we need two bits per symbol. Each resource block has $N_{rb} = 16$ subcarriers. So we need $(2)(16)=32$ bits per resource block. We have two resource blocks so $64$ bits total.
 
 Moving to \emph{Step 5a} we take the first $32$ bits that were generated in \emph{Step 4} and map them to $4$-\ac{QAM} symbols. After the mapping we have $16$ symbols,
 
@@ -380,7 +376,7 @@ Moving to \emph{Step 5a} we take the first $32$ bits that were generated in \emp
 \end{eqnarray}
 \noindent
 
-Since we have two resource blocks we included a superscript in parentheses to indicate the two difference resource blocks with differnce symbols. In \emph{Step 5b} we take the \ac{FFT} of each resource block,
+Since we have two resource blocks we included a superscript in parentheses to indicate the two difference resource blocks with different symbols. In \emph{Step 5b} we take the \ac{FFT} of each resource block,
 
 \begin{eqnarray}
 \tilde{\mathbf{x}}_{rb}^{(1)}&=&\operatorname{FFT}\left[\mathbf{x}_{rb}^{(1)}\right]\\
@@ -408,56 +404,54 @@ And finally \emph{Step 8} we add our \ac{CP}:
 We the calculation of $\mathbf{x}_{CP}$ we now have a waveform that has a smaller \ac{PAPR}. Which means a cell phones battery will last longer and the cell phone itself is cheaper to make since the power amplifiers do not have to be as high performance. 
 	
 \subsection{Forward Error Correction}
-	<TODO Subsection Forward Error Correction : PROOF READ>
+	<TODO Subsection Forward Error Correction : DONE>
 
-The reason to use \ac{FEC} is simple, if there are bit errors at the receiver can we detect them and possibily correct them. There are many types of \ac{FEC}, with different amounts of complexity. This section looks at the simpiest and most basic form to gain an understanding of how \ac{FEC} works. Then we discuss a popular code called \emph{Reed-Solomon}. And finally the most complex codes are built on \emph{Convolutional codes} in which we will describe the basic structure. 
+The reason to use \ac{FEC} is simple, if there are bit errors at the receiver can we detect them and possibly correct them. There are many types of \ac{FEC}, with different amounts of complexity. This section looks at the simplest and most basic form to gain an understanding of how \ac{FEC} works. Then we discuss a popular code called \emph{Reed-Solomon}. And finally the most complex codes are built on \emph{Convolutional codes} in which we will describe the basic structure. 
 	
 	
 \subsubsection{Basic FEC}
-	<TODO Subsubsection  Basic FEC : PROOF READ>
+	<TODO Subsubsection  Basic FEC : DONE>
 
 This section is only for illustrative purposes to describe the idea of how \ac{FEC} works. There are no commercial applications that apply such a weak code that will be described here. However there is value in the basic examples since the more complex codes use a higher dimensionality of the same problem to strengthen error correction capability.
 
-The \ac{FEC} operation takes in the bits we want to send as an input. Before we would send the bits to be mapped to a constellation but when we are using \ac{FEC} we need to restructure the bits that are going to be sent. So \ac{FEC} takes in the bits to be sent. Then \ac{FEC} manipulates the bits in a certain way (depending on which code is used) then outputs the new bits, usually with some overhead. Then these new bits are the ones that are sent to the constellation mapping.
+The \ac{FEC} operation takes in the bits we want to send as an input. Before, we would send the bits to be mapped to a constellation but when we are using \ac{FEC} we need to restructure the bits that are going to be sent. So \ac{FEC} takes in the bits to be sent. Then \ac{FEC} manipulates the bits in a certain way (depending on which code is used) then outputs the new bits, usually with some overhead. Then these new bits are the ones that are sent to the constellation mapping.
 
-The overhead that the \ac{FEC} adds is a function of the code used and some parameters for the code. Lets say a certain \ac{FEC} code operates on eight bit chunks of data and outputs $10$ bits per eight bit input. How the $10$ bits encode the eight bits will need to be reversed at the receiver to get the original message back.  
+The overhead that the \ac{FEC} adds is a function of the code used and some parameters for the code. Lets say a certain \ac{FEC} code operates on eight bit chunks of data and outputs $10$ bits. How the $10$ bits encode the eight bits will need to be reversed at the receiver to get the original message back.  
 
-Lets take a \emph{5:1} ratio example, for every bit that comes our \ac{FEC} algorithm will output five bits. This is the simplest for where each bit is just replicated five times. Then at the receiver the five bits and be decoded. Even if two of the replications were corrupted the receiver can conclude that if the majority of the bits are a one then a one was set or vice-versa; majority rules.
-
-	
+Lets take a \emph{5:1} ratio example, for every bit that comes our \ac{FEC} algorithm will output five bits. This is the simplest for where each bit is just replicated five times. Then at the receiver the five bits are decoded. Even if two of the replications were corrupted the receiver can conclude that if the majority of the bits are a one then a one was set or vice-versa; majority rules.
 	
 \subsubsection{Reed-Solomon}
-	<TODO Subsubsection  Reed-Solomon : PROOF READ>
+	<TODO Subsubsection  Reed-Solomon : DONE>
 
 \emph{Reed-Solomon} coding is a block code that is used in many commercial products like \ac{CD}s and \ac{DVD}s, even the Voyager space probe \cite{voyager}. The block codes have $k$ message bits and $n$ block output bits. The ratio $R=k/n$. The ratio is important since it directly impacts the throughput of the system. If we have a large $R$ then we need to transmit more bits to get the message at the receiver. If $R$ is closer to one then the strength of the error correction is reduced.
 
-The \emph{Reed-Solomon} algorithm takes $k$ bits and mapps them into a \emph{finite field} of size $q$, where $q$ is a \emph{prime power} \cite{Sklar}. The machanism used there is the same in which we employed when we looked a gray coding our constellations. We take this smaller $k$ space and map it intelligently to a larger $n$ space then if there are a few errors in the $n$ space we can find the closest $n$ space symbol which then can be mapped back to the original message in $k$ space.
+The \emph{Reed-Solomon} algorithm takes $k$ bits and maps them into a \emph{finite field} of size $q$, where $q$ is a \emph{prime power} \cite{Sklar}. The mechanism used there is the same in which we employed when we looked a gray coding our constellations. We take this smaller $k$ space and map it intelligently to a larger $n$ space then if there are a few errors in the $n$ space we can find the closest $n$ space symbol which then can be mapped back to the original message in $k$ space.
 
-The interested reader can find more information on the mathematics behind \emph{Reed-Solomon} coding here \cite{rsmath}. The use of Galois Fields have applications in cryptography and coding theory. 
+The interested reader can find more information on the mathematics behind \emph{Reed-Solomon} coding here \cite{rsmath}. The use of \index{Galois Fields} have applications in cryptography and coding theory. 
 	
 	
 \subsubsection{Convolutional Codes}
-	<TODO Subsubsection  Convolutional Codes : PROOF READ>
+	<TODO Subsubsection  Convolutional Codes : DONE>
 
 Convolutional codes are used in tandem with block codes. The biggest draw back to the convolutional encoding is the decoding process can be computationally intense. The convolutional codes are the most most efficient and if the highest performance is required the convolutional codes are worth the added complexity.
 
-The encoding portion uses $n$ generator polynomials and as the $k$ bits are passed through a $k$ deep shift register the $n$ bit symbols are calculated. The $n$ bit symbols are then what is tranmitted. For the decoding portion at the receiver a construct called a \emph{Trellis Diagram} depicts how the decoding is completed \cite{trellis}.
+The encoding portion uses $n$ generator polynomials and as the $k$ bits are passed through a $k$ deep shift register the $n$ bit symbols are calculated. The $n$ bit symbols are then what are transmitted. For the decoding portion at the receiver a construct called a \emph{Trellis Diagram} depicts how the decoding is completed \cite{trellis}.
 
-The decoding process comes down to the idea that the encoding process is a state machine. The generator polynomials and the bits to be encoded are the inputs that generate the state machine is traversed. The state machine is designed in such a way that if there is an error in the recieved signal the next state is determined to have been an error and enough information is availe to determine the correct next state, which in turn corrects the estimated bit.
+The decoding process comes down to the idea that the encoding process is a state machine. The generator polynomials and the bits to be encoded are the inputs that generate the state machine is traversed. The state machine is designed in such a way that if there is an error in the received signal the next state is determined to have been an error and enough information is available to determine the correct next state, which in turn corrects the estimated bit.
 
 \section{Digital Receiver Design - System Level}
-	<TODO Section Digital Receiver Design - System Level : PROOF READ>
+	<TODO Section Digital Receiver Design - System Level : DONE>
 
 This section details the design and implementation of an \ac{OFDM} receiver. We will generate a transmitted waveform in Python. Where in which we can control the \ac{SNR} of the received signal. The signal will then go through the demodulation and detection phases of a digital receiver. We will put into practice the channel estimation and equalization methods that we have outlined in this Chapter. Once our system model in Python is complete we will look at the performance in relation to the theoretical performance.
 
 We will also provide an analysis of a data rate study. There are a few key parameters that we will be setting for our implementation however, the parameters may not meet your requirements so in the data rate study we provide the tools for you to pick your design parameters and to finely tune your implementation to meet your requirements.
 
-The next step we will take after the system model's performance is verified is start implementing processing blocks in \ac{VHDL}. Each block designed with be individually tested to ensure proper operation. We will use the Python system model to provide a stimulus signal and we will automate the testing of each block.
+The next step we will take after the system model's performance is verified is start implementing processing blocks in \ac{VHDL}. Each block designed will be individually tested to ensure proper operation. We will use the Python system model to provide a stimulus signal and we will automate the testing of each block.
 
 Finally we look at how the \ac{VHDL} is testbenched and the results from the simulations. We characterize the performance of the \ac{VHDL} implementation, there is some degradation of performance since the Python simulation model uses $64$ bit floating point precision and the \ac{VHDL} model will be using less bits with fixed point precision.
 
 \subsection{System Model - OFDM}
- <TODO Subsection System Model - OFDM : PROOF READ>
+ <TODO Subsection System Model - OFDM : DONE>
 
 As we write the system model we will be cognizant of the fact that we will need the ability to save inputs and outputs to stimulate our \ac{VHDL} entities in their testbenchs. So we will start with defining the modules that will be implemented in \ac{VHDL}. This way we can have a one to one mapping of the system model code with the \ac{VHDL} implementation. Since we will be comparing the two very frequently the same naming convention is very handy.
 
@@ -468,9 +462,9 @@ The pilot tones are loaded into the \emph{Matrix Multiply Block} and the result 
 The \emph{Equalize Block} takes in the estimated frequency response and the data tones from the \emph{\ac{FIFO} Block} and divides the received data by the channel estimate. Once complete the equalized symbols get mapped back to bits in the \emph{Symbol Detect Block}.
 
 \subsection{Data Rate Study}
- <TODO Subsection Data Rate Study : PROOF READ>
+ <TODO Subsection Data Rate Study : DONE>
  
-There are two key parameters of the transceiver that directly affect the data rate of the processing on the \ac{FPGA}. It is important before writing any \ac{VHDL} to be certain of these two parameters because if we aren't sure or they change for any reason we may need to go back and re-write some \ac{VHDL} to properly accommodate the changes.
+There are two key parameters of the transceiver that directly affect the data rate of the processing on the \ac{FPGA}. It is important before writing any \ac{VHDL} to be certain of these two parameters because if we are not sure or they change for any reason we may need to go back and re-write some \ac{VHDL} to properly accommodate the changes.
 
 The two key parameters are:
 \begin{enumerate}
@@ -482,35 +476,24 @@ Finding the right clock speed $f_{sys}$ is easier after you know the bandwidth o
 
 Now we can try to relate our required bit rate to bandwidth, so we can set our sample rate, $f_s$. To do this we need to know the type of wireless channel we will be experiencing. For our implementation here we will be testing this in the lab and we can assume a similar wireless channel that a \ac{WLAN} would experience. Since \ac{WLAN}s are widely researched we can pull channel information from the literature, we can use a channel coherence time of $8$ \ac{ms} with a required bit rate of $6$ \ac{Mb} per second \cite{jung2011react}.
 
-% @article{jung2011react,
-  % title={REACT: Rate adaptation using coherence time in 802.11 WLANs},
-  % author={Jung, Hakyung and Cho, Kideok and Choi, Yanghee and others},
-  % journal={Computer Communications},
-  % volume={34},
-  % number={11},
-  % pages={1316--1327},
-  % year={2011},
-  % publisher={Elsevier}
-% }
-
-The bandwidth for a \ac{WLAN} channel can be $20$ \ac{MHz} or $40$ \ac{MHz}, as a result our sample rate needs to be at least $80$ \ac{MHz}. \ac{ADC} \ac{IC}s have common sampling rates at $80$ \ac{MHz} and $105$ \ac{MHz}. The $105$ \ac{MHz} sample rate is the better option to ensure we can see the full $40$ \ac{MHz} due to anti-aliasing \ac{LPF} and other practical limitations we don't want to be on the theoretical limit. So we can now say we are designing our transceiver with $f_s = 105$ \ac{MHz}.
+The bandwidth for a \ac{WLAN} channel can be $20$ \ac{MHz} or $40$ \ac{MHz}, as a result our sample rate needs to be at least $80$ \ac{MHz}. \ac{ADC} \ac{IC}s have common sampling rates at $80$ \ac{MHz} and $105$ \ac{MHz}. The $105$ \ac{MHz} sample rate is the better option to ensure we can see the full $40$ \ac{MHz} due to anti-aliasing \ac{LPF} and other practical limitations we do not want to be on the theoretical limit. So we can now say we are designing our transceiver with $f_s = 105$ \ac{MHz}.
 
 Next we can move to the \ac{FPGA} system clock speed, $f_{sys}$. For this clock speed we need to be aware of what \ac{FPGA} we are planning on targeting. For each family of \ac{FPGA}s there is general guidance for the maximum frequency that logic can be ran. For some lower end \ac{FPGA}s $200$ \ac{MHz} starts to be where closing timing is more difficult. For higher-end \ac{FPGA}s around $400$ \ac{MHz} is where we may start having trouble, depending on the algorithms implemented.
 
 For our implementation we will be targeting a mid-grade \ac{FPGA}. Either the Intel Altera Arria or the Xilinx Kintex UltraScale. We also want our system clock rate to be a power of two integer multiple of the sample clock rate. So we can choose either $f_{sys} = 105$ \ac{MHz} or $f_{sys} = 210$ \ac{MHz}. If we chose $f_{sys} = 105$ \ac{MHz} then any modern \ac{FPGA} would be able to handle the processing. If we chose $f_{sys} = 210$ \ac{MHz} we at least need a mid-grade \ac{FPGA}. We will design our \ac{VHDL} to operate at $f_{sys} = 105$ \ac{MHz}.
 
-A quick note about handling signals that have a large bandwidth. For higher bandwidth signals, lets say $500$ \ac{MHz}, where $f_s$ is at least $1$ \ac{GHz} we interface the \ac{FPGA} to the \ac{ADC} with a \ac{SERDES} interface. The \ac{SERDES} interface takes the high speed serial data from the \ac{ADC} and formats the samples in a parallel fashion for the \ac{FPGA} logic to handle a power of two samples in parallel. For this type of processing we would need to design our \ac{VHDL} to be able to handle multiple samples in parallel.
+A quick note about handling signals that have a large bandwidth. For higher bandwidth signals, lets say $500$ \ac{MHz}, where $f_s$ is at least $1$ \ac{GHz} we interface the \ac{FPGA} to the \ac{ADC} with a \ac{SERDES} interface. The \ac{SERDES} interface takes the high speed serial data from the \ac{ADC} and formats the samples in a parallel fashion for the \ac{FPGA} logic to handle a power of two samples. For this type of processing we would need to design our \ac{VHDL} to be able to handle multiple samples in parallel.
 
 Now we have all of our parameters for our implementation. We will be using an \ac{ADC} sampling at $105$ \ac{MHz} our signal that has up to $40$ \ac{MHz} of bandwidth. The signal processing on the \ac{FPGA} will be running at the same clock speed $105$ \ac{MHz} and we are going to design our \ac{VHDL} to be able to handle data inputs every clock cycle.
 
 \subsection{Module Design}
- <TODO Subsection Module Design : PROOF READ>
+ <TODO Subsection Module Design : DONE>
 
 For each of the seven modules that will be used in the transceiver we will walk through how we are going to design each one. First we will discuss whether we will use existing \ac{IP} from the \ac{FPGA} vendor or write the \ac{VHDL} ourselves. Then we will talk about the input and output interfacing that we will use to ensure proper operation when the system is wired together. 
 
 A quick note on using vendor \ac{IP}. The vendor \ac{IP} is generated for the part you are targeting, so the resulting logic is optimized for the hardware you are using. It is also quick, you can treat the \ac{IP} as a black box and not wonder what is inside it. All you need to do is interface to the \ac{IP} and you are ready to move on to the next module.
 
-However, vendor \ac{IP} is not portable. If you decide to upgrade to a new \ac{FPGA} in the same family you will need to regenerate the \ac{IP}. In most cases this isn't an issue but if they upgrade the logic inside and that has to change the interface then you will need to redesign your interfacing code. If you decide to completely switch \ac{FPGA} vendors then the new \ac{IP} may not be the same at all, if it exists. So to use vendor \ac{IP} is a decision that you should consciously make and be aware of the implications. 
+However, vendor \ac{IP} is not portable. If you decide to upgrade to a new \ac{FPGA} in the same family you will need to regenerate the \ac{IP}. In most cases this is not an issue but if the \ac{FPGA} vendor may upgrade the logic inside and that has to change the interface then you will need to redesign your interfacing code. If you decide to completely switch \ac{FPGA} vendors then the new \ac{IP} may not be the same at all, if it exists. So to use vendor \ac{IP} is a decision that you should consciously make and be aware of the implications. 
  
 {\bf \emph{Preamble Detection Block}}
 
@@ -520,9 +503,9 @@ The preamble is a known sequence at the transmitter and receiver and the optimal
 
 {\bf \emph{\ac{FFT} Block}}
 
-The \ac{FFT} operation a little more complex than the \ac{FIR} filter. For this  block we will be using the \ac{IP} the vendor provides. We will also be writing an \ac{FFT} wrapper block in \ac{VHDL} that takes our common interface and maps it to the \ac{IP} this way if we do switch \ac{FPGA}s all we will need to do is rewrite the wrapper.
+The \ac{FFT} operation a little more complex than the \ac{FIR} filter. For this block we will be using the \ac{IP} the vendor provides. We will also be writing an \ac{FFT} wrapper block in \ac{VHDL} that takes our common interface and maps it to the \ac{IP} this way if we do switch \ac{FPGA}s all we will need to do is rewrite the wrapper.
 
-For this application we could see \ac{OFDM} blocks come in back to back. Right now we haven't determined what the speed in which the \ac{OFDM} block will arrive. Because of this we will be using the streaming architecture for the \ac{FFT} operation. This means that new samples can always be provided to the core.
+For this application we could see \ac{OFDM} blocks come in back to back. Right now we have not determined what the speed in which the \ac{OFDM} block will arrive. Because of this we will be using the streaming architecture for the \ac{FFT} operation. This means that new samples can always be provided to the core.
 
 The streaming architecture is the correct architecture for our application but there is also a burst architecture where once a frame of data is provided the core it is busy and cannot accept any more time domain samples until all the frequency domain samples are read out.
 
@@ -534,17 +517,17 @@ The output of the \ac{FFT} block is $N$ subcarrier samples. Each subcarrier is e
 
 The \ac{FIFO} block stores the data tones until the \emph{Equalize Block} block is ready for them. The \ac{FIFO} must be big enough to hold all $N$ samples even though we know that some of them will be used for pilots. We need room for all $N$ in case we find out that we can use a channel estimate for multiple \ac{OFDM} blocks. If we can then we will overflow a \ac{FIFO} that is smaller than $N$.
 
-For this block we will use the \ac{IP} for the \ac{FIFO}. In this case the interface to the \ac{FIFO} is pretty simple and doesn't change very often. If we go to another ac{FPGA} they likely have a similar interface.
+For this block we will use the \ac{IP} for the \ac{FIFO}. In this case the interface to the \ac{FIFO} is pretty simple and does not change very often. If we go to another ac{FPGA} they likely have a similar interface.
 
 {\bf \emph{Matrix Multiply Block}}
 
 The input to the Matrix Multiply Block is the set of received pilot tones. The received pilot tones are multiplied by the pre-computed inverse \ac{DFT} matrix. We want to make sure this block is generic enough for our wireless channel. We can assume the pilot tones are always at the same indices. In some transceivers they vary the placement of the pilots. For this implementation we will pre-compute and store the entire $(N\times N)$ inverse \ac{DFT} matrix so that we can programmatically place the pilots as needed.
 
-The output of this block is the estimated impulse response. The estimated impulse response is of length $L$. The output of this block will need to zero padd out to $N$ so the next block, the \ac{FFT}, can operate on a full frame of data. There isn't any \ac{IP} that will handle these calculations for us we will be writing \ac{VHDL} ourselves.
+The output of this block is the estimated impulse response. The estimated impulse response is of length $L$. The output of this block will need to zero pad to $N$ so the next block, the \ac{FFT}, can operate on a full frame of data. There is not any \ac{IP} that will handle these calculations for us we will be writing \ac{VHDL} ourselves.
 
 {\bf \emph{Equalize Block}}
 
-The input to the Equalize Block is the estimated frequency response of the channel and the data tones. As the estimated frequency response is sent into this block all $N$ subcarrier will be streaming in. This block ensures the correct channel estimate tone is equalizing the correct received data tone.
+The input to the Equalize Block is the estimated frequency response of the channel and the data tones. As the estimated frequency response is sent into this block all $N$ subcarriers will be streaming in. This block ensures the correct channel estimate tone is equalizing the correct received data tone.
 
 As our \ac{VHDL} lines up the two complex samples they are provided to \ac{IP} that does the division operation. The division operation is performed by a fully pipelined \ac{CORDIC} \ac{IP} and the equalized samples are the output of this block.
 
@@ -553,14 +536,14 @@ As our \ac{VHDL} lines up the two complex samples they are provided to \ac{IP} t
 As equalized data tones are input to the Symbol Detect Block they are mapped back to bits. We will need to write the \ac{VHDL} that also takes as an input what constellation size we will be using. We will start with the easiest $4$\ac{QAM} constellation and add more functionality as needed. 
 
 \subsection{Test Benching - Module Level}
-	<TODO Subsection Test Benching - Module Level : PROOF READ>
+	<TODO Subsection Test Benching - Module Level : DONE>
 
-There are two reasons to testbench each module separately. The first is that when we first write any of these blocks it is likely we will have a bug. If we can isolate our bugs to a particular module then it will be easier to find the bug. Also, it has been known to happen where a bug actually causes something to work. This can be very frustrating when the bug has slightly different inputs and all of a sudden, something we had working is now broken. Turns out it was always broken we just didn't catch it.
+There are two reasons to testbench each module separately. The first is that when we write any of these blocks it is likely we will have a bug. If we can isolate our bugs to a particular module then it will be easier to find the bug. Also, it has been known to happen where a bug actually causes something to work. This can be very frustrating when the bug has slightly different inputs and all of a sudden, something we had working is now broken. Turns out it was always broken we just did not catch it.
 
 The next reason from testbenching each module is that our simulations run faster. When we run the module level simulations we want to thoroughly test all the features of the block. All possible and valid inputs must be tested. This ensures that when we put the entire system together we will have a working design.
 	
 \subsection{Test Benching - System Level}
-	<TODO Subsection Test Benching - System Level : PROOF READ>
+	<TODO Subsection Test Benching - System Level : DONE>
 
 The system level simulation is one in which we simulate the top level transceiver design. This simulation includes all the modules wired up together. If we did our job correctly in the \emph{Module Level} testbench then we have a working transceiver. This testbench ensures this is the case. Sometimes it is hard to make sure we have all possible cases tested in the module level testing.
 
