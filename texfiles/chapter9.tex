@@ -1,21 +1,20 @@
 \chapter{Moving Object Tracking in Real-Time Video}
-	<TODO Chapter Moving Object Tracking in Real-Time Video : PROOF READ>
+	<TODO Chapter Moving Object Tracking in Real-Time Video : DONE>
 
 In this Chapter we discuss the basic image processing algorithms used in real-time video processing applications. The algorithms covered here focus on altering the captured video to highlight or enhance important aspects of the video to alert a user. An example application could include security cameras where motion detection alerts the security guard, or tracking suspicious vehicles outside a guarded area. A more fun application is tracking motion on a person while video chatting so the subject is always in frame. 
 
 	
 \section{Image Processing Algorithms}
-	<TODO Section Image Processing Algorithms : PROOF READ>
+	<TODO Section Image Processing Algorithms : DONE>
 
-Basic image processing algorithms are used regularly in all image processing applications. After a general knowledge of the basic algorithms is understood they can be pieced together to get a working system that is tailored to the application in mind. We start with matrix multiplication, which provides linear image affects like rotation and skew. We then move on to the \ac{FFT} which can be used for image registration. We then add to the functionality to the \ac{FFT} with wavelets. We finish up with convolution.
-
+Basic image processing algorithms are used regularly in all image processing applications. After the general knowledge of the basic algorithms is understood they can be pieced together to get a working system that is tailored to the application in mind. We start with matrix multiplication, which provides linear image affects like rotation and skew. We then move on to the \ac{FFT} which can be used for image registration. We then add to the functionality of the \ac{FFT} with wavelets. We finish up with convolution.
 	
 \subsection{Matrix Multiplication}
-	<TODO Subsection Matrix Multiplication : PROOF READ>
+	<TODO Subsection Matrix Multiplication : DONE>
 
 Matrix multiplication is very useful in image processing since scaling, skew, and highlighting can be accomplished efficiently with spatial transformations. When applying a spatial transformation to an image we first break down the image into many smaller images. 
 
-When we consider a point in the image we narrow our focus to the surrounding pixels. For example if we consider pixel $(x\times y)$ we limit our calculations to the range in $x$ to be $x-1$ to $x+1$ and the $y$ range is $y-1$ to $y+1$. In this method we are able to reduce our calculations to a $3 \times 3$ matrix multiply. 
+When we consider a point in the image we narrow our focus to the surrounding pixels. For example if we consider a pixel $(x\times y)$ we limit our calculations to the range in $x$ to be $x-1$ to $x+1$ and the $y$ range is $y-1$ to $y+1$. In this method we are able to reduce our calculations to a $3 \times 3$ matrix multiply. 
 
 The processes of applying a spatial transformation to an image would then consist of calculating a $3 \times 3$ matrix multiply at each pixel. Clearly if the image is large there are a lot of calculations required. However, we can perform the calculations in parallel since all the matrix multiplies are independent.
 
@@ -28,11 +27,11 @@ for x in range(1,N-1):
 	trans_image(x-1:x+1,y-1:y+1) += timage.
 \end{lstlisting}
 
-Where $T$ is the $3\times 3$ matrix that represents the transformation, \emph{image} is the input image to be transformed, and \emph{trans\_image} is the resulting transformed image. In this code there are a couple of things to notice. As defined we consider the pixel of interest and the eight surrounding pixels. All the edges are special cases. Depending on the transform we will zero-pad a row and column on the left and right and top and bottom of the image. Or we may duplicate that rows and columns to ensure the transformed image is the same dimensions. 
+Where $T$ is the $3\times 3$ matrix that represents the transformation, \emph{image} is the input image to be transformed, and \emph{trans\_image} is the resulting transformed image. In this code there are a couple of things to notice. As defined we consider the pixel of interest and the eight surrounding pixels. All the edges are special cases. Depending on the transform we will zero-pad a row and column on the left and right and top and bottom of the image. Or we may duplicate the rows and columns to ensure the transformed image is the same dimensions. 
  
 The second thing to notice about this is that in the transformed image a pixel will be the summation of nine matrix multiply results. So depending on the transformation we could have up to nine pixels contributing to a single transformed pixel. 
 
-Next we need to define $T$. We discussed $T$ represents the transformation but what does it look like. First we will consider the identity transform. If we apply this transform we get the exact same image back. The identity transform looks like this,
+Next we need to define $T$. We discussed that $T$ represents the transformation but what does it look like. First we will consider the identity transform. If we apply this transform we get the exact same image back. The identity transform looks like this,
 
 \begin{equation}
 \begin{bmatrix}
@@ -54,9 +53,9 @@ Next we consider a spatial lowpass filter. For the lowpass filter $T$ is,
 \end{bmatrix}.
 \end{equation}
 
-For the lowpass filter we weight each pixel by $\frac{1}{9}$ then we sum the nine weighted pixels. This results in each pixel being the average of the surrounding pixels. The lowpass filter is also known as a smoothing filter. If we have sharp edges on our image we can smooth them out with a lowpass filter. 
+For the lowpass filter we weight each pixel by $\frac{1}{9}$ then we sum the nine weighted pixels. This results in each pixel being the average of the surrounding pixels. The \index{lowpass filter} is also known as a smoothing filter. If we have sharp edges on our image we can smooth them out with a lowpass filter. 
 
-The last spatial transform we will present is the highpass filter. The highpass filter can be used to detect edges since edges will have larger differences in color intensity. The larger differences are not attenuated by the highpass filter however the rest of the slowly varying color changes will be filtered to be the same.
+The last spatial transform we will present is the highpass filter. The highpass filter can be used to detect edges since edges will have larger differences in color intensity. The larger differences are not attenuated by the highpass filter however the rest of the slowly varying color changes will be filtered to be the same color.
 
 The highpass filter transform matrix is,
 
@@ -68,10 +67,10 @@ The highpass filter transform matrix is,
 \end{bmatrix}.
 \end{equation}
 
-\cite{image processing book}	
+\cite{gonzalez2002digital}	
 	
 \subsection{Fast Fourier Transform}
-	<TODO Subsection Fast Fourier Transform : PROOF READ>
+	<TODO Subsection Fast Fourier Transform : DONE>
 	
 In the previous section we saw two spatial filter examples. In this section we transition to the frequency domain of an image. For image processing the two dimensional \ac{FFT} is needed. To transform the image into the two dimensional frequency domain we use,
 
@@ -79,7 +78,7 @@ In the previous section we saw two spatial filter examples. In this section we t
 F\left(k,l\right)=\sum_{i=0}^{N-1}\sum_{j=0}^{N-1}f\left(i,j\right)e^{-i2\pi\left(\frac{ki}{N}+\frac{lj}{N}\right)}
 \end{equation}
 
-Once in the frequency domain we can also perform a lowpass filter. Usually the advantage of performing a lowpass filter in the frequency domain is complexity since the \ac{FFT} is more efficient that matrix multiplication. But also we may need to do other processing in the frequency domain anyway. 
+Once in the frequency domain we can also perform a lowpass filter. Usually the advantage of performing a lowpass filter in the frequency domain is reduced complexity since the \ac{FFT} is more efficient than matrix multiplication. But also we may need to do other processing in the frequency domain anyway. 
 
 To implement an ideal lowpass filter in the frequency domain we first need the transfer function of the filter. The transfer function $H(k,l)$ is,
 
@@ -91,7 +90,7 @@ H(k,l) =
 \end{cases}
 \end{equation}
 \noindent
-where $D(k,l)$ is the distance pixel $k,l$ is from the origin or center of the image. In the two dimensional \ac{FFT} result the low frequency region is the center and expanding out increases frequency. If we define a circle with radius $D_0$ and centered at the origin then every frequency inside the circle is not attenuated in the ideal filter and every frequency outside the circle is removed. 
+where $D(k,l)$ is the distance pixel $k,l$ is from the origin or center of the image. In the two dimensional \ac{FFT} result the low frequency region is the center and frequency increases while expanding out from the center. If we define a circle with radius $D_0$ and centered at the origin then every frequency inside the circle is not attenuated in the ideal filter and every frequency outside the circle is removed. 
 
 We have now seen two ways to implement a lowpass filter. The first method was in the spatial domain and the other the in frequency domain. The advantage to the frequency domain implementation is that once the \ac{FFT} is complete a simple element-wise multiplication is needed. Then an \ac{IFFT} back to the spatial domain is needed. 
 
@@ -109,7 +108,7 @@ C_{f,h}(x,y) = \frac{1}{MN}\sum_{m=0}^{M}\sum_{n=0}^{N}f^*(m,n)h(x+m,y+n).
 However since we are in the frequency domain we are able to calculate $C_{f,h}(x,y)$ with less computational complexity. To do this we first need to remember that convolution in the spatial domain is multiplication in the frequency domain. Next, since the correlation that we are interested in is very similar to convolution it can be shown that correlation in the frequency domain is equivalent to $F^*(k,l)H(k,l)$. In the frequency domain we multiply the images and take the \ac{IFFT} to get back to the spatial domain. 
 
 \subsection{Wavelets}
-	<TODO Subsection Wavelets : PROOF READ>
+	<TODO Subsection Wavelets : DONE>
 
 Wavelets build on the Fourier analysis by introducing a \emph{mother function}. The mother function is denoted by $\Psi$. The mother function can be selected based on the application but here we will look at the simplest mother function the \emph{haar} function.
 
@@ -124,14 +123,14 @@ For our image processing application we are interested in the discrete wavelet t
 Y[n,m] = \frac{1}{\sqrt{c_0^n}}\sum_{k=0}^{K-1}y[k]\Psi\left[\left(\frac{k}{c_0^n}-m\right)T\right].
 \end{equation}
 \noindent
-where $c_0^n$ is the discretized scaling factor and $\Phi$ is sampled in the frequency domain. The definition in the frequency domain allow the ability to benefit from the wavelet analysis with minimal complexity. 
+where $c_0^n$ is the discretized scaling factor and $\Phi$ is sampled in the frequency domain. The definition in the frequency domain allows us to benefit from the wavelet analysis with minimal complexity. 
 
-For signal and image processing the wavelet is a great tool for de-noising signals and de-blurring images. The wavelet transform is used for to calculation a deconvolution. Wavelet based deconvolution algorithms can be iterative which leads to data rate considerations. For more information on wavelet deconvolution see \cite{Emerging applications of wavelets: A review}.
+For signal and image processing the wavelet is a great tool for de-noising signals and de-blurring images. The wavelet transform is used to calculate a deconvolution. Wavelet based deconvolution algorithms can be iterative which leads to data rate considerations. For more information on wavelet deconvolution see \cite{akansu2010emerging}.
 
 \section{Kalman Filters}
-	<TODO Section Kalman Filters: PROOF READ>
+	<TODO Section Kalman Filters: DONE>
 
-Kalman filter is estimates and tracks a \emph{true state}. The true state is corrupted by process and observation noise. The noise in the system corrupts an observation that we will use a Kalman filter to reduce the noise corruption. 
+The Kalman filter estimates and tracks a \emph{true state}. The true state is corrupted by process and observation noise. The noise in the system corrupts an observation that we will use in a Kalman filter to reduce the noise corruption. 
 
 The perfect image that we hope to estimate is denoted $\mathbf{x}_k$, with $k$ denoting the frame number that we wish to estimate. As we iterate through images, say in a video, we update our estimate of the true state, denoted $\hat{\mathbf{x}}_k$.
 
@@ -142,22 +141,12 @@ The relation between the true state and the observation is modeled as,
 \noindent 
 Where $\mathbf{z}_k$ is the observation, $\mathbf{x}_k$ is the true state and $\mathbf{H}_k$ transforms $\mathbf{x}_k$ into the observation state and $\mathbf{v}_k$ is observation noise. 
 
-Next we need to understand how the underlying model for the the true state is dependent on the previous frames. The true state at $k$ depends on the state at $k-1$ and a transition model. The true state is updated as,	
+Next we need to understand how the underlying model for the true state is dependent on the previous frames. The true state at $k$ depends on the state at $k-1$ and a transition model. The true state is updated as,	
 \begin{equation}
 \mathbf{x}_k = \mathbf{F}_k\mathbf{x}_{k-1} + \mathbf{B}_k\mathbf{u}_{k} + \mathbf{w}_k.
 \end{equation}
 \noindent
 Where $\mathbf{F}_k$ is the state transition model. This models how previous images in the video are transformed to the new image. For example if the background is not changing the transition model is the identity for those regions. If there are rotations or skew introduced from the previous image then $\mathbf{F}_k$ also models these changes.
-
-% k is the time index
-% F is the state transition model
-% H is the observation model
-% Q is the covariance of the process noise
-% R is the covariance of the observation noise
-% B is the control-input model
-% u control vector
-% w process noise ~ N(0,Qk)
-% observation zk is
 
 Next $\mathbf{B}_k$ and $\mathbf{u}_{k}$ are the control model and control vector respectively. These terms model the input to the system that is not dependent on the previous frame. $\mathbf{B}_k\mathbf{u}_{k}$ would model how and where in the frame a new object is placed for example. Finally $\mathbf{w}_k$ is the process noise in the system.
 
@@ -210,13 +199,4 @@ And finally we have the post-fit residual error,
 \noindent
 which is used in the next iteration when $k$ is incremented to $k+1$. 
 
-Clearly if the state $\mathbf{x}$ is large the calculations in the Kalman filter can be computationally intractable. Some dimensionality reduction techniques can be applied to reduce the problem down to a manageable size. 
-
-
-
-
-
-
-
-
-
+Clearly if the state $\mathbf{x}$ is large the calculations in the Kalman filter can be computationally intractable. Some dimensionality reduction techniques can be applied to reduce the problem down to a manageable size. For more information see \cite{Kay98}.

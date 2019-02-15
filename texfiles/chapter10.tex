@@ -1,10 +1,10 @@
 \chapter{Machine Learning Algorithms}
-	<TODO Chapter Machine Learning Algorithms : PROOF READ>
+	<TODO Chapter Machine Learning Algorithms : DONE>
 	
 This chapter is an overview of common machine learning algorithms. First the algorithm itself is presented but perhaps more importantly the scenarios in which to use the algorithm is illustrated with an example. In this way you will add tools to your machine learning tool box but also know when to use them. 
 
 \section{K-Nearest Neighbors Algorithm}
-	<TODO Section K-Nearest Neighbors Algorithms : PROOF READ>
+	<TODO Section K-Nearest Neighbors Algorithms : DONE>
 	
 The \ac{KNN} algorithm is one of the simplest algorithms that is used in machine learning. The \ac{KNN} is used to group similar things together. The most popular application is the recommended products feature on some websites. Where you have selected to view an item, the website will take that item you viewed as an input to the \ac{KNN} algorithm, find the five or so items that are similar and present them to the user.
 
@@ -21,36 +21,36 @@ We calculate the distance between the $\mathbf{D}_u$ and $\mathbf{D}_v$ which we
 A quick note on the algorithm's complexity. If we have a large number of products, $N_P$, we will need to search over the entire catalog of products. Of course we want to return the recommended products as quickly as possible to the user to provide a great user experience. We are able to pre-calculate the distances between the products and store the results. We can reduce the amount of calculation required while we are on the user's clock. 
 	
 \section{Linear Regression}
-	<TODO Section Linear Regression : PROOF READ>
+	<TODO Section Linear Regression : DONE>
 	
 \index{Linear Regression}, in it's simplest form, models the relationship between an independent variable and a dependent variable. Once the relationship is characterized then any future scenario can be analyzed. The dependent variable can be predicted based on the independent variable for the new scenario. 
 
-You may have already performed some Linear Regression and not realized it. If in high school or undergraduate studies you may have had a paper to write or a book to read. You can time yourself to determine how long it takes you to write or read one page. Then since you know how many total pages you have to read or write you can determine how long it will take you total to finish writing or reading your paper or book respectively. 
+You may have already performed some Linear Regression and not realized it. If in high school or undergraduate studies you may have had a paper to write or a book to read. You can time yourself to determine how long it takes you to write or read one page. Then since you know how many total pages you have to read or write you can determine how long it will take you in total to finish writing or reading your paper or book respectively. 
 
 In this scenario the independent variable is the number of pages you need to write or read. The amount of time you spend writing or reading a page is the \emph{slope} or rate at which you accomplish the work. Then the simple multiplication of the number of pages times the rate results in the total time needed to finish the assignment. 
 
-To formally map this to a mathematical model we first consider the linear equation we learned in school,
+To formally map this to a mathematical model we first consider the linear equation we learned in school \cite{boa06},
 
 \begin{equation}
 y = mx+b.
 \label{eq:svlinmodel}
 \end{equation}
 \noindent
-The independent variable is $x$ the total number of pages, $m$ is the rate or the amount of time per page, $y$ is the dependent variable or the total time to accomplish the task. We haven't discussed $b$ which could model a constant setup time to start writing or reading. In this scenario $b=0$ is probably a good assumption. 
+The independent variable is $x$ the total number of pages, $m$ is the rate or the amount of time per page, $y$ is the dependent variable or the total time to accomplish the task. We have not discussed $b$ which could model a constant setup time to start writing or reading. In this scenario $b=0$ is probably a good assumption. 
 
 Lets look at the book reading example a little closer. Lets say we are reading a fictional novel and we determine $m$. We can figure out how long it will take the read the book. Then we decide to read another fictional novel where the pages are about the same size. There is not really a reason to determine what $m$ is again we can just use the previous value of $m$. 
 
-However, can we use the same $m$ for reading and absorbing the material from a dense mathematics book. No, in this case or $m$ value would be smaller. We would need to take more time on each page since not only are the pages longer but also we probably can't just read a page once and move on.
+However, can we use the same $m$ for reading and absorbing the material from a dense mathematics book. No, in this case or $m$ value would be smaller. We would need to take more time on each page since not only are the pages longer but also we probably can not just read a page once and move on.
 
-So a word of caution here is that if we \emph{train} under some circumstance to obtain a value for $m$. In this example, the \emph{training} was timing ourselves reading a page, or better yet reading 10 pages and averaging the results. If we \emph{train} under a particular circumstance $m$ should only be used for similar scenarios. 
+So a word of caution here is that if we \emph{train} under some circumstance to obtain a value for $m$. In this example, the \emph{training} was timing ourselves reading a page, or better yet reading $10$ pages and averaging the results. If we \emph{train} under a particular circumstance $m$ should only be used for similar scenarios. 
 
-The training under similar scenarios sounds obvious but there may be some applications where maybe there are underlying assumptions that we don't know we are making. In the next example we will see how this could be true in the housing market. 
+The training under similar scenarios sounds obvious but there may be some applications where maybe there are underlying assumptions that we do not know we are making. In the next example we will see how this could be true in the housing market. 
 
-Before we dive into the next example we should define the single variant model, like we saw above and the multi variant model, which we will see in the next example. In the signal variant case we only considered an independent variable of one dimension, total pages. Next we will look at a model that considers multiple variables that all need to be considered in the dependent variable. 
+Before we dive into the next example we should define the single variant model, like we saw above and the multi-variant model, which we will see in the next example. In the signal variant case we only considered an independent variable of one dimension, total pages. Next we will look at a model that considers multiple variables that all need to be considered in the dependent variable. 
 
 Our next example discusses a model for valuing a house. There are of course many factors that go into the value of a house. The size of the house in square feet is a metric that would influence the house value. How about number of bedrooms, bathrooms, size of kitchen, size of yard, school district quality, and age of the house. 
 
-We just listed seven metrics that could be used to value a house. I'm sure you can double that list if you wanted but the point here is that we need to consider as many variables as we can to accurately predict the house's value. We know need to define an equation to model our multi variant system. We can change \eq{svlinmodel} to,
+We just listed seven metrics that could be used to value a house. I'm sure you can double that list if you wanted but the point here is that we need to consider as many variables as we can to accurately predict the house's value. We now need to define an equation to model our multi-variant system. We can change \eq{svlinmodel} to,
 
 \begin{equation}
 y = \mathbf{m}^T\mathbf{x} + b.
@@ -62,19 +62,19 @@ Next we can define the vector $\mathbf{m}$ which is another list of numbers of t
 
 There are a few ways in which we could use this model. First we could come up with all the possible metrics of a house and organize them in $\mathbf{x}$ and $\mathbf{m}$ then do some market research in different neighborhoods in America and look at the going rates and try to calculate the $\mathbf{m}$ values for different places. Clearly New York City will be different than rural Iowa. If you are doing research on trends in housing maybe this is useful. 
 
-We could also use this model in a different way and this way is think would be more applicable to a broader audience. In this model we populate $\mathbf{x}$ and $\mathbf{m}$ we metrics that are valuable to you. If you have to have a house that has more than five bedrooms you put the number of bedrooms on the list. If you want to have a lot of land then that is another metric to put into $\mathbf{x}$. After compiling the list you can then look at some houses that may meet some of your wishes the idea would be to use metrics that include both \emph{have to haves} and also \emph{like to haves} so that a house either doesn't meet the basic needs, exceeds basic needs. Then you can choose the house that exceeds the basic needs for the right price. 
+We could also use this model in a different way and this way is think would be more applicable to a broader audience. In this model we populate $\mathbf{x}$ and $\mathbf{m}$ with metrics that are valuable to you. If you have to have a house that has more than five bedrooms you put the number of bedrooms on the list. If you want to have a lot of land then that is another metric to put into $\mathbf{x}$. After compiling the list you can then look at some houses that may meet some of your wishes the idea would be to use metrics that include both \emph{have to haves} and also \emph{like to haves} so that a house either does not meet the basic needs, exceeds basic needs. Then you can choose the house that exceeds the basic needs for the right price. 
 
-The second use for this model then doesn't have to have an $\mathbf{m}$ vector that has dollar amounts tied to bathrooms, which is difficult to calculate. Instead we can have relative weights or percentages be used. If a smaller house is desired, like downsizing in retirement then the weight assigned to square-footage is higher when square-footage is low. In this case at the end of the calculation you can compare the weighted result for all the houses to determine which one is most appropriate for you and your family. 
+The second use for this model then does not have to have an $\mathbf{m}$ vector that has dollar amounts tied to bathrooms, which is difficult to calculate. Instead we can have relative weights or percentages be used. If a smaller house is desired, like downsizing in retirement then the weight assigned to square-footage is higher when square-footage is low. In this case at the end of the calculation you can compare the weighted result for all the houses to determine which one is most appropriate for you and your family. 
 
 In general \index{Linear Regression} models a relationship between independent variables and dependent variables. The relationship is characterized by the single scalar $m$, vector $\mathbf{m}$, or $\mathbf{m}$ can be defined as a matrix which relates the independent variables to multiple dependent variable with a different linear combination or weighting. No matter the number of variables the calculation of $\mathbf{m}$ should only be applied in the context for which it was calculated. For the housing example above $\mathbf{m}$ may need to be recalculated if the housing market changes or your budget changes. 
 
 
 \section{Linear Discriminant Analysis}
-	<TODO Section Linear Discriminant Analysis : PROOF READ>
+	<TODO Section Linear Discriminant Analysis : DONE>
 
-\index{Linear Discriminant Analysis} is used to reduce the number of dimensions of a problem to enable timely execution of the calculations. Similar to \ac{PCA} the analysis is performed to first reduce the dimensions needs then to perform the task first set out to do. 
+\index{Linear Discriminant Analysis} is used to reduce the number of dimensions of a problem to enable timely execution of the calculations. Similar to \ac{PCA} the analysis is performed to first reduce the dimensions needed then to perform the task first set out to do. 
 
-In this section we will look at the algorithm to do face recognition. To do facial recognition we first must train the algorithm to know who we can recognize. Assume we have an image of a person where $\mathbf{P}$ is $(M\times N)$ pixels. Furthermore we have a $\mathbf{P}$ for each person say a total of $N_T$ people we would like to be able to recognize. 
+In this section we provide an example of facial recognition. To do facial recognition we first must train the algorithm to know who we can recognize. Assume we have an image of a person where $\mathbf{P}$ is $(M\times N)$ pixels. Furthermore we have a $\mathbf{P}$ for each person, say a total of $N_T$ people we would like to be able to recognize. 
 
 To make this example more concrete say we are implementing a security system where a camera is used at the front door. If any of the $N_T$ employees we have walk up to the door we can recognize them and allow them to come in, otherwise we can take further action as necessary. When an employee is hired we need to take a picture of them for a badge \ac{ID} which is common now. This same picture can be our $\mathbf{P}$ used for the new employee. 
 
@@ -84,7 +84,7 @@ Next we need to construct a vectorized representation of all the $N_T$ images we
 \mathbf{T} = \left[\operatorname{vec}(\mathbf{P}_1),\dots,\operatorname{vec}(\mathbf{P}_{N_T})\right].
 \end{equation}	
 	
-After the construction of $\mathbf{T}$ we can compute the \ac{SVD} of $\mathbf{T}$. The \ac{SVD} is a computationally intensive algorithm but we will only need to do this in the training phase of the algorithm. We decompose $\mathbf{T}$ with \ac{SVD} as,
+After the construction of $\mathbf{T}$ we can compute the \ac{SVD} of $\mathbf{T}$. The \ac{SVD} is a computationally intensive algorithm but we will only need to do this in the training phase of the algorithm. We decompose $\mathbf{T}$ with \ac{SVD} as \cite{Str09},
 
 \begin{equation}
 \mathbf{T}=\mathbf{U}\mathbf{\Sigma}\mathbf{V}^T.
@@ -98,7 +98,7 @@ Now we can use the \ac{SVD} to get the eigenvalues and eigenvectors of the matri
 &=&\mathbf{U}\mathbf{\Lambda}\mathbf{U}^T.
 \end{eqnarray}	
 
-Now that we have the eigenvalues we can reduce dimensions, via the \ac{PCA} method but removing the dimensions with the smaller eigenvalues. We will now define $\mathbf{U}_{PCA}$ that has $k$ eigenvectors that correspond to the $k$ largest eigenvalues. 
+Now that we have the eigenvalues we can reduce dimensions, via the \index{\ac{PCA}} method but removing the dimensions with the smaller eigenvalues. We will now define $\mathbf{U}_{PCA}$ that has $k$ eigenvectors that correspond to the $k$ largest eigenvalues. 
 
 For the \ac{LDA} we need to define two matrices. The first we already calculated which is the \emph{within} image scatter. We will denote the \emph{within} covariance as $\mathbf{S}_w$ which is going to be our $\mathbf{T}\mathbf{T}^T$. The second matrix we need to define is the \emph{between} image scatter, $\mathbf{S}_b$. To calculate $\mathbf{S}_b$ we first need the average across images, $\mathbf{\mu}_P = \expec{T}$. The result is a vector of length $NM$. This is opposed to the mean of an image, which would result in a vector of length $N_T$.
 
@@ -124,17 +124,13 @@ We now need the eigenvalues for $\mathbf{S}_b\mathbf{S}_w^{-1}$ which are obtain
 \noindent
 Where once again $\mathbf{U}_{LDA}$ are the eigenvectors with $\mathbf{\Lambda}_{LDA}$ is a diagonal matrix with the eigenvalues. We can perform a dimension reduction based on eigenvalue by keeping the $k$ largest eigenvalues and associated eigenvectors. 
 
-Now that \ac{PCA} and \ac{LDA} are defined we can move forward with the facial recognition algorithm. We first need to project our training images into the eigenspace that our \ac{PCA} or \ac{LDA} produced. 
+Now that \ac{PCA} and \ac{LDA} are defined we can move forward with the facial recognition algorithm. We first need to project our training images into the \index{eigen-space} that our \index{\ac{PCA}} or \index{\ac{LDA}} produced. 
 
-The term \emph{eigenface} identifies the image in the \ac{PCA} eigenspace. The term \emph{fisherface} is used for an image in the \ac{LDA} space. The term \emph{fisher} is used since $\mathbf{S}_b\mathbf{S}_w^{-1}$ is referred to as the Fisher matrix. From here we define our two \emph{faces} as,
+The term \emph{\index{eigenface}} identifies the image in the \ac{PCA} eigenspace \cite{turk1991eigenfaces}. The term \emph{\index{fisherface}} is used for an image in the \ac{LDA} space. The term \emph{fisher} is used since $\mathbf{S}_b\mathbf{S}_w^{-1}$ is referred to as the Fisher matrix. From here we define our two \emph{faces} as,
 
 \begin{equation}
 \mathbf{F}_E = \mathbf{T}\mathbf{U}_{PCA}~~~~~~~~\mathbf{F}_F = \mathbf{T}\mathbf{U}_{LDA}
 \end{equation}	
-
-\cite{eigenfisherface}
-
-% CITATIONClose[8] M. Turk; A. Pentland (1991). "Eigenfaces for recognition" (PDF). Journal of Cognitive Neuroscience. 3 (1): 71–86. doi:10.1162/jocn.1991.3.1.71. PMID 23964806
 
 We are now ready to analyze a new image. Going back to our security system example. We are ready now to start the camera and as people walk up to our door we take an image, after we take the image we vectorize the image, $\mathbf{n}=\operatorname{vec}{\mathbf{P}}$. Next we need to project the new image into the eigenspace of our choosing resulting in $\mathbf{W}$,
 \begin{equation}
@@ -147,14 +143,14 @@ Next we compare $\mathbf{W}$ to the respective $\mathbf{F}$ we subtract and find
 \mathbf{d} = \norm{\mathbf{F}-\mathbf{W}}^2.
 \end{equation}	
 
-The smallest distance represents the most similar image. Some testing is needed depending on the camera resolution and other factors like lighting and the ability to get the person to be looking directly at the camera. In practical systems some experimentation is used to determine ranges for which the distance metric can fall into. If the minimum distance is low enough then the face is recognized. If the minimum distance is low but not low enough to be a match then the face isn't in the library of trained images. Or if the lowest distance is very high the image isn't a face at all. Depending on the system some of the information may not be useful. 
+The smallest distance represents the most similar image. Some testing is needed depending on the camera resolution and other factors like lighting and the ability to get the person to be looking directly at the camera. In practical systems some experimentation is used to determine ranges for which the distance metric can fall into. If the minimum distance is low enough then the face is recognized. If the minimum distance is low but not low enough to be a match then the face is not in the library of trained images. Or if the lowest distance is very high the image is not a face at all. Depending on the system some of the information may not be useful. 
 	
 \section{Neural Networks}
-	<TODO Section Neural Networks : PROOF READ>
+	<TODO Section Neural Networks : DONE>
 
-Neural Networks are networks of configured \emph{artificial neurons}. An artificial neuron is modeled after the neurons in the human brain. The hope is that if the model is realistic then the cognitive ability of a human could manifest in an artificial being. 
+Neural Networks are networks of configured \emph{artificial neurons}. An \index{artificial neuron} is modeled after the neurons in the human brain. The hope is that if the model is realistic then the cognitive ability of a human could manifest in an artificial being. 
 
-Understanding how Neural Networks work can be rather abstract, since there is not line-by-line code that we can follow like the other algorithms outlined. Instead we will first need to grasp the concept of what the basic building block is, the \emph{Perceptron}. 
+Understanding how Neural Networks work can be rather abstract, since there is not line-by-line segment of code that we can follow like the other algorithms outlined. Instead we will first need to grasp the concept of what the basic building block is, the \emph{Perceptron}. 
 
 The Perceptron is modeled in two stages. The first stage is the linear stage. Where the $N$ inputs, $\mathbf{x}\in \mathbb{R}^N$ are mapped to the output of the first stage by a weight vector $\mathbf{w}\in \mathbb{R}^{N}$. The output can also be biased by a term $b\in \mathbb{R}$. The output of the linear stage is,
 
@@ -166,7 +162,7 @@ In the first stage the configurable part of the equation is the weights vector, 
 
 The second stage is the non-linear aspect of the Perceptron. For this stage we will choose the simplest \emph{activation function} where the sign of $y$ is the output of the Perceptron. For this activation function we simply have a threshold detection where the threshold is $b$. 
 
-The initial state of the Perceptron is seeded with random weights. Next we need to go into the training phase of Perceptron or as we add more the network needs to be trained together. For now we can look at training just one Perceptron. To do this we need to have an application in mind. The smallest interesting example is a $N=2$ where $\mathbf{x}$ consists of two coordinates in an XY-Plane. 
+The initial state of the \index{Perceptron} is seeded with random weights. Next we need to go into the training phase of Perceptron or as we add more the network needs to be trained together. For now we can look at training just one Perceptron. To do this we need to have an application in mind. The smallest interesting example is a $N=2$ where $\mathbf{x}$ consists of two coordinates in an XY-Plane. 
 
 We will use a Perceptron to determine if the point $\mathbf{x}=[x_1,~y_1]$ is on one side or the other of a line. To do this we first need to pick a particular line. Next we generate some randomized points, we will denote the training points $\mathbf{P}_T\in \mathbb{R}^{N_T\times 2}$ where $N_T$ is the number of training points generated and the two columns correspond to the two dimensions of the XY-Plane. 
 
@@ -180,21 +176,19 @@ Now we can start our training of the Perceptron. First we launch $P_T[1]$ into t
 
 We continue to update the weights through all the points in $\mathbf{P}_T$. If $N_T$ was large enough the Perceptron was trained well. However if $N_T$ is not large enough then the weights will not have time to reach the optimal value. One mechanism we can add to the weight update equation is a constant that slows down or speeds up the weight updating. 
 
-Speeding up the weight calculations will aid us in using less training data. Which is helpful if the application we are targeting doesn't allow us to generate a lot of data points. However, the reason for slowing down the weight updates is that if we are updating in large jumps we may be over-shooting in each training data point.
+Speeding up the weight calculations will aid us in using less training data. Which is helpful if the application we are targeting does not allow us to generate a lot of data points. However, the reason for slowing down the weight updates is that if we are updating in large jumps we may be over-shooting in each training data point.
 
-Another word of caution is that if we use a training set that wasn't representative of the test data then we will clearly perform sub-optimally. For our example here we could generate random data points for $\mathbf{P}_T$ in a small range of the XY-Plane. But then after training we see data in a different range the weights won't be trained in domain of the line, resulting in an inaccurate classification.
+Another word of caution is that if we use a training set that was not representative of the test data then we will clearly perform sub-optimally. For our example here we could generate random data points for $\mathbf{P}_T$ in a small range of the XY-Plane. But then after training we see data in a different range the weights will not be trained in the domain of the line, resulting in an inaccurate classification.
 
 	
 \section{Support Vector Machines}
-	<TODO Section Support Vector Machines : PROOF READ>
+	<TODO Section Support Vector Machines : DONE>
 	
 \ac{SVM}s look to classify training data into two groups. The \ac{SVM} in two dimensions calculates a line that splits the training data into the two groups with the maximum \emph{margin} between the closet training points. 
 
 We will continue with the same notation as in the previous section. We denote our $N_T$ training points as $\mathbf{P}_T$. Next we will characterize the \emph{hyperplane} that separates our classes. Since our example is two dimensions then our hyperplane is a line. If we were classifying in three dimensions then our hyperplane is a plane. 
 
 To fully characterize our line we have the vector $\mathbf{w}$ which are the weights that are applied to the training points to calculate our line. We also have a $y$-intercept point $b$ that is also varied to maximize our margin. 
-
-<TODO Section Support Vector Machines : ADD PLOT>
 
 The line that separates our classes is then given by,
 
@@ -214,7 +208,7 @@ and
 \mathbf{P}[i]_T \in \mathbf{P}^{(-1)}_T ~~~ \text{when} \mathbf{\tau}[i] = -1.
 \end{equation}
 
-From these definitions we can further constraint our optimization problem with,
+From these definitions we can further constrain our optimization problem with,
 
 \begin{equation}
 \mathbf{w}\mathbf{P}^{(1)}_T - b \geq 1,
@@ -226,18 +220,18 @@ and
 \mathbf{w}\mathbf{P}^{(-1)}_T - b \geq -1.
 \end{equation}
 
-Once we have calculated $\mathbf{w}$ we then have to find $b$. Where $b$ is the distance between $\mathbf{w}\mathbf{P}^{(-1)}_T$ and the $y=x$ line. Finally, to calculate our margin we or the separation of the two classes is just, $2\norm{\mathbf{w}}^{-1}$.
+Once we have calculated $\mathbf{w}$ we then have to find $b$. Where $b$ is the distance between $\mathbf{w}\mathbf{P}^{(-1)}_T$ and the $y=x$ line. Finally, we can calculate our margin or the separation of the two classes, by $2\norm{\mathbf{w}}^{-1}$.
 
 \section{K-Means Clustering}
-	<TODO Section K-Means Clustering : PROOF READ>
+	<TODO Section K-Means Clustering : DONE>
 
-The K-Means Clustering algorithm introduction will use an example in image processing. We will not only look at the K-Means clustering algorithm but we will also need to look at how to preprocess the image in order to get the best results from the output of the K-Means algorithm. 
+In our K-Means Clustering algorithm introduction will use an example in image processing. We will not only look at the \index{K-Means clustering algorithm} but we will also need to look at how to pre-process the image in order to get the best results from the output of the K-Means algorithm. 
 
 There are challenges with a practical image, for instance if we have a soccer ball that is black and white. The \ac{RBG} values are used to segment the image but we want the soccer ball pixels grouped together. The output of the K-Means Clustering algorithm will not do this for us. We need to use some logic in determining where the object is in the picture.
 
-The first issue with practical images is that to gain high resolution crisp image lines are large jumps in color. As an aside, all phrases relating to distances (i.e. "Large Jumps" used in the last sentence) is literally in terms of \ac{RGB} distances. So, for crisp images the large jumps add noise to the image segmentation algorithm. So the first step here is to smooth the image. This can be done by updating a pixel's color by the average of its surrounding pixels.
+The first issue with practical images is that to gain high resolution crisp image lines are large jumps in color. All phrases relating to distances (i.e. \emph{Large Jumps}) is literally in terms of \ac{RGB} distances. So, for crisp images the large jumps add noise to the image segmentation algorithm. So the first step here is to smooth the image. This can be done by updating a pixel's color by the average of its surrounding pixels.
 
-For a smoothing-window ('sm\_win' in the code) of one. Each pixel is the average of itself and the eight neighboring pixels. If the smoothing-window is two then the eight neighboring pixels and the 16 pixels that neighbor those eight are averaged. The code below that loops over every pixel in the image (less the sm\_win edge pixels). For each pixel, the neighboring pixels are averaged and assigned into a new image to avoid previous pixel averages corrupting current pixel averages.
+For a smoothing-window ('sm\_win' is the code) of one. Each pixel is the average of itself and the eight neighboring pixels. If the smoothing-window is two then the eight neighboring pixels and the $16$ pixels that neighbor those eight are averaged. The code below that loops over every pixel in the image (less the sm\_win edge pixels). For each pixel, the neighboring pixels are averaged and assigned into a new image to avoid previous pixel averages corrupting current pixel averages.
 
 \begin{lstlisting}[language=Python]
 sm_win = 1
@@ -251,20 +245,9 @@ for nx in range(0,Nx):
 
 The smoothed image just looks like a blurry replication of the original, but the K-Means Clustering algorithm will have an easier time segmenting the image.
 
-Python provides a K-Means Clustering Algorithm and Documentation. The output of Python's \emph{KMeans} function calculates the group labels. Which is what is plotted here:
+Python provides a K-Means Clustering Algorithm and Documentation. The output of Python's \emph{KMeans} function calculates the group labels. Since the image is segmented into two categories the white of the ball, the black of the ball and the green of the grass had to be put in two categories. And as it turns out the black of the soccer ball and the green of the grass are closer than the white of the ball to the green or black.
 
-<TODO Section KMeans Clustering : ADD PLOT>
-
-
-where the blue is one group (background in this case) and the yellow is the white in the soccer ball. Since the segmented this image into two categories the white of the ball, the black of the ball and the green of the grass had to be put in two categories. And as it turns out the black of the soccer ball and the green of the grass are closer than either are to the white of the ball.
-
-We also notice there are some stray yellow pixels out there in the grass. We will need to clean them up.
-
-The next step is cleaning up these pixels by looping over all the pixels again. This time we will make sure that if a given pixel is in category zero (or one) it has a neighboring pixel also in category zero (or one). If a pixel is in the opposite category than all its neighbors then that pixel flips the category that it's in. We can see the resulting image here.
-
-
-<TODO Section KMeans Clustering : ADD PLOT>
-
+The image segmentation may miss classify some stray pixels. We will need to clean them up. The next step is cleaning up these pixels by looping over all the pixels again. This time we will make sure that if a given pixel is in category zero (or one) it has a neighboring pixel also in category zero (or one). If a pixel is in the opposite category than all its neighbors then that pixel flips the category that it is in. 
 
 Now that we have a cleaned up image free of random mis-categorized pixels we can begin finding the soccer ball in the image.
 
@@ -282,19 +265,16 @@ for nx in range(0,Nx):
       ly.append(ny)
 \end{lstlisting}
 
-where 'cat\_imag' is the matrix of ones and two representing the pixel categories. We loop over each row and column with index $nx$, and if there are any category two pixels in that row we save off $nx$ and we also add the column indices to $ly$.
+where 'cat\_imag' is the matrix of ones and twos representing the pixel categories. We loop over each row and column with index $nx$, and if there are any category two pixels in that row we save off $nx$ and we also add the column indices to $ly$.
 
-After making a list of the indices that contain the ball in the $x$ direction (rows) and $y$ direction (columns) then we make sure the list is unique with each pixel counted once. Then we determine the mean of the $x$ coordinates and the mean of the $y$ coordinates. Now we have the center of the ball we can use the equations for a circle to make an outline of the ball with the correct radius.
+After making a list of the indices that contain the ball in the $x$ direction (rows) and $y$ direction (columns) then we make sure the list is unique with each pixel counted once. Then we determine the mean of the $x$ coordinates and the mean of the $y$ coordinates. Now we have the center of the ball we can use the equations for a circle to make an outline of the ball with the correct radius,
 
 \begin{lstlisting}[language=Python]
-r = abs(fix_mean - fix_min);
-x = fix_min:fix_max;
-yp = sqrt(r^2 - (x-fix_mean).^2) + fiy_mean;
-yn = -sqrt(r^2 - (x-fix_mean).^2) + fiy_mean;
+r = abs(fix_mean - fix_min)
+x = fix_min:fix_max
+yp = sqrt(r^2 - (x-fix_mean).^2) + fiy_mean
+yn = -sqrt(r^2 - (x-fix_mean).^2) + fiy_mean
 \end{lstlisting}
 
-Asterisk in the center of the ball shows calculated center and red dashed line shows calculated ball radius
-
-<TODO Section KMeans Clustering : ADD PLOT>
 
 Now we have the location and containing circle we can categorize all the pixels inside the circle as part of the soccer ball.
