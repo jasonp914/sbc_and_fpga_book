@@ -1,12 +1,10 @@
 \chapter{Single Board Computer Programming Basics}
-	<TODO Chapter Single Board Computer Programming Basics : DONE>
 
 Once you get your \ac{SBC} in the mail and you open it up what do you do? You read the getting started guide, you plug in, the \ac{SD} card, a monitor, a keyboard and mouse. The \ac{SBC} boots up to a Linux desktop or command line and waits for your input. 
 
 This Chapter is about what you can do with the \ac{SBC}. There are many projects you can do with the \ac{SBC} and we will discuss the most popular \ac{SBC}, the \ac{RPi}. We will show examples of how to use the \ac{RPi} but most of the examples here apply to any Linux distribution. 
 
 \section{Linux Basics}
-	<TODO Section Linux Basics : DONE>
 
 The first thing that you will need to get used to in Linux is the command line. At the command line the programmer types in the commands they want to run. In this interface processing power is not wasted on rendering the \ac{GUI} or handling \ac{UI} events. The overhead of a \ac{GUI} takes away from processing the tasks you are trying to perform. 
 
@@ -17,7 +15,6 @@ We will then turn to the concept of \emph{Cron-Jobs}. In Linux we can setup a Cr
 Finally we discuss popular programming languages. We will discuss the basics of three languages. The first we look at \index{C/C++}. The strength of \index{C/C++} is that it is a low level language with a high efficiency rating. Next is \index{Python}, which is gaining a lot of popularity, particularly in machine learning applications. Since \index{Python} is more abstract from a bare metal language we sacrifice efficiency but we gain a lot of functionality from \index{Python}. Finally, we discuss a newer language named \emph{\index{Julia}}, which shows many promising attributes.  
 	
 \subsection{The Terminal}
-	<TODO Subsection The Terminal : DONE>
 	
 The Linux \index{\ac{CLI}} is a very power full tool. We will start with the basics here and once you are comfortable with the process your productivity will increase dramatically. Most people like the comfort of using a \index{\ac{GUI}} because they feel like they do not have to remember all the commands to type in. If they search through the menus long enough they will find the menu button they are interested in. Once comfortable with the \ac{CLI} this process of searching for the command you want to run is faster. 
 
@@ -80,7 +77,6 @@ Now that we have ran \emph{vim test\_file} we have a blank file being displayed 
 When \emph{vim} is launched we enter in command mode. We first enter \emph{i} which is a \emph{vim} command to go into insert mode. In this mode we can type into the document whatever we would like, in the example we typed in \emph{hello world}. After we are done editing we need to get back into command mode again and to do this we use the escape key on the keyboard. Once back in command mode we issue the \emph{vim} command \emph{:x!} which saves and closes the document, returning us back to the \ac{CLI}.	
 	
 \subsection{Aliases}
-	<TODO Subsection Aliases : DONE>
 	
 Aliases are used in the bash shell to reduce the number of keystrokes needed to execute common commands. You can define permanent aliases which are defined even after a power cycle and in different terminal sessions. Alternatively you can define aliases temporarily. We will focus on permanent aliases placed in your \emph{~/.bashrc} file or \emph{~/.bash\_aliases} file, which is called from your \emph{~/.bashrc} file. 
 
@@ -136,7 +132,6 @@ The last two aliases setup some default parameters for the \emph{\index{ping}} c
 Presented here are a few aliases that first demonstrate the syntax of defining aliases. Next they offer some ideas on what you could define for aliases. If you find that you are typing a command very often with the same parameters maybe an alias will help making your keystrokes a little more efficient. 
 	
 \subsection{Cron-Jobs}
-	<TODO Subsection Cron-Jobs : DONE>
 
 A \index{Cron-job} is a scheduling a script or command, just like you would type into the \ac{CLI}, to run at a specified time. Usually the tasks that are scheduled as a Cron-Job are tedious tasks that may require a lot of time to run and do not need you to supervise them. Tasks that can be started while you are away from your computer and can be finished by the time you come back are perfect candidates for a Cron-Job scheduling. 
 	
@@ -166,7 +161,6 @@ cp -r /home/user/workspace /home/user/backup/
 The \index{Python} script \emph{copy\_files.py} copies all the files and sub-folders of the user workspace to user backup. 
 	
 \section{Programming Languages}
-	<TODO Section Programming Languages : DONE>
 
 Choosing a programming language first depends on the algorithm or task you are trying to accomplish. Just like using a shovel to dig the foundation for a skyscraper you also would not use a bulldozer to make a sandcastle. It is important to choose the correct tool for the job. 	
 	
@@ -174,14 +168,12 @@ We are not choosing the best language, we are determining which language, or too
 	
 	
 \subsection{C/C++ vs. Python vs. Julia}
-	<TODO Subsection C/C++ vs. Python vs. Julia : DONE>
 
 In this overview of three languages we start with the \emph{lowest level} language. The term \emph{low level} refers to how close to \emph{\index{bare-metal}} a language is, for example memory access and how memory data is organized in memory. A bare-metal language allows the programmer the ability to store data in physical memory locations. If you are trying to develop a game, you are not concerned where the data is stored in memory, you want a higher level language that abstracts those details from you. 
 
 Memory allocation is just one example of what can be abstracted from the programmer. Some programmers want to have the ability to control where all the data is going and how it is organized. There may be an efficiency to a particular organization that may be lost when managed by an \ac{OS}. This overview provides some examples of each languages and hopefully allows you to choose the best language for your application.
 
 \subsubsection{C/C++}
-	<TODO Subsubsection  C/C++ : DONE>
 
 The C programming language is considered a \emph{high level} language in some embedded processing circles. In that, the C programming language is compiled down into machine code. The process of compiling the C code into machine language takes a few interpretive steps in which some functionality is abstracted from you as the programmer. These abstractions are beneficial in terms of getting past the minor details of a program and getting to the functionality of the program itself. 
 
@@ -304,7 +296,6 @@ From scratch we would start with a declaring a \emph{main}. We also increase the
 As you develop more code and more complex programs you will see you code base grow so that you do not have to rewrite code all the time you can start calling your other functions so you can spend your time write new more complex functions. 
 
 \subsubsection{Python}
-	<TODO Subsubsection  Python : DONE>
 
 Now we will transition from C to \index{Python}. The biggest difference between the two languages is the use of indentation for code scope. In C curly-brackets are used for scope differentiation. For example, after an if statement the code that is executed distinguished by using $\{\}$. In \index{Python} we end the if statement conditional with a colon, then the indentation marks the scope for the conditional \cite{pyref}. 
 
@@ -375,7 +366,6 @@ As we get a more and more complex game we could probably use the ability to save
 There are many ways to improve this shell of a game. The game can be taken in may directions. The best way to learn \index{Python} or any programming language is to get started. Adding a couple features to this game is a great way to get started. Once you add a few features play the game and see if you can think of ways to make the game more realistic, or even less realistic but fun.
 
 \subsubsection{Julia}
-	<TODO Subsubsection  Julia : DONE>
 
 For the introduction of \emph{\index{Julia}} we will once again start with the hello world program. The one line program prints hello world with a simple call to the \emph{println} function. 
 	
@@ -414,7 +404,6 @@ When we do the matrix calculation we also use the built in timer for the calcula
 As of the date of this writing the \emph{\index{Julia}} language is at Version $1.1$. The \emph{\index{Julia}} language is a promising language for data science. The developers of \emph{\index{Julia}} have worked with the popular \ac{SBC} \emph{Raspberry PI} to support the \ac{ARM} architecture of the \emph{Raspberry PI}. The implementation of \emph{\index{Julia}} on the \ac{SBC} enables applications in which fast implementations of \ac{ML} algorithms with a small form factor are possible. 
 
 \section{Controlling GPIO}
-	<TODO Section Controlling GPIO : DONE>
 
 An \ac{SBC} program interacts with the world by controlling \ac{GPIO}. With \ac{GPIO} we can control anything from \ac{LED}s to electric motors. To interact with \ac{GPIO} there are libraries that can be imported into Python for example. 
 

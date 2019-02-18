@@ -1,5 +1,4 @@
 \chapter{What is a Field Programmable Gate Array}
-	<TODO Chapter What is a Field Programmable Gate Array : DONE>
 
 An \ac{FPGA} is a chip that is first \emph{field programmable} which means that the chip is reconfigurable after it leaves the foundry or the manufacturer of the chip. For example the \ac{FPGA} could perform the operations of a transceiver then minutes later, after reconfiguration, the \ac{FPGA} can perform image processing algorithms then could act as a web server. Because of this versatility the \ac{FPGA} has become a very cost effective solution as opposed to \ac{ASIC}.
 
@@ -10,60 +9,50 @@ The responsibility of code efficiency can be foreign to traditional software dev
 This Chapter covers a broad topic of what an \ac{FPGA} is and to understand this we will discuss alternatives to the \ac{FPGA}; namely, the \ac{uC} and the \ac{ASIC}. Next, a couple of examples of applications of \ac{FPGA} are discussed for the final section of this chapter in which the resources available on the \ac{FPGA} are described and some common errors seen when using the resources with particular examples from the previous section. 
 
 \section{FPGA Alternatives and Data Rate Capabilities}
-	<TODO Section FPGA Alternatives and Data Rate Capabilities : DONE>
 
 There are many platforms for embedded processing. A \ac{RPi} is a very popular platform for the electronics hobbyist and the \ac{ARM} processor that is available on the \ac{RPi} is very powerful for an embedded processor. However, there are applications, such as image processing, that a little more computing power is needed. This section discusses determining the requirements for the application and determining if a particular platform can handle the data rate required by the application. 
 
 \subsection{Micro-Controllers (uC)}
-	<TODO Subsection Micro-Controllers (uC) : DONE>
 
 \ac{uC}'s are embedded processors for use in \emph{small} systems. What is meant by a small system is relative, usually embedded systems are programmed for a specific task. For example live-streaming a webcam to the \ac{LAN}. \ac{uC}'s come in varying sizes; depending on the task to be performed. You don't need the cutting-edge i7 from Intel to stream video, but an 8-bit \ac{PIC} \ac{uC} is too small for the task. However, an 8-bit \ac{uC} will turn on a water pump for $10$ minutes a day to water a house hold plant. Just as different vehicles suit owner's needs in different ways so do \ac{uC}'s.
 
 \subsection{Application Specific Integrated Circuits}
-	<TODO Subsection Application Specific Integrated Circuits : DONE>
 
 \ac{ASIC} chips are designed, of course, for a specific application. The knowledge of the algorithms to be calculated and the ability in an \ac{ASIC} to make any gate on the blank silicon make the \ac{ASIC} the most powerful processing platform. 
 
 \section{Applications for FPGAs}
-	<TODO Section Applications for FPGAs : DONE>
 
 In general, \ac{FPGA}s are used in applications where higher data rates are required. Controlling \ac{GPIO} is generally slow enough for a \ac{uC} but applications such as signal and image processing require data rates that start pushing the limits of a \ac{uC}. For these applications \ac{FPGA}s are vital. In this section we discuss the design of a transceiver and the data rate limitations that are faced. 
 
 \subsection{Transceivers}
-	<TODO Subsection Transceivers : DONE>
 	
-Modern transceiver designs take advantage of the higher data rate capability that is available on an \ac{FPGA}. A wide band signal that is demodulated in real-time takes a lot of computing power. For example if a signal's bandwidth is $40$ \ac{MHz} like the \ac{WIFI} signal with $64$ sub-carriers in an \ac{OFDM} signal \cite{wifistd}. Each of the $64$ sub-carriers can be demodulated in parallel. 
+Modern transceiver designs take advantage of the higher data rate capability that is available on an \ac{FPGA}. A wide band signal that is demodulated in real-time takes a lot of computing power. For example if a signal's bandwidth is $40$ \ac{MHz} like the Wi-Fi signal with $64$ sub-carriers in an \ac{OFDM} signal \cite{wifistd}. Each of the $64$ sub-carriers can be demodulated in parallel. 
 
 To be able to handle each of the sub-carriers, the \ac{FPGA} instantiates independent logic for each stage of the demodulation process. Since each stage has dedicated hardware, the receiver is able to keep up with a signal that is being constantly received. The \ac{FPGA} provides the designer the ability to receive the full data rate the transmitter can send. 	
 	
 \subsection{Image Processing}
-	<TODO Subsection Image Processing : DONE>
 	
 The data rate required by \index{image processing} algorithms is among the highest with applications in large image sizes and video processing. In these applications the embedded platform tracks, in real-time, an object such as a vehicle on a road. 
 
 Image processing algorithms first use an image segmentation algorithm to isolate sections or classify an image into sections. Once grouped together the amount of data is reduced by the number of groups classified in the image segmentation algorithm.
 
 \subsection{Cryptography}
-	<TODO Subsection Cryptography : DONE>
 
 Cryptography and security algorithms have the added benefit of being very difficult to change the hardware or a configured \ac{FPGA} remotely. While you can alter the code that is executed on a \ac{CPU} on a server is it difficult to change the detection algorithms that screen in real-time in hardware. 
 
 \section{Architecture of an FPGA}
-	<TODO Section Architecture of an FPGA : DONE>
 
 The architecture of an \ac{FPGA} is significantly different than a \ac{uP}. The \ac{uP} has many pieces that are interconnected and the data flows in certain and sometimes complex ways \cite{furber1996arm}. For an \ac{FPGA} the routing is configurable. The routing to dedicated processing parts on the \ac{FPGA} is dependent on the algorithms being implemented. 
 
 The configurable routing in the \ac{FPGA} routes the data to the five basic resources available on the \ac{FPGA}. The resources covered here are \ac{LUT}s, \ac{BRAM}, multipliers, clock trees, and \ac{IO}. We also discuss how the the switching matrices are configured to route data to the desired locations in the \ac{FPGA}.
 
 \subsection{Look Up Tables}
-	<TODO Subsection Look Up Tables : DONE>
 
 \index{\ac{LUT}}s are the general purpose logic that is available on the \ac{FPGA}. The general logic is what is used if there is not a dedicated resource available for a specific function. The architecture of the \ac{FPGA} varies per \ac{FPGA} vendor and even \ac{FPGA} family so it is important to know your specific target. But, in general, a \ac{CLB} consists of a couple \ac{LUT}s, a register, and a multiplexer. If a \ac{CLB} is configured to only use the register then you can not use the \ac{LUT}s for anything else, wasting those resources. 
 
 So the goal is to only use \ac{LUT}s when you have to. The rest of the section discusses how we can save \ac{LUT}s by using other dedicated resources so that the \ac{LUT}s are available for general purpose tasks.	
 	
 \subsection{Block RAM}
-	<TODO Subsection Block RAM : DONE>
 	
 \index{\ac{BRAM}} is dedicated memory on the \ac{FPGA}. \ac{BRAM} itself can be configured based on the \ac{FPGA} vendor, length of data to be stored, and number of accesses per clock. When planning to use \ac{BRAM} the we need to ensure that we are reading or writing one or two elements of the \ac{BRAM} in a clock cycle. If we are targeting a one-port \ac{BRAM} and the compiler interprets the \ac{BRAM} as distributed \ac{RAM} , which is another term for the registers in the \ac{CLB}, then the amount of resources used in the build will be drastically higher.
 
@@ -72,7 +61,6 @@ Another consideration we need to be aware of is the data width being written to 
 The conclusion here is that if we are targeting a \ac{BRAM} in our implementation we need to ensure that we are using it correctly so the tools place and route the data to the \ac{BRAM}. Otherwise we run the risk of not using the dedicated resources and end up filling up the \ac{FPGA} with occupied distributed \ac{RAM}.
 
 \subsection{Multipliers}
-	<TODO Subsection Multipliers : DONE> 
 
 To meet the needs of \ac{DSP} and image processing applications \ac{FPGA} chip manufacturers have included dedicated multipliers for us to use. The dedicated \index{multipliers} are very useful since usually these applications are very \ac{MAC} operation intensive. 
 
@@ -81,7 +69,6 @@ There are two benefits of the multipliers. First, a multiply operation is resour
 We need to make sure the vendor tools map the multiplies on the \ac{FPGA} correctly. The data width of the operands needs to be considered since if you have a data width of one bit larger than what your multiplier uses the \ac{FPGA} tools will use two multipliers. Which may be undesirable especially if you do not need to carry all the bits through the implementation. 
 
 \subsection{Switching Matrices}
-	<TODO Subsection Switching Matrices : DONE>
 
 \index{Switching matrices} are configurable routing	in the \ac{FPGA}. You can think of an \ac{FPGA} as a large city. The buildings in the city are the multipliers, \ac{BRAM}s, and \ac{LUT}s. As the data drives around the city the data comes to intersections. These intersections are switching matrices. However, unlike intersections on street roads there is not a traffic light. Once a lane is configured to be routed to a location other routes in the switching matrix are not possible.
 
@@ -90,13 +77,11 @@ The switching matrices are the main reason why you can not use $100$ percent of 
 The timing issues manifest due to the inability for the data to get to the desired location in time. This is because all the roads are busy and we need to route the data around many other blocks of the city to get to the destination. The added delay makes the design difficult to meet timing. When estimating resource usage to determine which \ac{FPGA} to target aim for $50$ percent since you will always want to add more functionality.
 	
 \subsection{Clock Trees}
-	<TODO Subsection Clock Trees : DONE>
 
 Dedicated \index{clocking resources} are available to reduce clock jitter. These dedicated nets are used to fan out the clock to the entire \ac{FPGA} design. If there is jitter or skew in the clock then different areas of the design could execute logic at slightly different times which may lead to timing issues. The \ac{FPGA} vendor tools work to ensure this does not happen.
 
 To use the dedicated clock trees we can use the function \emph{rising\_edge} or \emph{falling\_edge}. When we use these functions it tells the synthesizer that we want the argument signal to be on the dedicated clock resource. One pitfall beginners make is when they are trying to do a rising edge detection and use the \emph{rising\_edge} function. When you do rising edge detection you care when an event occurs. The event is driven by logic that has propagation delay though \ac{LUT}s and registers. If we then put that signal on a dedicated clock resource the jitter in the logic is still present in the clock even though it is one the clock resource, which may cause timing issues. 
 
 \subsection{Inputs and Outputs}
-	<TODO Subsection Inputs and Outputs : DONE>
 
 \index{General \ac{IO}} on the \ac{FPGA} is available for interfacing with peripherals. The interfacing voltage needs to be considered. The \ac{FPGA} can drive many voltages. Each \ac{FPGA} organizes its \ac{IO} pins in banks. A bank can be configured to drive a single voltage. If you need to connect to many peripherals then you need to ensure they are connected to different banks. There are also dedicated high performance pins. These pins are used to interface to high speed \ac{DDR} or Gigabyte serial devices like \ac{SATA} drives. 

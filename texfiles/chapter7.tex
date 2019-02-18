@@ -1,21 +1,18 @@
 \chapter{Hello World and Other Projects}
-	<TODO Chapter Hello World and Other Projects : DONE>
 
 There is no better way to get started than to work on a small project. This chapter outlines small projects to work on where each of them gets a little more challenging. As you progress through this chapter you will ensure your development environment is setup properly with simulating the \index{hello world project}. You will learn how to use a clock in a design and control an \ac{LED}. Then you will learn how to transfer data into and out of the \ac{FPGA} chip. 
 	
 \section{Beginner Projects}
-	<TODO Section Beginner Projects : DONE>
 
 Everyone has to start somewhere. These projects are designed to start off slowly. It may not be very exciting to add one to a counter but these exercises get you used to writing \ac{VHDL} and the development environment. Work through these exercises so that when we can get to exciting projects you will not be frustrated with working with the tools. 
 	
 \subsection{Hello World}
-	<TODO Subsection Hello World : DONE>
 
 When learning a new language you always need to write the \index{hello world program}. There are two lessons from this project. First, setting up and interacting with the features of your simulator. Once you write the first draft of your program you go through the steps of compiling and simulating your design. You will use this process many times. Gain an understanding of keyboard short cuts and practice them. Make changes to your file and recompile and ensure the changes are reflected when you re-simulate.
 
 The other main take-away from this example is the use of the report function. The report function allows you to print strings out to the console. The report function can be used to print out values of signals to make sure the simulation is progressing like you want in a larger more complex simulation. Or it can be used to report progress of the simulation.      
 
-\begin{VHDLlisting}[tabsize=8]
+\begin{VHDLlisting}[tabsize=4]
 library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
@@ -25,16 +22,15 @@ end entity hello_world;
 
 architecture tb of hello_world is
 begin
-	process
-	begin
-		report("Hello World!");
-	end process;
+    process
+    begin
+        report("Hello World!");
+    end process;
 end tb;
 \end{VHDLlisting}
 	
 	
 \subsection{Counter Test-Bench}
-	<TODO Subsection Counter Test-Bench : DONE>
 
 In this exercise we will instantiate a \ac{DUT} in a testbench. The \ac{DUT} itself is a simple counter. We will provide a clock to the counter and a reset line that will reset the counter. We will also have an enable line that turns the counter on. A simple \ac{DUT} like this has a few inputs that will need to be driven by the testbench.      
 	
@@ -47,43 +43,43 @@ entity tb_counter is
 end entity tb_counter;
 
 architecture tb of tb_counter is
-	signal w_clk         : std_logic := '0';
-	signal w_rst         : std_logic := '0';
-	signal w_en          : std_logic := '0';
-	signal w_count_sync  : unsigned(7 downto 0):=(others => '0');
-	signal w_count_async : unsigned(7 downto 0):=(others => '0');
+    signal w_clk         : std_logic := '0';
+    signal w_rst         : std_logic := '0';
+    signal w_en          : std_logic := '0';
+    signal w_count_sync  : unsigned(7 downto 0):=(others => '0');
+    signal w_count_async : unsigned(7 downto 0):=(others => '0');
 
 begin
-	p_gen_stim : process
-	begin
-		w_rst <= '1';
-		wait for 37.9 ns;
-		w_rst <= '0';
+    p_gen_stim : process
+    begin
+        w_rst <= '1';
+        wait for 37.9 ns;
+        w_rst <= '0';
 		
-		wait for 10 ns;
-		w_en <= '1';
-		wait for 50 ms;	
-	end process;
+        wait for 10 ns;
+        w_en <= '1';
+        wait for 50 ms;	
+    end process;
 	
-	u_counter_sync : entity work.counter_sync
-	port map(i_clk    => w_clk,
-			 i_rst    => w_rst,
-			 i_en     => w_en,
-			 o_count  => w_count_sync
-	);
+    u_counter_sync : entity work.counter_sync
+    port map(i_clk    => w_clk,
+             i_rst    => w_rst,
+             i_en     => w_en,
+             o_count  => w_count_sync
+    );
 	
-	u_counter_async : entity work.counter_async
-	port map(i_clk    => w_clk,
-			 i_arst   => w_rst,
-			 i_en     => w_en,
-			 o_count  => w_count_async
-	);
+    u_counter_async : entity work.counter_async
+    port map(i_clk    => w_clk,
+             i_arst   => w_rst,
+             i_en     => w_en,
+             o_count  => w_count_async
+    );
 	
-	p_clk : process
-	begin
-		wait for 5 ns;
-		w_clk <= not w_clk;
-	end process;
+    p_clk : process
+    begin
+        wait for 5 ns;
+        w_clk <= not w_clk;
+    end process;
 end tb;
 \end{VHDLlisting}
 
@@ -96,30 +92,30 @@ library ieee;
   
 entity counter_sync is
 port(i_clk   : in    std_logic;
-	 i_rst   : in    std_logic;
-	 i_en    : in    std_logic;
-	 o_count :   out unsigned(7 downto 0)	
+     i_rst   : in    std_logic;
+     i_en    : in    std_logic;
+     o_count :   out unsigned(7 downto 0)	
 )
 end entity counter_sync;
 
 architecture rtl of counter_sync is
-	-- Output Register
-	signal f_count : unsigned(7 downto 0) := (others => '0');
+    -- Output Register
+    signal f_count : unsigned(7 downto 0) := (others => '0');
 begin
 
-	-- Assign Outputs
-	o_count <= f_count;
+    -- Assign Outputs
+    o_count <= f_count;
 
-	p_count : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				f_count <= (others => '0');
-			elsif i_en = '1' then
-				f_count <= f_count + 1;
-			end if;		
-		end if;
-	end process;
+    p_count : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                f_count <= (others => '0');
+            elsif i_en = '1' then
+                f_count <= f_count + 1;
+            end if;		
+        end if;
+    end process;
 end rtl;
 
 \end{VHDLlisting}
@@ -134,30 +130,30 @@ library ieee;
   
 entity counter_async is
 port(i_clk   : in    std_logic;
-	 i_arst  : in    std_logic;
-	 i_en    : in    std_logic;
-	 o_count :   out unsigned(7 downto 0)	
+     i_arst  : in    std_logic;
+     i_en    : in    std_logic;
+     o_count :   out unsigned(7 downto 0)	
 )
 end entity counter_async;
 
 architecture rtl of counter_async is
-	-- Output Register
-	signal f_count : unsigned(7 downto 0) := (others => '0');
+    -- Output Register
+    signal f_count : unsigned(7 downto 0) := (others => '0');
 begin
 
-	-- Assign Outputs
-	o_count <= f_count;
+    -- Assign Outputs
+    o_count <= f_count;
 
-	p_count : process(i_clk)
-	begin
-		if i_arst = '1' then
-			f_count <= (others => '0');
-		elsif rising_edge(i_clk) then
-			if i_en = '1' then
-				f_count <= f_count + 1;
-			end if;		
-		end if;
-	end process;
+    p_count : process(i_clk)
+    begin
+        if i_arst = '1' then
+            f_count <= (others => '0');
+        elsif rising_edge(i_clk) then
+            if i_en = '1' then
+                f_count <= f_count + 1;
+            end if;		
+        end if;
+    end process;
 end rtl;
 
 \end{VHDLlisting}
@@ -165,7 +161,6 @@ end rtl;
 There are situations when you have to use asynchronous resets. If we assume we will use this counter in a situation where we have to use an asynchronous reset we would write this block slightly differently where the reset line is used outside the clocked region of the process. Now if the i\_reset line changes or the i\_clk line changes the process executed but there does not have to be a rising\_edge event for the reset to apply. There is potential issue with instantiating this block with an asynchronous reset. It is possible that the reset fails timing. If the asynchronous reset is applied right before a clock edge where the counter is enabled there could be a mismatch between the expected value in the counter and the registered value. Unfortunately, the vendor tools can not warn you about the asynchronous reset failing timing since it is not under a clocked process. The vendor tools can not know the timing of the asynchronous reset.	
 	
 \subsection{Blink Led with a One Second Interval}
-	<TODO Subsection Blink Led with a One Second Interval : DONE>
 
 In the project you will write \ac{HDL} to blink an LED. The LED should be on for a second and off for a second. You will also need to write a testbench for the block. You will find that it will take a long time to simulate a block for multiple seconds. We will once again have a synchronous reset, enable, and a clock as inputs. The output will be wired up to an \ac{LED}.
 
@@ -179,38 +174,38 @@ library ieee;
 entity blink_led is
 generic(gTOGGLECOUNT : integer)
 port(i_clk   : in    std_logic;
-	 i_rst   : in    std_logic;
-	 i_en    : in    std_logic;
-	 o_led   :   out std_logic	
+     i_rst   : in    std_logic;
+     i_en    : in    std_logic;
+     o_led   :   out std_logic	
 )
 end entity blink_led;
 
 architecture rtl of blink_led is
-	-- Output Register
-	signal f_led   : std_logic := '0';
+    -- Output Register
+    signal f_led   : std_logic := '0';
 
-	-- Duration Counter
-	signal f_count : unsigned(31 downto 0) := (others => '0');
+    -- Duration Counter
+    signal f_count : unsigned(31 downto 0) := (others => '0');
 begin
 
-	-- Assign Outputs
-	o_led <= f_led;
+    -- Assign Outputs
+    o_led <= f_led;
 
-	p_count : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				f_count <= (others => '0');
-			elsif i_en = '1' then
-				f_count <= f_count + 1;
-			end if;	
+    p_count : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                f_count <= (others => '0');
+            elsif i_en = '1' then
+                f_count <= f_count + 1;
+            end if;	
 
-			if f_count = gTOGGLECOUNT then
-				f_led <= not f_led;
-				f_count <= (others => '0');
-			end if;			
-		end if;
-	end process;
+            if f_count = gTOGGLECOUNT then
+                f_led <= not f_led;
+                f_count <= (others => '0');
+            end if;			
+        end if;
+    end process;
 end rtl;
 
 \end{VHDLlisting}
@@ -226,53 +221,51 @@ entity tb_blink_led is
 end entity tb_blink_led;
 
 architecture tb of tb_blink_led is
-	constant k_TOGGLECOUNT : integer := 100000000;
+    constant k_TOGGLECOUNT : integer := 100000000;
 
-	signal w_clk : std_logic := '0';
-	signal w_rst : std_logic := '0';
-	signal w_en  : std_logic := '0';
-	signal w_led : std_logic := '0';
+    signal w_clk : std_logic := '0';
+    signal w_rst : std_logic := '0';
+    signal w_en  : std_logic := '0';
+    signal w_led : std_logic := '0';
 begin
 
-	p_gen_stim : process
-	begin
-		w_rst <= '1';
-		wait for 34 ns;
-		w_rst <= '0';
+    p_gen_stim : process
+    begin
+        w_rst <= '1';
+        wait for 34 ns;
+        w_rst <= '0';
 		
-		wait for 15 ns;
-		w_en <= '1';
+        wait for 15 ns;
+        w_en <= '1';
 		
-		wait;
-	end process;
+        wait;
+    end process;
 
-	u_blink_led : entity work.blink_led
-	generic map(gTOGGLECOUNT => k_TOGGLECOUNT)
-	port map(i_clk   => w_clk,
-		     i_rst   => w_rst,
-		     i_en    => w_en ,
-		     o_led   => w_led
-	);
+    u_blink_led : entity work.blink_led
+    generic map(gTOGGLECOUNT => k_TOGGLECOUNT)
+    port map(i_clk   => w_clk,
+             i_rst   => w_rst,
+             i_en    => w_en ,
+             o_led   => w_led
+    );
 
-	p_clk : process
-	begin
-		wait for 5 ns;
-		w_clk <= not w_clk;
-	end process;	
+    p_clk : process
+    begin
+        wait for 5 ns;
+        w_clk <= not w_clk;
+    end process;	
 end tb;
 \end{VHDLlisting}
 
 The testbench is simple with the reset, enable, and clock to generate. The difficult part of this testbench though is how long it will take to simulate. At first when you get the testbench working you do not want to have to wait $30$ minutes for the simulation to finish. So at first we will set \emph{gTOGGLECOUNT} to $10$ and make sure the logic works. After getting the simulation to work then we can increase it and make sure the output toggles at the expected rate. 
 
 \section{IO Interfacing}
-	<TODO Section IO Interfacing : DONE>
 	
 This section of projects gets data in to and out from the \ac{FPGA}. The list of projects here are the easiest ways of setting up two way data transfer off the chip. These protocols are popular in interacting with a computer or with other chips on the same board.
 
 Although these projects are simple and great starting exercises you will reuse these blocks a lot when interfacing to different peripherals. We will discuss making these blocks generic so that they can be used with minimal changes on a variety of projects.
 
-\subsection{Universal Asynchronous Receiver-Transmitter (UART)}
-	<TODO Subsection Universal Asynchronous Receiver-Transmitter (UART) : DONE>
+\subsection{Universal Asynchronous Receiver-Transmitter}
 	
 The \ac{UART} is a very common low speed protocol. It's primary use is commanding and controlling the FPGA to do a task when a user issues a command through a general purpose computer. The \ac{UART} is also great for status or debugging the logic in the \ac{FPGA}.
 
@@ -293,21 +286,29 @@ entity uart_rx is
       i_rx            : in    std_logic;
       o_rx_data       : out   std_logic_vector(7 downto 0);
       o_rx_data_rdy   : out   std_logic
-      );
+  );
 end entity uart_rx;
 
 architecture rtl of uart_rx is
   constant k_timeperbit   : real := real(1)/real(g_baudRate);
   constant k_clkperiod    : real := real(1)/real(g_clkRate);
-  constant k_clksPerBit   : integer := integer(real(g_clkRate)/real(g_baudRate));
-  constant k_clksPerBitd2 : integer := integer(real(k_clksPerBit)/real(2));
+  constant k_clksPerBit   : integer := 
+                            integer(real(g_clkRate)/real(g_baudRate));
+  constant k_clksPerBitd2 : integer := 
+                            integer(real(k_clksPerBit)/real(2));
   constant k_TBits        : unsigned(3 downto 0) := to_unsigned(10,4);
 
   -- Outputs 
-  signal f_rx_data     : std_logic_vector(7 downto 0) := (others => '0');
+  signal f_rx_data     : std_logic_vector(7 downto 0);
   signal f_rx_data_rdy : std_logic := '0';
   
-  type sm_rxUart is (s_idle, s_cfmLow, s_rxStartBit, s_rx8bits, s_parity, s_stop, s_reset);
+  type sm_rxUart is (s_idle, 
+                     s_cfmLow, 
+                     s_rxStartBit, 
+                     s_rx8bits, 
+                     s_parity, 
+                     s_stop, 
+                     s_reset);
   signal f_cState : sm_rxUart := s_idle;
   
   signal f_clkCount : integer := 0;
@@ -332,7 +333,8 @@ begin
               f_cState <= s_rxStartBit;
               f_clkCount <= 0;  
             else 
-              f_cState <= s_idle; -- if rx line isn't still low during start bit.
+              -- if rx line isn't still low during start bit.
+              f_cState <= s_idle;
               f_clkCount <= 0;
             end if;
           else
@@ -421,7 +423,8 @@ end uart_tx;
 architecture rtl of uart_tx is 
   constant k_timeperbit : real := real(1)/real(g_baudRate);
   constant k_clkperiod  : real := real(1)/real(g_clkRate);
-  constant k_clksPerBit : integer := integer(real(g_clkRate)/real(g_baudRate)); 
+  constant k_clksPerBit : integer := 
+                          integer(real(g_clkRate)/real(g_baudRate)); 
   constant k_TBits      : unsigned(3 downto 0) := to_unsigned(10,4);
   
   type sm_uarttx_ctrl is (s_idle, s_txing, s_reset);
@@ -478,13 +481,12 @@ The \ac{UART} transmitter operates in a similar fashion. The transmitter's job i
 	
 
 \subsection{Serial Peripheral Interface (SPI)}
-	<TODO Subsection Serial Peripheral Interface (SPI) : DONE>
 
 \ac{SPI} is commonly used for inter-chip communication where a chip is configured by a SPI master. The SPI master initiates all traffic between the SPI master and SPI slave. The slave chip only responses to commands from the master. The SPI bus consists of four wires; clock, chip select, input data, and output data. Since there is a clock we know this protocol is synchronous. The clock is driven by the master and the clock rate is the only way to change the data rate of the communications. In general the \ac{SPI} bus is capable of a higher data rate than the UART.
 
 The rest of the lines generally work as follows but some chips use a slight variation to the descriptions below. General \ac{SPI} code can be altered to meet specific chip standards. The datasheet for the chip you are trying to interface to should be consulted to ensure proper operation. 
 
-The \ac(CS) line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the \ac{CS} lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{SPI} master. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our \ac{CS} line were active low it could be called \emph{CSn}. 
+The \ac{CS} line is used to enable communications with the chip. The reason for the name is that you can reuse the same clock and data lines but change only the \ac{CS} lines for configuring multiple chips. In this way you save \ac{IO} pins on the \ac{SPI} master. The CS line is used to indicate that communication is starting. \ac{CS} can be active low or active high. Usually with active low signals an \emph{n} is appended to the name so if our \ac{CS} line were active low it could be called \emph{CSn}. 
 
 The last lines of the \ac{SPI} bus to discuss are the data lines. These lines are named \ac{MOSI} and \ac{MISO}. The names of course tell you the direction and who drives the pins. Sometimes if \ac{IO} pins are limited there is a shared data line. This is possible because it is understood that the master controls communication if the master is reading data from the slave then the master releases control of the data line in time for the slave to control the line. Care must be taken to ensure that there is not contention on the line. If both slave and master drive the pin communication will fail. 	
 
@@ -494,128 +496,126 @@ Next we can look at an implementation of a \ac{SPI}-Master. Shown here
 -- spi_master.vhd
 
 library ieee;
-	use ieee.std_logic_1164.all;
-	use ieee.numeric_std.all;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
 	
 entity spi_master is
-	generic(g_sclkrate  : integer;
-			g_word_size : integer)
+    generic(g_sclkrate  : integer;
+            g_word_size : integer)
 	port(i_clk      : in    std_logic;
-		 i_rst      : in    std_logic;
+         i_rst      : in    std_logic;
 		 
-		 o_spi_clk  :   out std_logic;
-		 o_spi_mosi :   out std_logic;
-		 i_spi_miso : in    std_logic;
-		 o_spi_ncs  :   out std_logic;
+         o_spi_clk  :   out std_logic;
+         o_spi_mosi :   out std_logic;
+         i_spi_miso : in    std_logic;
+         o_spi_ncs  :   out std_logic;
 		
-		 i_rd_nwr   : in    std_logic;
-		 i_wrdataen : in    std_logic;
-		 i_wr_data  : in    std_logic_vector(g_word_size-1 downto 0);
+         i_rd_nwr   : in    std_logic;
+         i_wrdataen : in    std_logic;
+         i_wr_data  : in    std_logic_vector(g_word_size-1 downto 0);
 		
-		 o_rd_data  :   out std_logic_vector(g_word_size-1 downto 0);
-		 o_rd_dv    :   out std_logic;
-		 o_busy     :   out std_logic	
-	);
+         o_rd_data  :   out std_logic_vector(g_word_size-1 downto 0);
+         o_rd_dv    :   out std_logic;
+         o_busy     :   out std_logic	
+    );
 end entity spi_master;
 
 architecture rtl of spi_master is
-	signal f_clk_counter : unsigned(31 downto 0);
-	signal f_o_sclk      : std_logic := '0';
-	signal f_o_mosi      : std_logic := '0';
-	signal f_o_ncs       : std_logic := '0';
+    signal f_clk_counter : unsigned(31 downto 0);
+    signal f_o_sclk      : std_logic := '0';
+    signal f_o_mosi      : std_logic := '0';
+    signal f_o_ncs       : std_logic := '0';
 	
-	signal f_o_rd_dv     : std_logic := '0';
-	signal f_rd_data     : std_logic_vector(g_word_size-1 downto 0);
+    signal f_o_rd_dv     : std_logic := '0';
+    signal f_rd_data     : std_logic_vector(g_word_size-1 downto 0);
 	
-	type sm_spi is (s_idle, s_transfer, s_end);
-	signal s_spi         : sm_spi := s_idle;
+    type sm_spi is (s_idle, s_transfer, s_end);
+    signal s_spi         : sm_spi := s_idle;
 	
-	signal f_wr_data     : std_logic_vector(g_word_size-1 downto 0);
-	signal f_rx_data     : std_logic_vector(g_word_size-1 downto 0);
+    signal f_wr_data     : std_logic_vector(g_word_size-1 downto 0);
+    signal f_rx_data     : std_logic_vector(g_word_size-1 downto 0);
 	
-	signal f_data_c      : unsigned(7 downto 0);
-	signal f_data_rd_c   : unsigned(7 downto 0);
-	
-	
+    signal f_data_c      : unsigned(7 downto 0);
+    signal f_data_rd_c   : unsigned(7 downto 0);
 begin
 
-	o_busy      <= f_busy;
-	o_spi_clk   <= f_o_sclk; 
+    o_busy      <= f_busy;
+    o_spi_clk   <= f_o_sclk; 
     o_spi_mosi  <= f_o_mosi;
     o_spi_ncs   <= f_o_ncs; 
 	
-	o_rd_data <= f_o_rd_dv;
-	o_rd_dv   <= f_rd_data;
+    o_rd_data <= f_o_rd_dv;
+    o_rd_dv   <= f_rd_data;
 
-	p_gen_sclk : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				f_clk_counter <= (others => '0');
-			else
-				f_clk_counter <= f_clk_counter + 1;
-				if f_clk_counter = g_sclkrate then
-					f_o_sclk <= '0';
-					f_clk_counter <= (others => '0');
-				elsif f_clk_counter = g_sclkrate/2 then
-					f_o_sclk <= '1';
-				end if;
-			end if;		
-		end if;
-	end process;
+    p_gen_sclk : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                f_clk_counter <= (others => '0');
+            else
+                f_clk_counter <= f_clk_counter + 1;
+                if f_clk_counter = g_sclkrate then
+                    f_o_sclk <= '0';
+                    f_clk_counter <= (others => '0');
+                elsif f_clk_counter = g_sclkrate/2 then
+                    f_o_sclk <= '1';
+                end if;
+            end if;		
+        end if;
+    end process;
 
-	p_launch_data : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				s_spi <= s_idle;
-				f_busy <= '0';
-				f_o_ncs <= '1';
-			else
-				ff_o_sclk <= f_o_sclk;
-				case s_spi is
-					when idle =>
-						f_busy <= '0';
-						f_o_ncs <= '1';
-						f_o_rd_dv <= '1';
-						if i_wrdataen = '1' then
-							s_spi <= s_transfer;
-							f_wr_data <= i_wr_data;
-							f_busy <= '1';
-							f_rd_nwr <= i_rd_nwr;
-							f_data_c <= to_unsigned(f_wr_data'high,f_data_c'length);
-							f_data_rd_c <= (others => '0');
-						end if;
-					when s_transfer => 
-						-- Falling Edge of SCLK
-						if ff_o_sclk = '1' and f_o_sclk = '0' then
-							f_o_ncs <= '0';
-							f_o_mosi <= f_wr_data(to_integer(f_data_c));
-							f_data_c <= f_data_c - 1;
-							if f_data_c = 0 then
-								f_data_c <= to_unsigned(f_wr_data'high,f_data_c'length);
-								s_spi <= s_end;
-							end if;
-						end if;					
+    p_launch_data : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                s_spi <= s_idle;
+                f_busy <= '0';
+                f_o_ncs <= '1';
+            else
+                ff_o_sclk <= f_o_sclk;
+                case s_spi is
+                    when idle =>
+                        f_busy <= '0';
+                        f_o_ncs <= '1';
+                        f_o_rd_dv <= '1';
+                        if i_wrdataen = '1' then
+                            s_spi <= s_transfer;
+                            f_wr_data <= i_wr_data;
+                            f_busy <= '1';
+                            f_rd_nwr <= i_rd_nwr;
+                            f_data_c <= to_unsigned(f_wr_data'high,
+                                        f_data_c'length);
+                            f_data_rd_c <= (others => '0');
+                        end if;
+                    when s_transfer => 
+                        -- Falling Edge of SCLK
+                        if ff_o_sclk = '1' and f_o_sclk = '0' then
+                            f_o_ncs <= '0';
+                            f_o_mosi <= f_wr_data(to_integer(f_data_c));
+                            f_data_c <= f_data_c - 1;
+                            if f_data_c = 0 then
+                                f_data_c <= 
+                                to_unsigned(f_wr_data'high,f_data_c'length);
+                                s_spi <= s_end;
+                            end if;
+                        end if;					
 
-						-- Rising Edge of SCLK
-						if ff_o_sclk = '0' and f_o_sclk = '1' then
-							f_rx_data(to_integer(f_data_rd_c)) <= i_spi_miso;
-							f_data_rd_c <= f_data_rd_c + 1;
-						end if;
-					when s_end => 
-						s_spi <= s_idle;
-						if f_rd_nwr = '1' then
-							-- Reading data from slave
-							f_o_rd_dv <= '1';
-							f_rd_data <= f_rx_data;
-						end if;				
-				end case;
-			end if;
-		end if;	
-	end process;
-
-
+                        -- Rising Edge of SCLK
+                        if ff_o_sclk = '0' and f_o_sclk = '1' then
+                            f_rx_data(to_integer(f_data_rd_c)) <= i_spi_miso;
+                            f_data_rd_c <= f_data_rd_c + 1;
+                        end if;
+                    when s_end => 
+                        s_spi <= s_idle;
+                        if f_rd_nwr = '1' then
+                            -- Reading data from slave
+                            f_o_rd_dv <= '1';
+                            f_rd_data <= f_rx_data;
+                        end if;				
+                end case;
+            end if;
+        end if;	
+    end process;
 end rtl;
 \end{VHDLlisting}
 
@@ -636,7 +636,6 @@ Once we are in the \emph{s\_end} state we go back to \emph{s\_idle}, but before 
 Now we should go back and discuss the reasoning for using the rising edge and falling edge of the \ac{SPI} clock. We launch the data on the falling edge of the \ac{SPI} clock because we want to have the maximum possible time for the data to be stable when the receiver of the data samples it at the rising edge. Just like when we wait for the rising edge of the clock to register the input we want the data to be stable. 
 
 \subsection{Inter-Integrated Circuit (I2C) Bus}
-	<TODO Subsection Inter-Integrated Circuit (I2C) Bus : DONE>
 
 The \ac{I2C} bus communication protocol is similar to the \ac{SPI} interface in that it is used for inter chip communication. The major advantage to \ac{I2C} is that is uses half the lines as \ac{SPI}. You may be thinking who cares about the number of \ac{IO} pins a chip takes but this can be an issue with interfacing to a few peripherals, especially when a few of them are high speed \ac{LVDS}. In this case saving a few \ac{IO} pins per chip is necessary to ensure \ac{IO} pins are available for a high speed \ac{ADC} or \ac{DDR} memory chip. 	
 	
@@ -672,29 +671,33 @@ architecture rtl of i2c_write is
 	
     constant k_clks_per_scl_h : integer := 500;
     constant k_clks_per_scl   : integer := k_clks_per_scl_h*2;
-	constant k_end_cond       : integer := 144 + k_clks_per_scl_h;
+    constant k_end_cond       : integer := 144 + k_clks_per_scl_h;
 	
     -- Input Regs
-    signal f_data    : std_logic_vector(31 downto 0) := (others => '0');
+    signal f_data    : std_logic_vector(31 downto 0);
     	
     -- Output Regs
     signal f_busy    : std_logic := '0';
     signal f_sda     : std_logic := '1';
     signal f_scl     : std_logic := '1';
 
-	constant k_n_data_frames : integer := 3;
+    constant k_n_data_frames : integer := 3;
     signal f_cc      : unsigned(11 downto 0) := (others => '0');
     signal f_os      : unsigned(7 downto 0) := (others => '0');
-	signal f_ndframes: unsigned(3 downto 0) := (others => '0');
+    signal f_ndframes: unsigned(3 downto 0) := (others => '0');
     signal f_ack_bit : std_logic := '1';
-	signal f_done    : std_logic := '0';
+    signal f_done    : std_logic := '0';
 
-    type sm_states is (s_idle, s_init_frame, s_reset_start_cond, s_ack_bit, s_write_data_frame, s_end);
+    type sm_states is (s_idle, 
+                       s_init_frame, 
+                       s_reset_start_cond, 
+                       s_ack_bit, 
+                       s_write_data_frame, 
+                       s_end);
     signal s_i2c  : sm_states := s_idle;
 begin
 
     o_busy <= f_busy;
-
     b_sda <= f_sda;
     o_scl <= f_scl;
 
@@ -703,17 +706,17 @@ begin
         if rising_edge(i_clk) then
             if i_rst = '1' then
                 s_i2c <= s_idle;
-				f_sda <= '1';
+                f_sda <= '1';
                 f_scl <= '1';
-				f_done <= '0';
+                f_done <= '0';
             else
                 case s_i2c is
                     when s_idle => 
                         f_sda <= '1';a
                         f_scl <= '1';
-						f_done <= '0';
-						f_ack_bit <= '1';
-						f_os <= to_unsigned(31,8);
+                        f_done <= '0';
+                        f_ack_bit <= '1';
+                        f_os <= to_unsigned(31,8);
                         if i_dv = '1' then
                             f_data <= i_data;
                             s_i2c <= s_init_frame;
@@ -729,12 +732,12 @@ begin
                             f_sda <= f_data(to_integer(f_os));
                             s_i2c <= s_write_data_frame;
                         end if;
-					when s_reset_start_cond => 
-						f_cc <= f_cc + 1;
-						f_sda <= '1';
+                    when s_reset_start_cond => 
+                        f_cc <= f_cc + 1;
+                        f_sda <= '1';
                         if f_cc = k_end_cond then
                             f_cc <= (others => '0');
-							s_i2c <= s_init_frame;
+                            s_i2c <= s_init_frame;
                             f_sda <= '0';
                         end if;
                     when s_ack_bit => 
@@ -744,17 +747,17 @@ begin
                             f_ack_bit <= b_sda;
                         end if; 
                         if f_cc = k_clks_per_scl then
-							f_scl <= '0';
-							f_cc <= (others => '0');
+                            f_scl <= '0';
+                            f_cc <= (others => '0');
                             if f_ack_bit = '0' then
                                 -- Success
-								if f_done = '0' then
-									s_i2c <= s_write_data_frame;
-									f_sda <= f_data(to_integer(f_os));
-								else
-									f_sda <= '0';
-									s_i2c <= s_end;
-								end if;
+                                if f_done = '0' then
+                                    s_i2c <= s_write_data_frame;
+                                    f_sda <= f_data(to_integer(f_os));
+                                else
+                                    f_sda <= '0';
+                                    s_i2c <= s_end;
+                                end if;
                             else
                                 -- Fail -- Reset
                                 s_i2c <= s_idle;
@@ -762,7 +765,7 @@ begin
                         end if;
                     when s_write_data_frame => 
                         f_cc <= f_cc + 1;
-						f_ack_bit <= '1';
+                        f_ack_bit <= '1';
 						
                         if f_cc = k_clks_per_scl_h then
                             f_scl <= '1';
@@ -770,40 +773,40 @@ begin
                         end if; 
 						
                         if f_cc = k_clks_per_scl then
-							f_scl <= '0';
+                            f_scl <= '0';
                             f_cc <= (others => '0');
-							if f_os = 23 then
-								f_sda <= 'Z';
-								s_i2c <= s_ack_bit;
-								f_done <= '0';
-                            elsif f_os = 15 then
-								f_sda <= 'Z';
-								s_i2c <= s_ack_bit;
-								f_done <= '0';
-                            elsif f_os = 7 then
-								f_sda <= 'Z';
-								s_i2c <= s_ack_bit;
-								f_done <= '0';
-                            elsif f_done = '1' then
-								f_sda <= 'Z';
+                            if f_os = 23 then
+                                f_sda <= 'Z';
                                 s_i2c <= s_ack_bit;
-							else
-								f_sda <= f_data(to_integer(f_os));
-								if f_os = 0 then
-									f_done <= '1';
-								end if;
+                                f_done <= '0';
+                            elsif f_os = 15 then
+                                f_sda <= 'Z';
+                                s_i2c <= s_ack_bit;
+                                f_done <= '0';
+                            elsif f_os = 7 then
+                                f_sda <= 'Z';
+                                s_i2c <= s_ack_bit;
+                                f_done <= '0';
+                            elsif f_done = '1' then
+                                f_sda <= 'Z';
+                                s_i2c <= s_ack_bit;
+                            else
+                                f_sda <= f_data(to_integer(f_os));
+                                if f_os = 0 then
+                                    f_done <= '1';
+                                end if;
                             end if;
                         end if;
-					when s_end =>
-						f_cc <= f_cc + 1;
-						if f_cc = k_clks_per_scl_h then
+                    when s_end =>
+                        f_cc <= f_cc + 1;
+                        if f_cc = k_clks_per_scl_h then
                             f_scl <= '1';
                         end if; 
 						
                         if f_cc = k_end_cond then
                             f_cc <= (others => '0');
-							f_sda <= '1';
-							s_i2c <= s_idle;
+                            f_sda <= '1';
+                            s_i2c <= s_idle;
                         end if;
                 end case;
             end if;
@@ -822,7 +825,6 @@ Finally after sending all $32$ bits the done flag is asserted and we end the tra
 	
 	
 \subsection{Texas Instruments universal Parallel Port (uPP)}
-	<TODO Subsection Texas Instruments universal Parallel Port (uPP) : DONE>
 	
 A \ac{TI}-\ac{DSP} is an embedded processor that specializes in operations specific to signal processing. What that means is that the \ac{MAC} structure is used often in \ac{FIR} filter design, calculating \ac{FFT}s, and even some matrix multiplication calculations. The \ac{DSP} is equipped with with the ability to perform parallel \ac{MAC} operations. Depending on the specific processor you can expect eight parallel \ac{MAC} operations. 
 
@@ -852,155 +854,152 @@ When the core is not held in reset we first register the clock so that we can de
 -- upp_tx.vhd
 
 library ieee;
-	use ieee.std_logic_1164.all;
-	use ieee.numeric_std.all;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
 	
 entity upp_tx is
-	generic(g_dma_size      : integer := 4096;
-			g_upp_clk_ratio : integer := 200)
+    generic(g_dma_size      : integer := 4096;
+            g_upp_clk_ratio : integer := 200)
 	port(i_clk           : in    std_logic;
-		 -- Used async | release sync
-	     i_rst           : in    std_logic;
+         -- Used async | release sync
+         i_rst           : in    std_logic;
 		 
-		 -- uPP IO
-		 o_upp_clk       :   out std_logic; 
-		 o_upp_start     :   out std_logic;
-		 o_upp_enable    :   out std_logic;
-		 i_upp_wait      : in    std_logic;
+         -- uPP IO
+         o_upp_clk       :   out std_logic; 
+         o_upp_start     :   out std_logic;
+         o_upp_enable    :   out std_logic;
+         i_upp_wait      : in    std_logic;
 		 
-		 o_upp_data      :   out std_logic_vector(15 downto 0);
+         o_upp_data      :   out std_logic_vector(15 downto 0);
 		 
-		 -- App Interface
-		 i_tx_data       : in    std_logic_vector(15 downto 0);
-		 i_tx_data_dv    : in    std_logic	
-		 o_tx_fifo_full  :   out std_logic	
-	);
+         -- App Interface
+         i_tx_data       : in    std_logic_vector(15 downto 0);
+         i_tx_data_dv    : in    std_logic	
+         o_tx_fifo_full  :   out std_logic	
+    );
 end entity upp_tx;
 
 architecture rtl of upp_tx is
-	constant k_upp_clk_ratio_half : integer := g_upp_clk_ratio/2;
-	signal w_tx_fifo_full : std_logic;
+    constant k_upp_clk_ratio_half : integer := g_upp_clk_ratio/2;
+    signal w_tx_fifo_full : std_logic;
 	
-	signal f_clk_count      : unsigned(log2(g_upp_clk_ratio)-1 downto 0);
-	signal f_tx_word_count  : unsigned(log2(g_dma_size)-1 downto 0);
-	signal f_upp_clk        : std_logic;
-	signal ff_upp_clk       : std_logic;
-	signal f_upp_clk_strobe : std_logic;
-	signal f_upp_start      : std_logic;
-	signal f_upp_enable     : std_logic;
-	signal f_upp_data       : std_logic_vector(15 downto 0);
+    signal f_clk_count      : unsigned(log2(g_upp_clk_ratio)-1 downto 0);
+    signal f_tx_word_count  : unsigned(log2(g_dma_size)-1 downto 0);
+    signal f_upp_clk        : std_logic;
+    signal ff_upp_clk       : std_logic;
+    signal f_upp_clk_strobe : std_logic;
+    signal f_upp_start      : std_logic;
+    signal f_upp_enable     : std_logic;
+    signal f_upp_data       : std_logic_vector(15 downto 0);
 	                        
-	signal f_fifo_rden      : std_logic;
-	signal w_fifo_dout      : std_logic_vector(15 downto 0);
-	signal w_fifo_rddv      : std_logic;
-	signal w_fifo_empty     : std_logic;
+    signal f_fifo_rden      : std_logic;
+    signal w_fifo_dout      : std_logic_vector(15 downto 0);
+    signal w_fifo_rddv      : std_logic;
+    signal w_fifo_empty     : std_logic;
 	
-	type sm_upptx is (s_idle, s_transfer, s_end);
-	signal s_curr_state : sm_upptx := s_idle;
+    type sm_upptx is (s_idle, s_transfer, s_end);
+    signal s_curr_state : sm_upptx := s_idle;
 
 begin
 
-	o_tx_fifo_full <= w_tx_fifo_full;
-	o_upp_clk      <= f_upp_clk;
-	o_upp_start    <= f_upp_start ;
-	o_upp_enable   <= f_upp_enable;
-	o_upp_data     <= f_upp_data;
+    o_tx_fifo_full <= w_tx_fifo_full;
+    o_upp_clk      <= f_upp_clk;
+    o_upp_start    <= f_upp_start ;
+    o_upp_enable   <= f_upp_enable;
+    o_upp_data     <= f_upp_data;
 	
-	p_tx_data : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				s_curr_state <= s_idle;
-				f_upp_start <= '0';
-				f_upp_enable <= '0';
-				f_tx_word_count <= (others => '0');
-			else
-				case s_curr_state is
-					when s_idle => 
-						f_upp_start <= '0';
-						f_upp_enable <= '0';
-						f_tx_word_count <= (others => '0');
+    p_tx_data : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                s_curr_state <= s_idle;
+                f_upp_start <= '0';
+                f_upp_enable <= '0';
+                f_tx_word_count <= (others => '0');
+            else
+                case s_curr_state is
+                    when s_idle => 
+                        f_upp_start <= '0';
+                        f_upp_enable <= '0';
+                        f_tx_word_count <= (others => '0');
 						
-						if w_fifo_empty = '0' then
-							s_curr_state <= s_transfer;
-							f_fifo_rden <= '1';
-						end if;					
-					when s_transfer => 
-						if w_fifo_rddv = '1' then
-							f_upp_data <= w_fifo_dout;
-						end if;
+                        if w_fifo_empty = '0' then
+                            s_curr_state <= s_transfer;
+                            f_fifo_rden <= '1';
+                        end if;					
+                    when s_transfer => 
+                        if w_fifo_rddv = '1' then
+                            f_upp_data <= w_fifo_dout;
+                        end if;
 						
-						if f_upp_clk_strobe = '1' then
-							-- Rising Edge of upp clk
-							if i_upp_wait = '0' then
-								f_upp_enable <= '1';
-								f_fifo_rden <= '1';
-								f_tx_word_count <= f_tx_word_count + 1;
+                        if f_upp_clk_strobe = '1' then
+                            -- Rising Edge of upp clk
+                            if i_upp_wait = '0' then
+                                f_upp_enable <= '1';
+                                f_fifo_rden <= '1';
+                                f_tx_word_count <= f_tx_word_count + 1;
 							
-								case f_tx_word_count is
-									when 0 => 
-										f_upp_start <= '1';
-									when g_dma_size => 
-										s_curr_state <= s_end;
-									when others =>
-										f_upp_start <= '0';
-								end case;			
-							else
-								-- Transfer is stalled
-								f_upp_enable <= '0';
-								f_fifo_rden <= '0';
-							end if;							
-						else
-							f_fifo_rden <= '0';
-						end if;
-					
-					when s_end => 
-				
-				end case;
-			end if;
-		end if;
-	end process;
+                                case f_tx_word_count is
+                                    when 0 => 
+                                        f_upp_start <= '1';
+                                    when g_dma_size => 
+                                        s_curr_state <= s_end;
+                                    when others =>
+                                        f_upp_start <= '0';
+                                end case;			
+                            else
+                                -- Transfer is stalled
+                                f_upp_enable <= '0';
+                                f_fifo_rden <= '0';
+                            end if;							
+                        else
+                            f_fifo_rden <= '0';
+                        end if;
+                end case;
+            end if;
+        end if;
+    end process;
 	
 	
-	u_tx_fifo : entity work.tx_fifo
-	port map(wrclk => i_clk, 
-			 wren  => i_tx_data_dv,
-			 din   => i_tx_data,
-			 full  => w_tx_fifo_full,
+    u_tx_fifo : entity work.tx_fifo
+    port map(wrclk => i_clk, 
+             wren  => i_tx_data_dv,
+             din   => i_tx_data,
+             full  => w_tx_fifo_full,
 	
-			 rdclk => f_upp_clk,
-			 rden  => f_fifo_rden,
-			 dout  => w_fifo_dout,
-			 rddv  => w_fifo_rddv,
-			 empty => w_fifo_empty	
-	);
+             rdclk => f_upp_clk,
+             rden  => f_fifo_rden,
+             dout  => w_fifo_dout,
+             rddv  => w_fifo_rddv,
+             empty => w_fifo_empty	
+    );
 	
-	p_gen_upp_clk : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				f_clk_count <= (others => '0');
-				f_upp_clk <= '0';
-			else
-				ff_upp_clk <= f_upp_clk;
+    p_gen_upp_clk : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                f_clk_count <= (others => '0');
+                f_upp_clk <= '0';
+            else
+                ff_upp_clk <= f_upp_clk;
 			
-				f_clk_count <= f_clk_count + 1;
-				if f_clk_count = k_upp_clk_ratio_half then
-					-- Toggle UPP Clk
-					f_upp_clk <= not f_clk_count;
-					f_clk_count <= (others => '0');
-				end if;
+                f_clk_count <= f_clk_count + 1;
+                if f_clk_count = k_upp_clk_ratio_half then
+                    -- Toggle UPP Clk
+                    f_upp_clk <= not f_clk_count;
+                    f_clk_count <= (others => '0');
+                end if;
 				
-				if ff_upp_clk = '0' and f_upp_clk = '1' then
-					-- Generate upp clock strobe
-					f_upp_clk_strobe <= '1';
-				else
-					f_upp_clk_strobe <= '0';
-				end if;
+                if ff_upp_clk = '0' and f_upp_clk = '1' then
+                    -- Generate upp clock strobe
+                    f_upp_clk_strobe <= '1';
+                else
+                    f_upp_clk_strobe <= '0';
+                end if;
 				
-			end if;
-		end if;	
-	end process;
+            end if;
+        end if;	
+    end process;
 \end{VHDLlisting}
 
 Now that we have seen how the \ac{FPGA} transmits data we will transition to how the \ac{FPGA} receives data from the \ac{TI}-\ac{DSP}. Once again in the entity declaration we have a clock and a reset. We next have the \ac{uPP} \ac{IO} lines. These lines are just like the transmitter's \ac{IO} lines in reverse direction. Finally we have the application logic lines. 
@@ -1019,102 +1018,100 @@ The last if statement registers data of the \ac{uPP} data bus. If the transfer i
 -- upp_rx.vhd
 
 library ieee;
-	use ieee.std_logic_1164.all;
-	use ieee.numeric_std.all;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
 	
 entity upp_rx is
-	generic(g_dma_size : integer := 4096)
-	port(i_clk           : in    std_logic;
-	     i_rst           : in    std_logic;
+    generic(g_dma_size : integer := 4096)
+    port(i_clk           : in    std_logic;
+         i_rst           : in    std_logic;
 		 
-		 -- uPP IO
-		 i_upp_clk       : in    std_logic; 
-		 i_upp_start     : in    std_logic;
-		 i_upp_enable    : in    std_logic;
-		 o_upp_wait      :   out std_logic;
+         -- uPP IO
+         i_upp_clk       : in    std_logic; 
+         i_upp_start     : in    std_logic;
+         i_upp_enable    : in    std_logic;
+         o_upp_wait      :   out std_logic;
 		 
-		 i_upp_data      : in    std_logic_vector(15 downto 0);
+         i_upp_data      : in    std_logic_vector(15 downto 0);
 		 
-		 -- App interface
-		 o_upp_busy      :   out std_logic;
-		 o_rx_data_empty :   out std_logic;
-		 i_rx_data_rden  : in    std_logic;
-		 o_rx_data_dv    :   out std_logic;
-		 o_rx_data       :   out std_logic_vector(15 downto 0)	
-	);
+         -- App interface
+         o_upp_busy      :   out std_logic;
+         o_rx_data_empty :   out std_logic;
+         i_rx_data_rden  : in    std_logic;
+         o_rx_data_dv    :   out std_logic;
+         o_rx_data       :   out std_logic_vector(15 downto 0)	
+    );
 end entity upp_rx;
 
 
 architecture rtl of upp_rx is
 	
-	signal f_rx_data_dv   : std_logic;
-	signal f_rx_data      : std_logic_vector(15 downto 0);
-	signal w_rx_fifo_full : std_logic;
-	signal f_upp_busy     : std_logic;
+    signal f_rx_data_dv   : std_logic;
+    signal f_rx_data      : std_logic_vector(15 downto 0);
+    signal w_rx_fifo_full : std_logic;
+    signal f_upp_busy     : std_logic;
 	
-	signal f_dma_count    : unsigned(log2(g_dma_size)-1 downto 0);
+    signal f_dma_count    : unsigned(log2(g_dma_size)-1 downto 0);
 	
 begin
 
-	o_upp_wait <= w_rx_fifo_full;
-	o_upp_busy <= f_upp_busy; 
+    o_upp_wait <= w_rx_fifo_full;
+    o_upp_busy <= f_upp_busy; 
 
-	u_rx_fifo : entity work.rx_fifo
-	port map(i_rst => i_rst,
-			 wrclk => i_upp_clk, 
-			 wren  => f_rx_fifo_wren,
-			 din   => f_rx_fifo_data,
-			 full  => w_rx_fifo_full,
+    u_rx_fifo : entity work.rx_fifo
+    port map(i_rst => i_rst,
+             wrclk => i_upp_clk, 
+             wren  => f_rx_fifo_wren,
+             din   => f_rx_fifo_data,
+             full  => w_rx_fifo_full,
 	
-			 rdclk => i_clk,
-			 rden  => i_rx_data_rden,
-			 dout  => o_rx_data,
-			 rddv  => o_rx_data_dv,
-			 empty => o_rx_data_empty	
-	);
+             rdclk => i_clk,
+             rden  => i_rx_data_rden,
+             dout  => o_rx_data,
+             rddv  => o_rx_data_dv,
+             empty => o_rx_data_empty	
+    );
 
-	p_rx_data : process(i_upp_clk, i_arst)
-	begin
-		if rising_edge(i_upp_clk) then
-			if i_rst = '1' then
-				f_dma_count <= (others => '0');
-				f_rx_data_dv <= '0';
-				f_upp_busy <= '0';
-			else
-				f_upp_start <= i_upp_start;
-				if f_upp_start = '0' and i_upp_start = '1' then	
-					-- Start DMA transfer
-					f_upp_busy <= '1';
-				end if;
+    p_rx_data : process(i_upp_clk, i_arst)
+    begin
+        if rising_edge(i_upp_clk) then
+            if i_rst = '1' then
+                f_dma_count <= (others => '0');
+                f_rx_data_dv <= '0';
+                f_upp_busy <= '0';
+            else
+                f_upp_start <= i_upp_start;
+                if f_upp_start = '0' and i_upp_start = '1' then	
+                    -- Start DMA transfer
+                    f_upp_busy <= '1';
+                end if;
 				
-				if f_dma_count = g_dma_size-1 then
-					-- DMA Transfer Complete
-					f_dma_count <= (others => '0');
-					f_upp_busy <= '0';
-				end if;
+                if f_dma_count = g_dma_size-1 then
+                    -- DMA Transfer Complete
+                    f_dma_count <= (others => '0');
+                    f_upp_busy <= '0';
+                end if;
 			
-				if i_upp_enable = '1' then
-					-- Load uPP data into rx fifo
-					f_dma_count <= f_dma_count + 1;
-					f_rx_fifo_data <= i_upp_data;
-					f_rx_fifo_wren <= '1';
-				else
-					-- uPP Transfer Stalled.
-					f_rx_fifo_wren <= '0';
-				end if;
-			end if;
-		end if;
-	end process;	
+                if i_upp_enable = '1' then
+                    -- Load uPP data into rx fifo
+                    f_dma_count <= f_dma_count + 1;
+                    f_rx_fifo_data <= i_upp_data;
+                    f_rx_fifo_wren <= '1';
+                else
+                    -- uPP Transfer Stalled.
+                    f_rx_fifo_wren <= '0';
+                end if;
+            end if;
+        end if;
+    end process;	
 end rtl;
 \end{VHDLlisting}
 
 \section{Data Processing Projects}
-	<TODO Section Data Processing Projects : DONE>
 	
 We now transition to \ac{VHDL} examples that are processing data. The first example calculates the multiplication of two matrices. Matrix multiplication has applications in signal processing and machine learning. Then we present some signal processing examples, a \ac{FIR} filter and an \ac{NCO}, both of which are used regularly in \ac{DSP} applications. 
 
 \subsection{Strassen's Matrix Multiplication}
-	<TODO Subsection Strassen's Matrix Multiplication : DONE>
 	
 Matrix multiplication is a common operation is \ac{DSP}, machine learning, and graphics processing applications. Here we look at how to make matrix multiplication more efficient. Matrix multiplication in general is $\ord(n^3)$. To make the algorithm more efficient in terms of \ac{FPGA} resource we will use the Strassen matrix multiplication. 
 
@@ -1171,31 +1168,31 @@ To get started with this implementation we start with an entity declaration,
 -- matrix_multiply_strassen.vhd
 
 library ieee;
-	use ieee.std_logic_1164.all;
-	use ieee.numeric_std.all;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
 	
 entity matrix_multiply_strassen is
-	generic(g_bitwidth : integer)
-	port(i_clk    : in    std_logic;
-		 i_rst    : in    std_logic;
+    generic(g_bitwidth : integer)
+    port(i_clk    : in    std_logic;
+         i_rst    : in    std_logic;
 		 
-		 i_dv     : in    std_logic;
-		 i_a_11   : in    signed(g_bitwidth-1 downto 0);
-		 i_a_12   : in    signed(g_bitwidth-1 downto 0);
-		 i_a_21   : in    signed(g_bitwidth-1 downto 0);
-		 i_a_22   : in    signed(g_bitwidth-1 downto 0);
+         i_dv     : in    std_logic;
+         i_a_11   : in    signed(g_bitwidth-1 downto 0);
+         i_a_12   : in    signed(g_bitwidth-1 downto 0);
+         i_a_21   : in    signed(g_bitwidth-1 downto 0);
+         i_a_22   : in    signed(g_bitwidth-1 downto 0);
 		
-		 i_b_11   : in    signed(g_bitwidth-1 downto 0);
-		 i_b_12   : in    signed(g_bitwidth-1 downto 0);
-		 i_b_21   : in    signed(g_bitwidth-1 downto 0);
-		 i_b_22   : in    signed(g_bitwidth-1 downto 0);
+         i_b_11   : in    signed(g_bitwidth-1 downto 0);
+         i_b_12   : in    signed(g_bitwidth-1 downto 0);
+         i_b_21   : in    signed(g_bitwidth-1 downto 0);
+         i_b_22   : in    signed(g_bitwidth-1 downto 0);
 		 
-		 o_dv     :   out std_logic;
-		 o_c_11   :   out signed(2*g_bitwidth-1 downto 0);
-		 o_c_12   :   out signed(2*g_bitwidth-1 downto 0);
-		 o_c_21   :   out signed(2*g_bitwidth-1 downto 0);
-		 o_c_22   :   out signed(2*g_bitwidth-1 downto 0)	
-	);
+         o_dv     :   out std_logic;
+         o_c_11   :   out signed(2*g_bitwidth-1 downto 0);
+         o_c_12   :   out signed(2*g_bitwidth-1 downto 0);
+         o_c_21   :   out signed(2*g_bitwidth-1 downto 0);
+         o_c_22   :   out signed(2*g_bitwidth-1 downto 0)	
+    );
 end entity matrix_multiply_strassen;
 \end{VHDLlisting}
 
@@ -1227,26 +1224,26 @@ The process that registers the inputs is shown here.
 
 \begin{VHDLlisting}[tabsize=2]
 p_s1 : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				f_i_dv <= (others => '0');
-			else
-				f_i_dv <= f_i_dv(f_i_dv'high-1 downto 0) & i_dv;
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                f_i_dv <= (others => '0');
+            else
+                f_i_dv <= f_i_dv(f_i_dv'high-1 downto 0) & i_dv;
 				
-				if i_dv = '1' then
-					f_a_11  <= i_a_11;
-				    f_a_12  <= i_a_12;
-				    f_a_21  <= i_a_21;
-				    f_a_22  <= i_a_22;
-				    f_b_11  <= i_b_11;
-				    f_b_12  <= i_b_12;
-				    f_b_21  <= i_b_21;
-				    f_b_22  <= i_b_22;
-				end if;
-			end if;
-		end if;
-	end process;
+                if i_dv = '1' then
+                    f_a_11  <= i_a_11;
+                    f_a_12  <= i_a_12;
+                    f_a_21  <= i_a_21;
+                    f_a_22  <= i_a_22;
+                    f_b_11  <= i_b_11;
+                    f_b_12  <= i_b_12;
+                    f_b_21  <= i_b_21;
+                    f_b_22  <= i_b_22;
+                end if;
+            end if;
+        end if;
+    end process;
 \end{VHDLlisting}
 
 Under the rising edge clause of this process we first check the reset line. If the reset line is asserted we only need to clear the data valid shift register. Clearing these registers ensure no data is output from the core. Next we shift in the data valid input into our shift register. This signal is what will be used in the subsequent processes to know when data is valid. Finally we register all the inputs under the single data valid. 
@@ -1273,29 +1270,29 @@ In stage two we declare signals that are used in the addition or subtraction cal
 
 \begin{VHDLlisting}[tabsize=2]
 p_s2 : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if f_i_dv(0) = '1' then
-				ff_p_t1 <= f_a_11 + f_a_22;
-				ff_p_t2 <= f_b_11 + f_b_22;
-				ff_q_t1 <= f_a_21 + f_a_22;
-				ff_q_t2 <= f_b_11;
-				ff_r_t1 <= f_a_11;
-				ff_r_t2 <= f_b_12 - f_b_22;
-				ff_s_t1 <= f_a_22;
-				ff_s_t2 <= f_b_21 - f_b_11;
-				ff_t_t1 <= f_a_11 + f_a_12;
-				ff_t_t2 <= f_b_22;
-				ff_u_t1 <= f_a_21 - f_a_11;
-				ff_u_t2 <= f_b_11 + f_b_12;
-				ff_v_t1 <= f_a_12 - f_a_22;
-				ff_v_t2	<= f_b_21 + f_b_22;
-			end if;
-		end if;
-	end process;
+    begin
+        if rising_edge(i_clk) then
+            if f_i_dv(0) = '1' then
+                ff_p_t1 <= f_a_11 + f_a_22;
+                ff_p_t2 <= f_b_11 + f_b_22;
+                ff_q_t1 <= f_a_21 + f_a_22;
+                ff_q_t2 <= f_b_11;
+                ff_r_t1 <= f_a_11;
+                ff_r_t2 <= f_b_12 - f_b_22;
+                ff_s_t1 <= f_a_22;
+                ff_s_t2 <= f_b_21 - f_b_11;
+                ff_t_t1 <= f_a_11 + f_a_12;
+                ff_t_t2 <= f_b_22;
+                ff_u_t1 <= f_a_21 - f_a_11;
+                ff_u_t2 <= f_b_11 + f_b_12;
+                ff_v_t1 <= f_a_12 - f_a_22;
+                ff_v_t2	<= f_b_21 + f_b_22;
+            end if;
+        end if;
+    end process;
 \end{VHDLlisting}
 
-For each term we follow \eq{capp}-\eq{capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline on the next clock cycle overwriting our data. So we need to register it in this process.
+For each term we follow \eqtwo{capp}{capv} and assign each term. To ensure all the data with the associated input matrices stay aligned we need to register intermediate values even if no calculation is done. For example, the second term of $Q$ is just $b_{1,1}$ so we register that value because we will need it in the next clock cycle and another input matrix may be in the pipeline on the next clock cycle overwriting our data. So we need to register it in this process.
 
 \begin{VHDLlisting}[tabsize=2]
 -- Stage 3 : P,Q,R,S,T,U,V Calculations
@@ -1313,17 +1310,17 @@ The third stage calculates the intermediate variables in the Strassen algorithm.
 \begin{VHDLlisting}[tabsize=2]
 p_s3 : process(i_clk)
 begin
-	if rising_edge(i_clk) then
-		if f_i_dv(1) = '1' then
-			fff_p <= ff_p_t1 * ff_p_t2;
-			fff_q <= ff_q_t1 * ff_q_t2;
-			fff_r <= ff_r_t1 * ff_r_t2;
-			fff_s <= ff_s_t1 * ff_s_t2;
-			fff_t <= ff_t_t1 * ff_t_t2;
-			fff_u <= ff_u_t1 * ff_u_t2;
-			fff_v <= ff_v_t1 * ff_v_t2;
-		end if;
-	end if;
+    if rising_edge(i_clk) then
+        if f_i_dv(1) = '1' then
+            fff_p <= ff_p_t1 * ff_p_t2;
+            fff_q <= ff_q_t1 * ff_q_t2;
+            fff_r <= ff_r_t1 * ff_r_t2;
+            fff_s <= ff_s_t1 * ff_s_t2;
+            fff_t <= ff_t_t1 * ff_t_t2;
+            fff_u <= ff_u_t1 * ff_u_t2;
+            fff_v <= ff_v_t1 * ff_v_t2;
+        end if;
+    end if;
 end process;
 \end{VHDLlisting}
 
@@ -1350,16 +1347,16 @@ The reset of the signal declarations have the same bit width as the multiplicati
 \begin{VHDLlisting}[tabsize]
 p_s4 : process(i_clk)
 begin
-	if rising_edge(i_clk) then
-		if f_i_dv(2) = '1' then
-			f4_c11_t1 <= fff_p + fff_s;
-		    f4_c11_t2 <= fff_t + fff_v;
-		    f4_c12_t1 <= fff_r + fff_t;
-		    f4_c21_t1 <= fff_q + fff_s;
-		    f4_c22_t1 <= fff_p + fff_r;
-		    f4_c22_t2 <= fff_q + fff_u;
-		end if;
-	end if;
+    if rising_edge(i_clk) then
+        if f_i_dv(2) = '1' then
+            f4_c11_t1 <= fff_p + fff_s;
+            f4_c11_t2 <= fff_t + fff_v;
+            f4_c12_t1 <= fff_r + fff_t;
+            f4_c21_t1 <= fff_q + fff_s;
+            f4_c22_t1 <= fff_p + fff_r;
+            f4_c22_t2 <= fff_q + fff_u;
+        end if;
+    end if;
 end process;
 \end{VHDLlisting}
 
@@ -1368,14 +1365,14 @@ In the calculation of stage four we calculate the terms in \eq{couts}. The addit
 \begin{VHDLlisting}[tabsize=2]
 p_s5 : process(i_clk)
 begin
-	if rising_edge(i_clk) then
-		if f_i_dv(3) = '1' then
-			f5_c11 <= f4_c11_t1 - f4_c11_t2;
-		    f5_c12 <= f4_c12_t1;
-		    f5_c21 <= f4_c21_t1;
-		    f5_c22 <= f4_c22_t1 - f4_c22_t2;
-		end if;
-	end if;
+    if rising_edge(i_clk) then
+        if f_i_dv(3) = '1' then
+            f5_c11 <= f4_c11_t1 - f4_c11_t2;
+            f5_c12 <= f4_c12_t1;
+            f5_c21 <= f4_c21_t1;
+            f5_c22 <= f4_c22_t1 - f4_c22_t2;
+        end if;
+    end if;
 end process;
 \end{VHDLlisting} 
 
@@ -1395,12 +1392,11 @@ After the final stage is calculated and registered we can use these registers as
 This shift register denotes the latency of the core. If we put in data at clock cycle zero. It will take six clock cycles to get valid data out. Note that index five in the data valid array is actually the sixth element since the array is zero indexed. 
 
 \subsection{Digital Signal Processing}
-	<TODO Subsection Digital Signal Processing : DONE>
 	
 A common application for \ac{FPGA}s is \ac{DSP}. In this section we discuss the implementation of common \ac{DSP} functions. Here will discuss the \ac{FIR} filter and an \ac{NCO}. Which are both vital in a \ac{DSP} application. 
 
 \subsubsection{Finite Impulse Response Filter}
-	<TODO Subsubsection  Finite Impulse Response Filter : DONE>
+\label{sec:fir}
 
 There are many needs for \ac{FIR} filters in \ac{DSP}. Here we will present one type of \ac{FIR} filter that is quite useful. The type of filter we will be implementing in this section is the \emph{half-band \ac{FIR} \ac{LPF}}. Breaking down the name, we first know what a \ac{FIR} filter is which depending on the impulse response attenuates some frequencies while keeping other frequencies of interest. 
 
@@ -1416,92 +1412,103 @@ With all that said we will assume moving forward all of those parameters have be
 -- halfbandLPF.vhd
 
 library ieee;
-	use ieee.std_logic_1164.all;
-	use ieee.numeric_std.all;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.all;
 	
 entity halfbandLPF is 
-	generic(g_bitwidth : integer := 16;
-	        g_ncoeffs  : integer := 35);
-	port(
-			i_clk      : in    std_logic;
-			i_reset    : in    std_logic;
-			i_data     : in    std_logic_vector(g_bitwidth-1 downto 0);
-			i_dv       : in    std_logic;
-			o_data     :   out std_logic_vector(2*g_bitwidth-1 downto 0);
-			o_dv       :   out std_logic	
-	);
+    generic(g_bw       : integer := 16;
+            g_ncoeffs  : integer := 35);
+    port(
+            i_clk      : in    std_logic;
+            i_reset    : in    std_logic;
+            i_data     : in    std_logic_vector(g_bw-1 downto 0);
+            i_dv       : in    std_logic;
+            o_data     :   out std_logic_vector(2*g_bw-1 downto 0);
+            o_dv       :   out std_logic	
+    );
 end entity halfbandLPF;
 
 architecture rtl of halfbandLPF is 
-	type T_Sbw is array (natural range<>) of signed(g_bitwidth-1 downto 0);
-	type T_S2bw is array (natural range<>) of signed(2*g_bitwidth-1 downto 0);
-	signal f_x_mix    : T_Sbw(0 to g_ncoeffs-1) := (others => (others => '0'));
-	signal f_dv_shift : std_logic_vector(0 to g_ncoeffs-1) := (others => '0');
+    type T_Sbw is array (natural range<>) of signed(g_bw-1 downto 0);
+    type T_S2bw is array (natural range<>) of signed(2*g_bw-1 downto 0);
+    signal f_x_mix    : T_Sbw(0 to g_ncoeffs-1);
+    signal f_dv_shift : std_logic_vector(0 to g_ncoeffs-1);
 	
-	-- Length of this vector is Ceil((g_ncoeffs-1)/4)+1
-	-- These coefficients need to be loaded externally
-	signal f_h_uni      : T_Sbw(0 to 9) := (x"0026",x"FFA6",x"00BD",x"FEA0",x"0261",x"FC05",x"06BC",x"F350",x"2870",x"4000");
+    -- Length of this vector is Ceil((g_ncoeffs-1)/4)+1
+    -- These coefficients need to be loaded externally
+    signal f_h_uni      : T_Sbw(0 to 9) := (x"0026",
+                                            x"FFA6",
+                                            x"00BD",
+                                            x"FEA0",
+                                            x"0261",
+                                            x"FC05",
+                                            x"06BC",
+                                            x"F350",
+                                            x"2870",
+                                            x"4000");
 
-	signal ff_mix_add   : T_Sbw(0 to 9) := (others => (others => '0'));
-	signal fff_add_mult : T_S2bw(0 to 9) := (others => (others => '0'));
+    signal ff_mix_add   : T_Sbw(0 to 9);
+    signal fff_add_mult : T_S2bw(0 to 9);
 	
-	signal f4_sum_s1    : T_S2bw(0 to 4) := (others => (others => '0'));
-	signal f5_sum_s2    : T_S2bw(0 to 2) := (others => (others => '0'));
-	signal f6_sum_s3    : T_S2bw(0 to 1) := (others => (others => '0'));
-	signal f7_sum_s4    : signed(2*g_bitwidth-1 downto 0) := (others => '0');
+    signal f4_sum_s1    : T_S2bw(0 to 4);
+    signal f5_sum_s2    : T_S2bw(0 to 2);
+    signal f6_sum_s3    : T_S2bw(0 to 1);
+    signal f7_sum_s4    : signed(2*g_bw-1 downto 0);
 begin
-	o_data <= std_logic_vector(f7_sum_s4);
-	o_dv <= f_dv_shift(6);
+    o_data <= std_logic_vector(f7_sum_s4);
+    o_dv <= f_dv_shift(6);
 
-	p_calc : process(i_clk) is
-	begin
-		if rising_edge(i_clk) then
-			if i_reset = '1' then
-				f_dv_shift <= (others => '0');
-			elsif i_dv = '1' then
-				-- Shift Register Data
-				f_x_mix(34) <= signed(i_data);
-				f_x_mix(0 to g_ncoeffs-2) <= f_x_mix(1 to g_ncoeffs-1);
+    p_calc : process(i_clk) is
+    begin
+        if rising_edge(i_clk) then
+            if i_reset = '1' then
+                f_dv_shift <= (others => '0');
+            elsif i_dv = '1' then
+                -- Shift Register Data
+                f_x_mix(34) <= signed(i_data);
+                f_x_mix(0 to g_ncoeffs-2) <= f_x_mix(1 to g_ncoeffs-1);
 				
-				-- Shift Register Data Valid
-				f_dv_shift(0) <= i_dv;
-				f_dv_shift(1 to g_ncoeffs-1) <= f_dv_shift(0 to g_ncoeffs-2);
+                -- Shift Register Data Valid
+                f_dv_shift(0) <= i_dv;
+                f_dv_shift(1 to g_ncoeffs-1) <= f_dv_shift(0 to g_ncoeffs-2);
 				
-				-- Take advantage of symmetric filter. 
-				ff_mix_add(0) <= f_x_mix(0) + f_x_mix(34);
-				ff_mix_add(1) <= f_x_mix(2) + f_x_mix(32);
-				ff_mix_add(2) <= f_x_mix(4) + f_x_mix(30);
-				ff_mix_add(3) <= f_x_mix(6) + f_x_mix(28);
-				ff_mix_add(4) <= f_x_mix(8) + f_x_mix(26);
-				ff_mix_add(5) <= f_x_mix(10) + f_x_mix(24);
-				ff_mix_add(6) <= f_x_mix(12) + f_x_mix(22);
-				ff_mix_add(7) <= f_x_mix(14) + f_x_mix(20);
-				ff_mix_add(8) <= f_x_mix(16) + f_x_mix(18);
-				ff_mix_add(9) <= f_x_mix(17);
+                -- Take advantage of symmetric filter. 
+                ff_mix_add(0) <= f_x_mix(0) + f_x_mix(34);
+                ff_mix_add(1) <= f_x_mix(2) + f_x_mix(32);
+                ff_mix_add(2) <= f_x_mix(4) + f_x_mix(30);
+                ff_mix_add(3) <= f_x_mix(6) + f_x_mix(28);
+                ff_mix_add(4) <= f_x_mix(8) + f_x_mix(26);
+                ff_mix_add(5) <= f_x_mix(10) + f_x_mix(24);
+                ff_mix_add(6) <= f_x_mix(12) + f_x_mix(22);
+                ff_mix_add(7) <= f_x_mix(14) + f_x_mix(20);
+                ff_mix_add(8) <= f_x_mix(16) + f_x_mix(18);
+                ff_mix_add(9) <= f_x_mix(17);
 				
-				-- Multiply Impulse response. 
-				for i in 0 to 9 loop
-					fff_add_mult(i) <= ff_mix_add(i) * f_h_uni(i);
-				end loop;				
+                -- Multiply Impulse response. 
+                for i in 0 to 9 loop
+                    fff_add_mult(i) <= ff_mix_add(i) * f_h_uni(i);
+                end loop;				
 				
-				-- Start of the adder tree.
-				for i in 0 to 4 loop
-					f4_sum_s1(i) <= fff_add_mult(2*i) + fff_add_mult(2*i+1);
-				end loop;
+                -- Start of the adder tree.
+                for i in 0 to 4 loop
+                    f4_sum_s1(i) <= fff_add_mult(2*i)+
+                                    fff_add_mult(2*i+1);
+                end loop;
 				
-				f5_sum_s2(2) <= f4_sum_s1(4);
-				for i in 0 to 1 loop
-					f5_sum_s2(i) <= f4_sum_s1(2*i) + f4_sum_s1(2*i+1);
-				end loop;
+                f5_sum_s2(2) <= f4_sum_s1(4);
+                for i in 0 to 1 loop
+                    f5_sum_s2(i) <= f4_sum_s1(2*i) + 
+                                    f4_sum_s1(2*i+1);
+                end loop;
 				
-				f6_sum_s3(0) <= f5_sum_s2(0) + f5_sum_s2(1);
-				f6_sum_s3(1) <= f5_sum_s2(2);
+                f6_sum_s3(0) <= f5_sum_s2(0) + f5_sum_s2(1);
+                f6_sum_s3(1) <= f5_sum_s2(2);
 								
-				-- Result of adder tree.
-				f7_sum_s4 <= f6_sum_s3(0) + f6_sum_s3(1);
-			end if;			
-		end if;
-	end process;
+                -- Result of adder tree.
+                f7_sum_s4 <= f6_sum_s3(0) + f6_sum_s3(1);
+            end if;			
+        end if;
+    end process;
 end rtl;
 \end{VHDLlisting}
 	
@@ -1516,7 +1523,6 @@ After the \emph{begin} keyword we have the outputs being assigned. Next we move 
 Next we take advantage of the symmetric filter taps used in this \ac{FIR} filter to reduce the number of multiples. To do this we need to add the data at various indices together. Then in the next stage the impulse response is multiplied by the summation in the previous step. After which the ten values are summed in an \index{adder tree} where the number of adders is $log_2$ of the number of elements left to add. 
 	
 \subsubsection{Numerically Controlled Oscillator}
-	<TODO Subsubsection  Numerically Controlled Oscillator : DONE>
 	
 An \ac{NCO} is used to generate \emph{sine} and \emph{cosine} waves on an \ac{FPGA}. The generation of sinusoidal waves is beneficial for digitally mixing signals. In this section we discuss how to make an \ac{NCO} in two parts. First a phase accumulator is used to generate an address which is used to index in to a \ac{BRAM} which is assigned as the output. 
 
@@ -1524,61 +1530,62 @@ An \ac{NCO} is used to generate \emph{sine} and \emph{cosine} waves on an \ac{FP
 -- nco.vhd
 
 library ieee;
-	ieee.std_logic_1164.all;
-	ieee.numeric_std.all;
+    ieee.std_logic_1164.all;
+    ieee.numeric_std.all;
 	
 entity nco is
 generic(g_phinc_width : integer;
-	    g_bitwidth    : integer;);
+        g_bitwidth    : integer;);
 port(i_clk        : in    std_logic;
-	 i_rst        : in    std_logic;
-	 i_enable     : in    std_logic;
-	 i_phz_init   : in    unsigned(g_phinc_width-1 downto 0);
-	 i_phz_dv     : in    std_logic;
-	 i_phinc_init : in    unsigned(g_phinc_width-1 downto 0);
-	 i_phinc_dv   : in    std_logic;
-	 o_nco_data   :   out unsigned(g_bitwidth-1 downto 0);
-	 o_nco_dv     :   out std_logic
+     i_rst        : in    std_logic;
+     i_enable     : in    std_logic;
+     i_phz_init   : in    unsigned(g_phinc_width-1 downto 0);
+     i_phz_dv     : in    std_logic;
+     i_phinc_init : in    unsigned(g_phinc_width-1 downto 0);
+     i_phinc_dv   : in    std_logic;
+     o_nco_data   :   out unsigned(g_bitwidth-1 downto 0);
+     o_nco_dv     :   out std_logic
 );
 end 
 
 architecture rtl of nco is
-	type t_us_g is array (natural range <>) of unsigned(g_bitwidth-1 downto 0);
-	signal f_bram       : t_us_g(0 to 2**g_phinc_width-1);
-	signal f_phz_accum  : unsigned(g_phinc_width-1 downto 0);
-	signal f_phinc      : unsigned(g_phinc_width-1 downto 0);
-	signal f_nco_data   : unsigned(g_bitwidth-1 downto 0);
-	signal f_nco_dv     : std_logic := '0';
-	signal ff_nco_dv    : std_logic := '0';
+    type t_us_g is array (natural range <>) of 
+                           unsigned(g_bitwidth-1 downto 0);
+    signal f_bram       : t_us_g(0 to 2**g_phinc_width-1);
+    signal f_phz_accum  : unsigned(g_phinc_width-1 downto 0);
+    signal f_phinc      : unsigned(g_phinc_width-1 downto 0);
+    signal f_nco_data   : unsigned(g_bitwidth-1 downto 0);
+    signal f_nco_dv     : std_logic := '0';
+    signal ff_nco_dv    : std_logic := '0';
 begin
 
-	o_nco_data <= f_nco_data;
-	o_nco_dv   <= ff_nco_dv;
+    o_nco_data <= f_nco_data;
+    o_nco_dv   <= ff_nco_dv;
 	
-	p_init : process(i_clk)
-	begin
-		if rising_edge(i_clk) then
-			if i_rst = '1' then
-				f_phz_accum <= (others => '0');
-				f_nco_dv <= '0';
-			else
-				if i_phz_dv = '1' then
-					f_phz_accum <= i_phz_init;
-				end if;
+    p_init : process(i_clk)
+    begin
+        if rising_edge(i_clk) then
+            if i_rst = '1' then
+                f_phz_accum <= (others => '0');
+                f_nco_dv <= '0';
+            else
+                if i_phz_dv = '1' then
+                    f_phz_accum <= i_phz_init;
+                end if;
 				
-				if i_phinc_dv = '1' then
-					f_phinc <= i_phinc_init;
-				end if;
+                if i_phinc_dv = '1' then
+                    f_phinc <= i_phinc_init;
+                end if;
 				
-				f_nco_dv <= i_enable;
-				ff_nco_dv <= f_nco_dv;
-				f_nco_data <= f_bram(to_integer(f_phz_accum));
-				if i_enable = '1' then
-					f_phz_accum <= f_phz_accum + f_phinc;
-				end if;				
-			end if;
-		end if;	
-	end process;
+                f_nco_dv <= i_enable;
+                ff_nco_dv <= f_nco_dv;
+                f_nco_data <= f_bram(to_integer(f_phz_accum));
+                if i_enable = '1' then
+                    f_phz_accum <= f_phz_accum + f_phinc;
+                end if;				
+            end if;
+        end if;	
+    end process;
 end rtl;
 \end{VHDLlisting}
 
@@ -1595,7 +1602,6 @@ While not in reset we perform three major tasks. First of which is registering t
 The third major task has two parts. While the enable is high the phase accumulator is incremented by the phase increment. The phase increment is used as an address into a \ac{BRAM}. The \ac{BRAM} is initialized with a sinusoid that is sampled by the phase accumulator. As the phase accumulator rolls over in unsigned value the sinusoid \ac{BRAM} cycles over the next period of the wave being generated. The sinusoid is an output of the core. 
 
 \section{Security in Hardware}
-	<TODO Section Security in Hardware : DONE>
 
 There is a fundamental difference in programming a processor and designing hardware, as we have seen in this chapter. Consider the differences, when programming a processor there is an atomic instruction that is executed with references to register addresses. However, in an \ac{FPGA}, data is registered with no way of accessing the data by address and no way of changing the \ac{FPGA} configuration without erasing the data. 
 

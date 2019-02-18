@@ -1,5 +1,4 @@
 \chapter{Overview of Computing Platforms}
-	<TODO Chapter Overview of Computing Platforms : DONE>
 Today's electronics hobbyist has many platforms available to learn anything from programming basics to complicated topics like web hosting and robotics. This chapter provides an overview  of available computing platforms. We discuss \index{\ac{SBC}}s, \index{\ac{FPGA}}s, and \index{\ac{ASIC}}s. All of which have varying levels for skill required to get started. This book will get you started in designing systems for all the platforms.  
 
 If you are a beginner you should start with single board computers. They are a smaller and cheaper version of your laptop. They offer an operating system and are user friendly. They are not as computationally equipped but do offer some ability to do complex processing. 
@@ -12,31 +11,26 @@ Finally, the last step and the ultimate in computational performance is the \ac{
 	
 	
 \section{What Can an FPGA Do}
-	<TODO Section What Can an FPGA Do : DONE>
 
 The development of todays \ac{FPGA}s started in the late 1988s, where \index{\ac{SPLD}}s took the place of hand placing logic gates. These \ac{SPLD}s gave way to \index{\ac{CPLD}}s. This section provides a brief history which will help in the understanding of how and why \ac{FPGA}s are used.  	
 
 \subsection{History of FPGAs}
-	<TODO Subsection History of FPGAs : DONE>
 
 Early versions of the \ac{FPGA} were significantly less capable than today's \ac{FPGA}. But even before the \ac{FPGA} there were programmable logic cells that could be configured after \ac{IC} fabrication. These precursors to the \ac{FPGA} were the start of programmable logic being used in data centers and cloud computing, like it is today.
 
 The history of the \ac{FPGA} really includes the \ac{SPLD}, \ac{CPLD}, and the \emph{Macrocell} \ac{IC}s. Each of these \ac{IC}s in turn increase the processing the level of configurable logic.
 	
 \subsubsection{SPLDs and CPLDs}
-	<TODO Subsubsection  SPLDs and CPLDs : DONE>
 
 The \ac{SPLD} has two types, the \ac{PAL} and the \ac{GAL}. Both the \ac{PAL} and the \ac{GAL} are \ac{SOP} devices where inputs are sent to a series of \emph{AND} gates then the results of the \emph{AND} gates are \emph{XOR}'d together. The \ac{PAL} \ac{IC} was programmed by burning fuses, and so was programmable only once. The \ac{GAL} used \ac{EEPROM} so the \ac{IC} was reconfigurable \cite{floyd2011digital}.
 
 The \ac{CPLD} consists of array of \ac{SPLD}s with programmable interconnects. The architecture for the \ac{CPLD} allows the user to program the outputs of one \ac{SPLD} to be the inputs to the next \ac{SPLD}. The \ac{PIA} allows the interconnection of all the \ac{SPLD}s in a \ac{CPLD}.
 	
 \subsubsection{Macrocells}
-	<TODO Subsubsection  Macrocells : DONE>
 
 A \emph{macrocell} was used in tandem with an \ac{SPLD}. The \index{macrocell} added some functionality to the outputs of the \ac{SPLD}. The macrocell consists of an array of \emph{OR} gates. The output of the \emph{OR} gates were then routed to some \emph{output logic}. The vendors of the macrocells would change what functionality of the \emph{output logic} for different families of chips depending on customer demand \cite{floyd2011digital}.
 	
 \subsection{Why Use an FPGA}
-	<TODO Subsection Why Use an FPGA : DONE>
 	
 \ac{FPGA}s are really the blank slate of embedded processing. The features in \ac{FPGA}s today lead to a large range of applications, including Artificial Intelligence and machine learning. \ac{FPGA}s have many characteristics that make them a great versatile computational platform. 
 
@@ -49,14 +43,12 @@ Another benefit of an \ac{FPGA} is the amount of configurable input and output p
 Finally, an \ac{FPGA} is a great testing platform for \ac{ASIC} development. The ultimate in performance is the \ac{ASIC} however you get one chance for a die. The \ac{NRE} for a second attempt can make it not cost effective.
 
 \subsubsection{Introduction to Data Rate}
-	<TODO Subsubsection  Introduction to Data Rate : DONE>
 
 A \index{data rate} in general is defined as the number of bits processed per unit time. For a system the data rate is how much data can the system handle per unit time. The overall data rate of the system is the minimum data rate for the individual components. In designing a system with a minimum data rate requirement it is important to be mindful of the data rates of the components.
 
 To make the concept of determining data rate a little more concrete lets look at an image processing. To determine the data rate of a system the knowledge of the application and more importantly the architecture of the system needs to be known. There are multiple ways to architect the design to enable higher or lower data rates which trades off with size and power usage. 
 
 \subsubsection{Data Rate Study - Image and Video Processing}
-	<TODO Subsubsection  Data Rate Study - Image and Video Processing : DONE>
 
 The data rates for \index{image processing} and \index{video processing} push the limits of processing power. The algorithms that are used for image and video processing must be able to handle a lot of data and every stage during the processing. Even if the processing is not done in real-time, which is where data is stored in non-volatile memory and is read out as needed for the processing, the algorithms require a certain scope of pixels to be able to make decisions.
 
@@ -66,19 +58,17 @@ If we start analyzing video we start seeing $30$ high-resolution images a second
 
 To process this amount of data we first need to remove all the data that is not relevant to the application. If the application tracks moving objects when anything that is in the background is not fed through the computationally intensive portions of the algorithms. If pixels are not changing then why keep them. After significantly reducing the amount of data to process the algorithm executes faster and will be more likely to be a real-time video processing solution.
 	
-\section{What Can a SBC Do}
-	<TODO Section What Can a SBC Do : DONE>
+\section{What Can a Single Board Computer Do}
 
-The \ac{SBC} can do many things. The better question is what can it not do. However, when you get your brand new \ac{SBC} you open the box and plug it in, turn it on and it boots up. You are at the desktop of a Linux distribution that you hadn't heard of before today. You wonder ...now what?
+The \ac{SBC} can do many things. The better question is what can it not do. However, when you get your brand new \ac{SBC} you open the box and plug it in, turn it on and it boots up. You are at the desktop of a Linux distribution that you had not heard of before today. You wonder ...now what?
 
 By far the most popular \ac{SBC} is the \ac{RPi} \cite{rpiorg} but this discussion really applies to the Aurdino \cite{arduinoref} and any other small form factor \ac{SBC} out there. The most exciting projects are the one that you program and they physically interact with the world. This can be anything from automatically watering a plant to driving a robot around your living room.
 
-If your \ac{SBC} is connected to your \ac{WLAN} this is a great opportunity to learn more about networking. You set up your \ac{SBC} to host a \ac{NAS} which shares your files with all your trusted \ac{WLAN} connected devices. You can also learn the basics of \index{web-development}. The \ac{SBC} is perfectly capable of hosting a website that can be accessible from anywhere if you also learn how to properly, and securely, configure your router.
+If your \ac{SBC} is connected to a \ac{WLAN} this is a great opportunity to learn more about networking. You set up your \ac{SBC} to host a \ac{NAS} which shares your files with all your trusted \ac{WLAN} connected devices. You can also learn the basics of \index{web-development}. The \ac{SBC} is perfectly capable of hosting a website that can be accessible from anywhere if you also learn how to properly, and securely, configure your router.
 
 The possibilities are many and the Internet itself can help you get started in learning about what projects are simple to get you started. And as you learn more about your \ac{SBC} you can post the exciting projects you come up with to help the next person get excited about making with an \ac{SBC}.
 	
 \subsubsection{The Performance of Decisions}
-	<TODO Subsubsection  The Performance of Decisions : DONE>
 
 There are many mechanisms in the modern \ac{CPU} and embedded \ac{uC} to predict branches or decisions will take the processing in a different direction. Just like when you think you have your day all planned out and something surprises you; you need to derail the rest of your plans.
 
@@ -87,19 +77,16 @@ In the world of embedded processing the act of \emph{derailing your plans} is fl
 The performance of taking a branch to a new section of code in general is not a major issue. When this happens the latency is on the order of \ac{us}. However, if your processing algorithms are at or near the capacity of the device, special care must be taken to squeeze out all the performance you can.
 	
 \subsubsection{Data Rate Study - Web Hosting}
-	<TODO Subsubsection  Data Rate Study - Web Hosting : DONE>
 
 The data rate for a webpage can be a little tricky to compute. The data rate depends first on the connection speed, the user's viewing speed, and the size of the webpage itself. The average webpage size is constantly increasing with faster connections and processing speeds. At the time of writing the average size of a webpage is $3$ \ac{MB} \cite{AvgWebSize}. For this study we will also say we want to page to load, be usable for the requester, in under three seconds.
 
 The information tells us rather quickly that we need about a $1$ \ac{MB} per second connection and processing power to handle today's average webpage. Or maybe we take longer than the $3$ seconds to load the entire page but have the top of the page load quicker. We put a priority on the top of the page and let the requester start looking at the page, maybe we won't even have to load the rest of the page. But getting the data in front of the requester faster produces the illusion that the data rate of rendering the page is large when actually we are still working on getting the data rendered. 
 	
 \section{FPGA vs. Processor}
-	<TODO Section FPGA vs. Processor : DONE>
 
 The \ac{FPGA} and the \ac{uC} are two different tools. Each are good at some processing tasks and poor at other programming tasks. The two metrics we will touch on here is data rate capability and decision making. Decision making can also be thought of as \emph{managerial tasks} which are how well the processing platform is able to take inputs either from outside the \ac{IC} itself or process data and make decisions based on the data. In most processing applications it's a combination of both.
 	
 \subsubsection{Balancing Data Rate and Decision Making}
-	<TODO Subsubsection  Balancing Data Rate and Decision Making : DONE>
 We will start with data rate capability. The data rate that either processing unit can handle is of course how much data per unit time can the processing unit handle. First the \emph{unit of time} is proportional to the clock frequency. If we just compare the \ac{FPGA} and \ac{uC} the \ac{uC} usually wins with a higher operating frequency. However, the \ac{FPGA} is able to pipeline significantly more data than the \ac{uC} can. Since the \ac{FPGA} hardware is reconfigurable we can make a multiplier, adder, multiplexer, etc at any point in our processing algorithm. With the \ac{uC} we will need to keep the data in memory until the \ac{ALU} is ready to handle the specific operation we need to perform.
 
 The fact that we can make any \ac{ALU} operation we want is great. But even better, we can also make as many as we need to on an \ac{FPGA}. There is a limited size of the \ac{FPGA}, but for example there are $5000$ multipliers dedicated on some \ac{FPGA}s. We could use all of these in the same clock cycle if our algorithm needed to. So the higher data rate capability goes to the \ac{FPGA}.

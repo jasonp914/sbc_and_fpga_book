@@ -1,8 +1,5 @@
-
-
-
 function printsum(a)
-	println(summary(a), ": ",repr(a))
+    println(summary(a), ": ",repr(a))
 end
 
 M = 3

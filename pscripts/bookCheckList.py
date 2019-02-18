@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import numpy as py
+#import numpy as py
 import re
 import sys
 import smtplib
@@ -76,11 +76,11 @@ def remove_todo_tags(data_list,filepath):
 		if data_list[i].find("<TODO") < 0:
 			# Copy non-tag line over to new file
 			file.write(data_list[i])
-		else:
+		#else:
 			# TODO TAG line
-			if data_list[i].find("NOT DONE") < 0:
+			#if data_list[i].find("NOT DONE") < 0:
 				# Don't remove other tag types
-				file.write(data_list[i])
+				#file.write(data_list[i])
 
 	file.close()
 

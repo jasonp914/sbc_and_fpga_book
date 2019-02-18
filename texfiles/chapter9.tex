@@ -1,16 +1,13 @@
 \chapter{Moving Object Tracking in Real-Time Video}
-	<TODO Chapter Moving Object Tracking in Real-Time Video : DONE>
 
 In this Chapter we discuss the basic image processing algorithms used in real-time video processing applications. The algorithms covered here focus on altering the captured video to highlight or enhance important aspects of the video to alert a user. An example application could include security cameras where motion detection alerts the security guard, or tracking suspicious vehicles outside a guarded area. A more fun application is tracking motion on a person while video chatting so the subject is always in frame. 
 
 	
 \section{Image Processing Algorithms}
-	<TODO Section Image Processing Algorithms : DONE>
 
 Basic image processing algorithms are used regularly in all image processing applications. After the general knowledge of the basic algorithms is understood they can be pieced together to get a working system that is tailored to the application in mind. We start with matrix multiplication, which provides linear image affects like rotation and skew. We then move on to the \ac{FFT} which can be used for image registration. We then add to the functionality of the \ac{FFT} with wavelets. We finish up with convolution.
 	
 \subsection{Matrix Multiplication}
-	<TODO Subsection Matrix Multiplication : DONE>
 
 Matrix multiplication is very useful in image processing since scaling, skew, and highlighting can be accomplished efficiently with spatial transformations. When applying a spatial transformation to an image we first break down the image into many smaller images. 
 
@@ -70,7 +67,6 @@ The highpass filter transform matrix is,
 \cite{gonzalez2002digital}	
 	
 \subsection{Fast Fourier Transform}
-	<TODO Subsection Fast Fourier Transform : DONE>
 	
 In the previous section we saw two spatial filter examples. In this section we transition to the frequency domain of an image. For image processing the two dimensional \ac{FFT} is needed. To transform the image into the two dimensional frequency domain we use,
 
@@ -108,7 +104,6 @@ C_{f,h}(x,y) = \frac{1}{MN}\sum_{m=0}^{M}\sum_{n=0}^{N}f^*(m,n)h(x+m,y+n).
 However since we are in the frequency domain we are able to calculate $C_{f,h}(x,y)$ with less computational complexity. To do this we first need to remember that convolution in the spatial domain is multiplication in the frequency domain. Next, since the correlation that we are interested in is very similar to convolution it can be shown that correlation in the frequency domain is equivalent to $F^*(k,l)H(k,l)$. In the frequency domain we multiply the images and take the \ac{IFFT} to get back to the spatial domain. 
 
 \subsection{Wavelets}
-	<TODO Subsection Wavelets : DONE>
 
 Wavelets build on the Fourier analysis by introducing a \emph{mother function}. The mother function is denoted by $\Psi$. The mother function can be selected based on the application but here we will look at the simplest mother function the \emph{haar} function.
 
@@ -125,10 +120,9 @@ Y[n,m] = \frac{1}{\sqrt{c_0^n}}\sum_{k=0}^{K-1}y[k]\Psi\left[\left(\frac{k}{c_0^
 \noindent
 where $c_0^n$ is the discretized scaling factor and $\Phi$ is sampled in the frequency domain. The definition in the frequency domain allows us to benefit from the wavelet analysis with minimal complexity. 
 
-For signal and image processing the wavelet is a great tool for de-noising signals and de-blurring images. The wavelet transform is used to calculate a deconvolution. Wavelet based deconvolution algorithms can be iterative which leads to data rate considerations. For more information on wavelet deconvolution see \cite{akansu2010emerging}.
+For signal and image processing the wavelet is a great tool for de-noising signals and de-blurring images. The wavelet transform is used to calculate a deconvolution. Wavelet based deconvolution algorithms can be iterative which leads to data rate considerations. For more information on wavelet deconvolution see \cite{welstead1999fractal}.
 
 \section{Kalman Filters}
-	<TODO Section Kalman Filters: DONE>
 
 The Kalman filter estimates and tracks a \emph{true state}. The true state is corrupted by process and observation noise. The noise in the system corrupts an observation that we will use in a Kalman filter to reduce the noise corruption. 
 

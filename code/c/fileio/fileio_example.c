@@ -65,7 +65,9 @@ int count_vowels(char buff[LINESIZE]){
 	return nv;
 }
 
-void caesar_cipher(char buff[LINESIZE], char cc[LINESIZE], int key){
+void caesar_cipher(char buff[LINESIZE], 
+                   char cc[LINESIZE], 
+                   int key){
 	int i, a, eol;
 	char alpha[26];
 	int alpha_index;
@@ -73,45 +75,48 @@ void caesar_cipher(char buff[LINESIZE], char cc[LINESIZE], int key){
 	eol = 0;
 	alpha_init(alpha);
 	for(i=0; i < LINESIZE; i++){
-		if(buff[i] == '\n' || eol == 1 || buff[i] == '.'){
-			cc[i] = '\n';
-			eol = 1;
-		}else if(buff[i] == ' '){
-		 	cc[i] = ' ';		
-		}else{
-			//printf("Current Char : %c\n",buff[i]);
-		 	for(a=0; a < 26; a++){
-				if(buff[i] == alpha[a]){
-		 			alpha_index = (a+key) % 26;
-		 			cc[i] = alpha[alpha_index];		
-		 		}
-		 	}
-		}		
-	}
+        if(buff[i] == '\n' || 
+            eol == 1 || 
+            buff[i] == '.'){
+            cc[i] = '\n';
+            eol = 1;
+        }else if(buff[i] == ' '){
+            cc[i] = ' ';		
+        }else{
+            for(a=0; a < 26; a++){
+                if(buff[i] == alpha[a]){
+                    alpha_index = (a+key) % 26;
+                    cc[i] = alpha[alpha_index];		
+                }
+            }
+        }		
+    }
 }
 
 int main(int argc, char* argv[]){
-	FILE *fp;	
-	char buff[LINESIZE];
-	char cc[LINESIZE];
-	int nv = 0;
-
-
-	fp = fopen(argv[1],"r");
-
-	while (fgets(buff,sizeof(buff),(FILE*)fp) != NULL){
-		nv += count_vowels(buff);
-		printf("%s",buff);
-		printf("\n");
-		caesar_cipher(buff,cc,1);
-		printf("\n");
-		print_string(cc);
-		printf("\n");
-	}
-
-	printf("\nNumber of vowels : %d\n",nv);
-	
-	fclose(fp);
+    FILE *fp;	
+    char buff[LINESIZE];
+    char cc[LINESIZE];
+    int nv = 0;
+    
+    
+    fp = fopen(argv[1],"r");
+    
+    while (fgets(buff,
+                 sizeof(buff),
+                (FILE*)fp) != NULL){
+        nv += count_vowels(buff);
+        printf("%s",buff);
+        printf("\n");
+        caesar_cipher(buff,cc,1);
+        printf("\n");
+        print_string(cc);
+        printf("\n");
+    }
+    
+    printf("\nNumber of vowels : %d\n",nv);
+    
+    fclose(fp);
 }
 
 
