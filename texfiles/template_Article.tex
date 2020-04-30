@@ -17,7 +17,10 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{makeidx}
-
+\usepackage[scaled]{helvet}
+%\usepackage{pstricks}
+\usepackage{graphicx}
+\usepackage{color}
 % for colored solution
 \lstnewenvironment{VHDLlisting}[1][]
   {\lstset{
@@ -31,6 +34,17 @@
   }}{}
 
 \makeindex
+\newenvironment{dedication}
+{\clearpage           % we want a new page
+	\thispagestyle{empty}% no header and footer
+	\vspace*{\stretch{1}}% some space at the top 
+	\itshape             % the text is in italics
+	\raggedleft          % flush to the right margin
+}
+{\par % end the paragraph
+	\vspace{\stretch{3}} % space at bottom is three times that at the top
+	\clearpage           % finish off the page
+}
 
 \newcommand{\expec}[1]{{\mathcal{E}}\left\{#1\right\}}
 \newcommand{\expecsub}[2]{{\mathcal{E}_{#2}}\left\{#1\right\}}
@@ -55,15 +69,64 @@
 \newcommand{\eqtwo}[2]{Equations~\eqref{eq:#1} and \eqref{eq:#2}}
 
 %opening
+
 \title{Field Programmable Gate Arrays and Single Board Computers: What Are They and Why to Use Them}
 \author{Dr. Jason Pennington}
+\date{}
 
 \begin{document}
+\frontmatter
+%\maketitle
 
-\maketitle
+%\psset{unit=1in}
+%\begin{pspicture}(9in,6in)
+%\psframe[fillstyle=solid,fillcolor=Blue](0,0)(9,6)
+%\end{pspicture}
+
+
+\begin{titlepage}
+		\centering
+		\vspace{4\baselineskip}
+		{\Huge 
+			Field Programmable Gate Arrays and\\ Single Board Computers\par}
+		\vspace{1\baselineskip}
+		\par
+		{\Large\textsc{What Are They and Why to Use Them}\par}
+		\vspace{4\baselineskip}
+		by\par
+		{\large\textsc{Jason Pennington, Ph.D.}\par}
+		\vfill
+		FBS Publishing\par
+		{\em Fueled By Spite}
+\end{titlepage}
+
+
+	
+\begin{flushleft}
+		
+		\textit{Field Programmable Gate Arrays and Single Board Computers :\\What Are They and Why to Use Them}
+		
+		\vfill	
+		\textsf{\copyright} FBS Publishing, Inc. 
+		
+		\vspace{1\baselineskip}		
+		
+		ISBN-1234567891234
+		
+		\vspace{1\baselineskip}
+		
+		\noindent All rights reserved. No part of this publication may be produced or transmitted in any form or by any means, electronic or mechanical, including photocopying recording or any information storage and retrieval system, without the prior written permission of the publisher. For permissions contact copyright@fbspublishing.com
+\end{flushleft}
+
+\begin{dedication}
+	To My Family  
+\end{dedication}
+
 
 \tableofcontents
 
+
+\mainmatter
 \input{chapter1.tex}
 \input{chapter2.tex}
 \input{chapter3.tex}
@@ -75,15 +138,14 @@
 \input{chapter9.tex}
 \input{chapter10.tex}
 
-
-\chapter{Appendix}
-\appendix
+\backmatter
 
 
+\clearpage
+\chapter{Acronym}
 \input{acronym.tex}  % put this at end of paper
 
 \printindex
-
 \bibliographystyle{IEEEtran}
 \bibliography{thesis}
 
